@@ -22,14 +22,14 @@ jobs:
       - run: npm run test:visual
 
       - name: Chromatic
-        if: ${{ secrets.CHROMATIC_PROJECT_TOKEN != '' }}
+        if: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
         uses: chromaui/action@v1
         with:
           projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Skip Chromatic (No Token)
-        if: ${{ secrets.CHROMATIC_PROJECT_TOKEN == '' }}
+        if: ${{ !secrets.CHROMATIC_PROJECT_TOKEN }}
         run: |
           echo "⚠️ Chromatic token not found. Skipping visual regression tests."
           echo "To enable visual testing, add CHROMATIC_PROJECT_TOKEN to repository secrets."

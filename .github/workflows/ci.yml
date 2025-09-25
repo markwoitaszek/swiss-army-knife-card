@@ -51,11 +51,13 @@ jobs:
       - run: npm run test:e2e
 
       - name: Run Visual Tests (if Chromatic token available)
-        if: ${{ secrets.CHROMATIC_PROJECT_TOKEN != '' }}
+        if: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
         run: npm run test:visual
+        env:
+          CHROMATIC_PROJECT_TOKEN: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
 
       - name: Skip Visual Tests (No Chromatic Token)
-        if: ${{ secrets.CHROMATIC_PROJECT_TOKEN == '' }}
+        if: ${{ !secrets.CHROMATIC_PROJECT_TOKEN }}
         run: |
           echo "⚠️ Skipping visual tests - CHROMATIC_PROJECT_TOKEN not found"
           echo "Visual tests will be skipped until token is added"
