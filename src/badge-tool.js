@@ -19,9 +19,9 @@ function styleMap(styles) {
     .join('; ');
 }
 
+import BaseTool from './base-tool';
 import Merge from './merge';
 import Utils from './utils';
-import BaseTool from './base-tool';
 
 /** ****************************************************************************
   * BadgeTool class

@@ -81,7 +81,7 @@ ISSUES=$(gh api graphql -f query='
 # Move each issue to To Do column
 echo "$ISSUES" | jq -r '.data.repository.issues.nodes[] | "\(.id)|\(.number)|\(.title)"' | while IFS='|' read -r issue_id issue_number issue_title; do
     echo "Moving issue #$issue_number: $issue_title"
-    
+
     # Add issue to project (if not already there)
     gh api graphql -f query='
       mutation($projectId: ID!, $itemId: ID!) {
@@ -92,7 +92,7 @@ echo "$ISSUES" | jq -r '.data.repository.issues.nodes[] | "\(.id)|\(.number)|\(.
         }
       }
     ' -f projectId="PVT_kwDOBQqg5s4A" -f itemId="$issue_id" 2>/dev/null || true
-    
+
     # Move to To Do column
     gh api graphql -f query='
       mutation($projectId: ID!, $itemId: ID!, $columnId: ID!) {
@@ -108,7 +108,7 @@ echo "$ISSUES" | jq -r '.data.repository.issues.nodes[] | "\(.id)|\(.number)|\(.
         }
       }
     ' -f projectId="PVT_kwDOBQqg5s4A" -f itemId="$issue_id" -f columnId="$TODO_COLUMN_ID" 2>/dev/null || true
-    
+
     echo "  ✓ Moved issue #$issue_number"
 done
 

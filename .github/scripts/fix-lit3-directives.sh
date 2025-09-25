@@ -11,13 +11,13 @@ TOOL_FILES=$(find src -name "*-tool.js" -not -name "main.js")
 
 for file in $TOOL_FILES; do
     echo "Processing $file..."
-    
+
     # Check if the file already has the replacement functions
     if grep -q "function classMap" "$file"; then
         echo "  ✓ Already has replacement functions"
         continue
     fi
-    
+
     # Add the replacement functions after the imports
     sed -i '' '/^import Merge from/a\
 \
@@ -38,7 +38,7 @@ function styleMap(styles) {\
     .join('\''; '\'');\
 }\
 ' "$file"
-    
+
     echo "  ✓ Added replacement functions"
 done
 

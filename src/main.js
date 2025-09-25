@@ -35,6 +35,7 @@ import {
 import { ifDefined } from 'lit/directives/if-defined.js';
 // import { styleMap } from 'lit/directives/style-map.js'; // Not available in Lit 3.x
 import { unsafeSVG } from 'lit/directives/unsafe-svg.js';
+import { version } from '../package.json';
 
 // Simple styleMap replacement for Lit 3.x compatibility
 function styleMap(styles) {
@@ -44,7 +45,6 @@ function styleMap(styles) {
     .map(([key, value]) => `${key}: ${value}`)
     .join('; ');
 }
-import { version } from '../package.json';
 
 import {
   FONT_SIZE,
