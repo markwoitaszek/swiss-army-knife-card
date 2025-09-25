@@ -8,7 +8,8 @@ export default defineConfig({
   workers: process.env.CI ? 1 : undefined,
   reporter: [
     ['html'],
-    ['json', { outputFile: 'test-results/results.json' }]
+    ['json', { outputFile: 'test-results/results.json' }],
+    ['@chromatic-com/playwright/reporter', { outputDir: 'test-results/chromatic-archives' }]
   ],
 
   use: {
