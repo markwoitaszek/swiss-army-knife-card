@@ -20,7 +20,7 @@ let SwissArmyKnifeCard = class extends LitElement {
       <div class="card">
         <div class="placeholder">
           Swiss Army Knife Card - Development Mode
-          <br>
+          <br />
           <small>Configuration: ${JSON.stringify(this.config)}</small>
         </div>
       </div>
@@ -32,14 +32,14 @@ SwissArmyKnifeCard.styles = css`
       display: block;
       padding: 16px;
     }
-    
+
     .card {
       background: var(--card-background-color, #ffffff);
       border-radius: 8px;
       padding: 16px;
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     }
-    
+
     .placeholder {
       text-align: center;
       color: var(--secondary-text-color, #666);
