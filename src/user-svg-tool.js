@@ -1,6 +1,6 @@
-import { svg } from 'lit-element';
-import { classMap } from 'lit-html/directives/class-map';
-import { styleMap } from 'lit-html/directives/style-map';
+import { svg } from 'lit';
+import { classMap } from 'lit/directives/class-map';
+import { styleMap } from 'lit/directives/style-map';
 import { SVGInjector } from '@tanem/svg-injector';
 
 import Merge from './merge';

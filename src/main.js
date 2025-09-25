@@ -20,19 +20,18 @@
 *******************************************************************************
 */
 
-// NTS @2021.10.31
-// Check compatibility when upgrading lit stuff. Many versions have conflicts!
-// Use compatible lit-* stuff, ie lit-element@2 and lit-html@1.
-// Combining other versions may lead to incompatibility, and thus lots of errors and
-// tools not working anymore!
+// NTS @2024.09.25
+// Migrated to Lit 3.x for modern web component development
+// All imports now use the unified 'lit' package
+// Lit 3.x provides better performance and modern web standards support
 
 import {
   LitElement, html, css, svg, unsafeCSS,
-} from 'lit-element';
+} from 'lit';
 
-import { styleMap } from 'lit-html/directives/style-map.js';
-import { unsafeSVG } from 'lit-html/directives/unsafe-svg.js';
-import { ifDefined } from 'lit-html/directives/if-defined.js';
+import { styleMap } from 'lit/directives/style-map.js';
+import { unsafeSVG } from 'lit/directives/unsafe-svg.js';
+import { ifDefined } from 'lit/directives/if-defined.js';
 import { version } from '../package.json';
 
 import {
