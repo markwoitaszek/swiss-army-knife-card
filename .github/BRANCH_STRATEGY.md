@@ -101,17 +101,20 @@ Future branches (created on-demand):
 ### On-Demand Phase Branch Creation
 
 **Why Create Phase Branches On-Demand?**
+
 - ✅ **Avoids merge conflicts**: No outdated branches to sync
 - ✅ **Cleaner history**: Each phase starts with latest completed work
 - ✅ **Simpler maintenance**: No need to update multiple branches
 - ✅ **Better isolation**: Each phase is self-contained
 
 **When to Create Phase Branches:**
+
 - **Phase 2**: Create `phase-2-core-features` when Phase 1 is complete
-- **Phase 3**: Create `phase-3-advanced-features` when Phase 2 is complete  
+- **Phase 3**: Create `phase-3-advanced-features` when Phase 2 is complete
 - **Phase 4**: Create `phase-4-polish-release` when Phase 3 is complete
 
 **Creation Process:**
+
 ```bash
 # Example: Creating Phase 2 branch after Phase 1 completion
 git checkout master
