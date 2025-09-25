@@ -5,7 +5,7 @@
  * Sets up branch protection rules for the SAK Card project
  */
 
-const { Octokit } = require('@octokit/rest');
+import { Octokit } from '@octokit/rest';
 
 // Initialize Octokit
 const octokit = new Octokit({
@@ -41,7 +41,7 @@ const branchProtection = {
 
 async function setupBranchProtection() {
   console.log('Setting up branch protection rules...');
-  
+
   try {
     await octokit.rest.repos.updateBranchProtection({
       owner,
@@ -53,7 +53,7 @@ async function setupBranchProtection() {
   } catch (error) {
     console.error('❌ Error setting up branch protection:', error.message);
   }
-  
+
   // Also protect the modernization-analysis branch
   try {
     await octokit.rest.repos.updateBranchProtection({
@@ -66,7 +66,7 @@ async function setupBranchProtection() {
   } catch (error) {
     console.error('❌ Error setting up branch protection for modernization-analysis:', error.message);
   }
-  
+
   console.log('✅ Branch protection setup complete!');
 }
 

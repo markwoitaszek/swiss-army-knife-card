@@ -5,7 +5,7 @@
  * Creates all the milestones for the SAK Card modernization project
  */
 
-const { Octokit } = require('@octokit/rest');
+import { Octokit } from '@octokit/rest';
 
 // Initialize Octokit
 const octokit = new Octokit({
@@ -45,7 +45,7 @@ const milestones = [
 
 async function createMilestones() {
   console.log('Creating milestones...');
-  
+
   for (const milestone of milestones) {
     try {
       await octokit.rest.issues.createMilestone({
@@ -65,7 +65,7 @@ async function createMilestones() {
       }
     }
   }
-  
+
   console.log('✅ Milestone setup complete!');
 }
 

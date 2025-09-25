@@ -20,30 +20,30 @@ jobs:
             const issue = context.payload.issue;
             const title = issue.title.toLowerCase();
             const body = issue.body?.toLowerCase() || '';
-            
+
             // Auto-label based on title content
             const labels = [];
-            
+
             if (title.includes('bug') || title.includes('error') || title.includes('fix')) {
               labels.push('type: bug');
             }
-            
+
             if (title.includes('feature') || title.includes('enhancement') || title.includes('add')) {
               labels.push('type: feature');
             }
-            
+
             if (title.includes('doc') || title.includes('readme') || title.includes('guide')) {
               labels.push('type: documentation');
             }
-            
+
             if (title.includes('test') || title.includes('testing')) {
               labels.push('type: test');
             }
-            
+
             if (title.includes('refactor') || title.includes('cleanup')) {
               labels.push('type: refactor');
             }
-            
+
             // Add priority labels based on keywords
             if (title.includes('critical') || title.includes('urgent') || title.includes('blocking')) {
               labels.push('priority: critical');
@@ -54,12 +54,12 @@ jobs:
             } else {
               labels.push('priority: medium');
             }
-            
+
             // Add status label for new issues
             if (context.payload.action === 'opened') {
               labels.push('status: needs-triage');
             }
-            
+
             // Add labels if any were found
             if (labels.length > 0) {
               await github.rest.issues.addLabels({
@@ -80,16 +80,16 @@ jobs:
           script: |
             const pr = context.payload.pull_request;
             const baseBranch = pr.base.ref;
-            
+
             // Assign milestone based on target branch
             let milestone = null;
-            
+
             if (baseBranch === 'main') {
               milestone = 'Phase 1: Foundation';
             } else if (baseBranch === 'develop') {
               milestone = 'Phase 2: Core Features';
             }
-            
+
             if (milestone) {
               // Get milestone number
               const milestones = await github.rest.issues.listMilestones({
@@ -97,9 +97,9 @@ jobs:
                 repo: context.repo.repo,
                 state: 'open'
               });
-              
+
               const targetMilestone = milestones.data.find(m => m.title === milestone);
-              
+
               if (targetMilestone) {
                 await github.rest.issues.update({
                   owner: context.repo.owner,
@@ -120,10 +120,10 @@ jobs:
           script: |
             const issue = context.payload.issue;
             const action = context.payload.action;
-            
+
             // Get project ID (you'll need to replace this with your actual project ID)
             const projectId = 'PROJECT_ID_PLACEHOLDER';
-            
+
             if (action === 'opened') {
               // Add to backlog column
               console.log(`Adding issue ${issue.number} to project backlog`);
@@ -143,7 +143,7 @@ jobs:
         with:
           script: |
             const pr = context.payload.pull_request;
-            
+
             // Auto-approve minor and patch updates
             if (pr.title.includes('Bump') && !pr.title.includes('major')) {
               await github.rest.pulls.createReview({

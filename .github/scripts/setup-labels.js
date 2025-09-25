@@ -5,7 +5,7 @@
  * Creates all the labels needed for the SAK Card project
  */
 
-const { Octokit } = require('@octokit/rest');
+import { Octokit } from '@octokit/rest';
 
 // Initialize Octokit
 const octokit = new Octokit({
@@ -55,7 +55,7 @@ const labels = [
 
 async function createLabels() {
   console.log('Creating labels...');
-  
+
   for (const label of labels) {
     try {
       await octokit.rest.issues.createLabel({
@@ -74,7 +74,7 @@ async function createLabels() {
       }
     }
   }
-  
+
   console.log('✅ Label setup complete!');
 }
 

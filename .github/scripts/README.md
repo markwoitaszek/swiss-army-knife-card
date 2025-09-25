@@ -5,11 +5,13 @@ This directory contains scripts to automate the setup of GitHub project manageme
 ## Prerequisites
 
 1. **GitHub CLI**: Install and authenticate with GitHub CLI
+
    ```bash
    gh auth login
    ```
 
 2. **Node.js**: Ensure Node.js is installed
+
    ```bash
    node --version
    ```
@@ -22,6 +24,7 @@ This directory contains scripts to automate the setup of GitHub project manageme
 ## Setup Scripts
 
 ### 1. Labels Setup
+
 Creates all the labels needed for the project.
 
 ```bash
@@ -29,6 +32,7 @@ node .github/scripts/setup-labels.js
 ```
 
 **Labels Created:**
+
 - Priority labels (critical, high, medium, low)
 - Type labels (bug, feature, enhancement, documentation, refactor, test)
 - Phase labels (foundation, core, advanced, polish)
@@ -36,6 +40,7 @@ node .github/scripts/setup-labels.js
 - Status labels (needs-triage, needs-design, needs-approval, blocked, duplicate)
 
 ### 2. Milestones Setup
+
 Creates all the milestones for the modernization project.
 
 ```bash
@@ -43,12 +48,14 @@ node .github/scripts/setup-milestones.js
 ```
 
 **Milestones Created:**
+
 - Phase 1: Foundation (2024-02-15)
 - Phase 2: Core Features (2024-03-15)
 - Phase 3: Advanced Features (2024-04-15)
 - Phase 4: Polish & Release (2024-05-15)
 
 ### 3. Branch Protection Setup
+
 Sets up branch protection rules for main branches.
 
 ```bash
@@ -56,6 +63,7 @@ node .github/scripts/setup-branch-protection.js
 ```
 
 **Protection Rules:**
+
 - Requires 2 approving reviews
 - Requires status checks to pass
 - Requires branches to be up to date
@@ -65,6 +73,7 @@ node .github/scripts/setup-branch-protection.js
 ## Manual Setup Steps
 
 ### 1. Create Project Board
+
 1. Go to your repository on GitHub
 2. Click "Projects" tab
 3. Click "New project"
@@ -73,7 +82,9 @@ node .github/scripts/setup-branch-protection.js
 6. Description: "Project management board for Swiss Army Knife Card modernization and development"
 
 ### 2. Set Up Project Columns
+
 Add these columns in order:
+
 1. **Backlog** - New issues and ideas
 2. **To Do** - Ready to work on
 3. **In Progress** - Currently being worked on
@@ -82,18 +93,22 @@ Add these columns in order:
 6. **Done** - Completed items
 
 ### 3. Configure Automation Rules
+
 In the project board settings, add these automation rules:
 
 #### Auto-assign to Project
+
 - When issue is created → Add to "Backlog" column
 - When PR is created → Add to "In Review" column
 
 #### Auto-move based on Status
+
 - When issue is assigned → Move to "To Do"
 - When PR is ready for review → Move to "In Review"
 - When PR is merged → Move to "Done"
 
 #### Auto-label based on Content
+
 - Issues with "bug" in title → Add `type: bug` label
 - Issues with "feature" in title → Add `type: feature` label
 - PRs targeting main branch → Add `phase: foundation` label
@@ -126,6 +141,7 @@ After running the scripts, verify the setup:
 ### Common Issues
 
 1. **Authentication Error**: Make sure you're logged in with GitHub CLI
+
    ```bash
    gh auth status
    ```
