@@ -3,7 +3,7 @@
  * Handles theme detection, color processing, and style generation
  */
 
-import type { ThemeState, SakConfig } from '../types/SakTypes.js';
+import type { SakConfig, ThemeState } from '../types/SakTypes.js';
 
 export class ThemeService {
   private theme: ThemeState | null = null;
@@ -43,7 +43,7 @@ export class ThemeService {
       textColor: this.getThemeVariable('primary-text-color'),
       cardBackgroundColor: this.getThemeVariable('card-background-color'),
       primaryTextColor: this.getThemeVariable('primary-text-color'),
-      secondaryTextColor: this.getThemeVariable('secondary-text-color')
+      secondaryTextColor: this.getThemeVariable('secondary-text-color'),
     };
 
     const themeChanged = !this.theme || this.theme.isDark !== newTheme.isDark;
@@ -82,7 +82,7 @@ export class ThemeService {
     }
 
     // Try to get from current theme
-    const value = this.hass.themes.darkMode 
+    const value = this.hass.themes.darkMode
       ? this.hass.themes.themes[this.hass.themes.selected_theme]?.dark?.[name]
       : this.hass.themes.themes[this.hass.themes.selected_theme]?.light?.[name];
 
@@ -102,7 +102,7 @@ export class ThemeService {
       'text-color': '#212121',
       'card-background-color': '#ffffff',
       'primary-text-color': '#212121',
-      'secondary-text-color': '#757575'
+      'secondary-text-color': '#757575',
     };
 
     return defaultVariables[name] || '';
@@ -162,11 +162,13 @@ export class ThemeService {
 
   private hexToRgb(hex: string): { r: number; g: number; b: number } | null {
     const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-    return result ? {
-      r: parseInt(result[1], 16),
-      g: parseInt(result[2], 16),
-      b: parseInt(result[3], 16)
-    } : null;
+    return result
+      ? {
+          r: parseInt(result[1], 16),
+          g: parseInt(result[2], 16),
+          b: parseInt(result[3], 16),
+        }
+      : null;
   }
 
   // Style generation
@@ -182,14 +184,14 @@ export class ThemeService {
       '--sak-text-color': this.theme.textColor,
       '--sak-card-background-color': this.theme.cardBackgroundColor,
       '--sak-primary-text-color': this.theme.primaryTextColor,
-      '--sak-secondary-text-color': this.theme.secondaryTextColor
+      '--sak-secondary-text-color': this.theme.secondaryTextColor,
     };
   }
 
   // Subscription management
   subscribe(callback: (theme: ThemeState) => void): () => void {
     this.updateCallbacks.add(callback);
-    
+
     // Return unsubscribe function
     return () => {
       this.updateCallbacks.delete(callback);

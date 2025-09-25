@@ -46,10 +46,12 @@ export class BrowserDetection {
     // See: https://javascriptio.com/view/10924/detect-if-device-is-ios
     // After iOS 13 you should detect iOS devices like this, since iPad will not be detected as iOS devices
     // by old ways (due to new "desktop" options, enabled by default)
-    
-    return (/iPad|iPhone|iPod/.test(window.navigator.userAgent)
-      || (window.navigator.platform === 'MacIntel' && window.navigator.maxTouchPoints > 1))
-      && !(window as any).MSStream;
+
+    return (
+      (/iPad|iPhone|iPod/.test(window.navigator.userAgent) ||
+        (window.navigator.platform === 'MacIntel' && window.navigator.maxTouchPoints > 1)) &&
+      !(window as any).MSStream
+    );
   }
 
   // Other browser detection
@@ -70,16 +72,21 @@ export class BrowserDetection {
     // The iOS app does not use a standard agent string...
     // See: https://github.com/home-assistant/iOS/blob/master/Sources/Shared/API/HAAPI.swift
     // It contains strings like "like Safari" and "OS 14_2", and "iOS 14.2.0"
-    
+
     const userAgent = window.navigator.userAgent.toLowerCase();
-    return /os 15.*like safari/.test(userAgent) || 
-           /os 14.*like safari/.test(userAgent) || 
-           /os 16.*like safari/.test(userAgent);
+    return (
+      /os 15.*like safari/.test(userAgent) ||
+      /os 14.*like safari/.test(userAgent) ||
+      /os 16.*like safari/.test(userAgent)
+    );
   }
 
   // Feature detection
   supportsSVG(): boolean {
-    return !!document.createElementNS && !!document.createElementNS('http://www.w3.org/2000/svg', 'svg').createSVGRect;
+    return (
+      !!document.createElementNS &&
+      !!document.createElementNS('http://www.w3.org/2000/svg', 'svg').createSVGRect
+    );
   }
 
   supportsCSSVariables(): boolean {
@@ -106,8 +113,10 @@ export class BrowserDetection {
   // Performance detection
   isLowEndDevice(): boolean {
     // Simple heuristic for low-end devices
-    return navigator.hardwareConcurrency <= 2 || 
-           (navigator as any).deviceMemory && (navigator as any).deviceMemory <= 2;
+    return (
+      navigator.hardwareConcurrency <= 2 ||
+      ((navigator as any).deviceMemory && (navigator as any).deviceMemory <= 2)
+    );
   }
 
   // Get browser info
@@ -118,10 +127,10 @@ export class BrowserDetection {
     userAgent: string;
   } {
     const userAgent = window.navigator.userAgent;
-    
+
     let name = 'Unknown';
     let version = 'Unknown';
-    
+
     if (this.isChrome) {
       name = 'Chrome';
       const match = userAgent.match(/Chrome\/(\d+)/);
@@ -139,12 +148,12 @@ export class BrowserDetection {
       const match = userAgent.match(/Version\/(\d+)/);
       version = match ? match[1] : 'Unknown';
     }
-    
+
     return {
       name,
       version,
       platform: navigator.platform,
-      userAgent
+      userAgent,
     };
   }
 
@@ -163,7 +172,7 @@ export class BrowserDetection {
       webgl: this.supportsWebGL(),
       touch: this.supportsTouch(),
       pointerEvents: this.supportsPointerEvents(),
-      lowEndDevice: this.isLowEndDevice()
+      lowEndDevice: this.isLowEndDevice(),
     };
   }
 }

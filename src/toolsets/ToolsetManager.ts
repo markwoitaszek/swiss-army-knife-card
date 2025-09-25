@@ -4,7 +4,7 @@
  */
 
 import { html, TemplateResult } from 'lit';
-import type { SakConfig, ToolsetConfig, EntityState, ThemeState } from '../types/SakTypes.js';
+import type { EntityState, SakConfig, ThemeState, ToolsetConfig } from '../types/SakTypes.js';
 import { Toolset } from './Toolset.js';
 
 export class ToolsetManager {
@@ -45,9 +45,7 @@ export class ToolsetManager {
     }
 
     return html`
-      <div class="sak-toolsets">
-        ${this.toolsets.map(toolset => toolset.render())}
-      </div>
+      <div class="sak-toolsets">${this.toolsets.map(toolset => toolset.render())}</div>
     `;
   }
 
@@ -58,7 +56,7 @@ export class ToolsetManager {
     }
 
     this.toolsets = [];
-    
+
     this.config.layout.toolsets.forEach((toolsetConfig: ToolsetConfig) => {
       const toolset = new Toolset(toolsetConfig, this.hass);
       toolset.updateEntities(this.entities);

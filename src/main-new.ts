@@ -12,7 +12,7 @@ import './components/SakCard.js';
 console.info(
   `%c  SWISS-ARMY-KNIFE-CARD  \n%c      Version ${version}      `,
   'color: yellow; font-weight: bold; background: black',
-  'color: white; font-weight: bold; background: dimgray',
+  'color: white; font-weight: bold; background: dimgray'
 );
 
 // Export for external use

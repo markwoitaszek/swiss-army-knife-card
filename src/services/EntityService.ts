@@ -3,7 +3,7 @@
  * Handles entity data fetching, caching, and change detection
  */
 
-import type { EntityState, SakConfig, EntityConfig } from '../types/SakTypes.js';
+import type { EntityConfig, EntityState, SakConfig } from '../types/SakTypes.js';
 
 export class EntityService {
   private entities: Map<string, EntityState> = new Map();
@@ -75,7 +75,7 @@ export class EntityService {
     if (index < 0 || index >= this.entityConfigs.length) {
       return undefined;
     }
-    
+
     const entityConfig = this.entityConfigs[index];
     return this.getEntity(entityConfig.entity);
   }
@@ -83,7 +83,7 @@ export class EntityService {
   // Subscription management
   subscribe(callback: (entities: EntityState[]) => void): () => void {
     this.updateCallbacks.add(callback);
-    
+
     // Return unsubscribe function
     return () => {
       this.updateCallbacks.delete(callback);

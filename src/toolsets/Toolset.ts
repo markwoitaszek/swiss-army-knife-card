@@ -4,8 +4,8 @@
  */
 
 import { html, TemplateResult } from 'lit';
-import type { ToolsetConfig, EntityState, ThemeState, Position, Scale, Rotation } from '../types/SakTypes.js';
 import { BaseTool } from '../tools/base/BaseTool.js';
+import type { EntityState, ThemeState, ToolsetConfig } from '../types/SakTypes.js';
 
 export class Toolset {
   private config: ToolsetConfig;
@@ -58,7 +58,7 @@ export class Toolset {
       left: '0',
       top: '0',
       width: '100%',
-      height: '100%'
+      height: '100%',
     };
 
     return html`
@@ -75,7 +75,7 @@ export class Toolset {
     }
 
     this.tools = [];
-    
+
     this.config.tools.forEach(toolConfig => {
       const tool = this.createTool(toolConfig);
       if (tool) {
@@ -88,7 +88,7 @@ export class Toolset {
     // This would create the appropriate tool based on type
     // For now, we'll return null as the tool creation logic
     // would need to be implemented based on the existing tool classes
-    
+
     // Tool creation would look something like:
     // switch (toolConfig.type) {
     //   case 'circle':
@@ -100,23 +100,23 @@ export class Toolset {
     //     console.warn('Unknown tool type:', toolConfig.type);
     //     return null;
     // }
-    
+
     return null;
   }
 
   private getTransform(): string {
     let transform = '';
-    
+
     // Position
     if (this.config.position) {
       transform += `translate(${this.config.position.cx}%, ${this.config.position.cy}%)`;
     }
-    
+
     // Scale
     if (this.config.scale) {
       transform += ` scale(${this.config.scale.x}, ${this.config.scale.y})`;
     }
-    
+
     // Rotation
     if (this.config.rotation) {
       const cx = this.config.rotation.cx || this.config.position?.cx || 50;
@@ -124,7 +124,7 @@ export class Toolset {
       transform += ` rotate(${this.config.rotation.angle}deg)`;
       transform += ` translate(-${cx}%, -${cy}%)`;
     }
-    
+
     return transform;
   }
 

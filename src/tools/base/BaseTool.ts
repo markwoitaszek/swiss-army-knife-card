@@ -3,11 +3,11 @@
  * Provides common functionality and interface for tool implementations
  */
 
-import { LitElement, html } from 'lit';
+import { LitElement } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 
 // Import types
-import type { ToolConfig, EntityState, Position, Scale, Rotation } from '../../types/SakTypes.js';
+import type { EntityState, Position, Rotation, Scale, ToolConfig } from '../../types/SakTypes.js';
 
 @customElement('sak-base-tool')
 export abstract class BaseTool extends LitElement {
@@ -76,7 +76,7 @@ export abstract class BaseTool extends LitElement {
   protected handleClick(event: Event): void {
     event.preventDefault();
     event.stopPropagation();
-    
+
     if (this.config.tap_action && this.config.tap_action.action !== 'none') {
       this.executeAction(this.config.tap_action);
     }
@@ -133,38 +133,38 @@ export abstract class BaseTool extends LitElement {
   // Action implementations
   protected toggleEntity(): void {
     if (!this.entityState) return;
-    
+
     this.hass.callService('homeassistant', 'toggle', {
-      entity_id: this.entityState.entity_id
+      entity_id: this.entityState.entity_id,
     });
   }
 
   protected callService(service: string, serviceData?: any): void {
     if (!service) return;
-    
+
     const [domain, serviceName] = service.split('.');
     this.hass.callService(domain, serviceName, serviceData);
   }
 
   protected navigate(path: string): void {
     if (!path) return;
-    
+
     // Navigate using Home Assistant's navigation
     (this.hass as any).callService('browser_mod', 'navigate', { path });
   }
 
   protected openUrl(url: string): void {
     if (!url) return;
-    
+
     window.open(url, '_blank');
   }
 
   protected showMoreInfo(): void {
     if (!this.entityState) return;
-    
+
     // Show more info dialog
     (this.hass as any).callService('browser_mod', 'more_info', {
-      entity_id: this.entityState.entity_id
+      entity_id: this.entityState.entity_id,
     });
   }
 
@@ -188,32 +188,32 @@ export abstract class BaseTool extends LitElement {
   // Position and transform utilities
   protected getTransform(): string {
     let transform = '';
-    
+
     if (this.position) {
       transform += `translate(${this.position.cx}, ${this.position.cy})`;
     }
-    
+
     if (this.scale) {
       transform += ` scale(${this.scale.x}, ${this.scale.y})`;
     }
-    
+
     if (this.rotation) {
       const cx = this.rotation.cx || this.position?.cx || 0;
       const cy = this.rotation.cy || this.position?.cy || 0;
       transform += ` rotate(${this.rotation.angle} ${cx} ${cy})`;
     }
-    
+
     return transform;
   }
 
   // Color utilities
   protected getColor(): string {
     if (!this.config.color) return '#000000';
-    
+
     if (typeof this.config.color === 'string') {
       return this.config.color;
     }
-    
+
     // Handle ColorConfig object
     switch (this.config.color.type) {
       case 'fixed':
@@ -230,20 +230,20 @@ export abstract class BaseTool extends LitElement {
     if (!this.config.animation || this.config.animation.type === 'none') {
       return '';
     }
-    
+
     const classes = ['animated'];
-    
+
     if (this.config.animation.type) {
       classes.push(`animation-${this.config.animation.type}`);
     }
-    
+
     return classes.join(' ');
   }
 
   // Visibility utilities
   protected shouldShow(): boolean {
     if (!this.isVisible) return false;
-    
+
     // Add any tool-specific visibility logic here
     return true;
   }

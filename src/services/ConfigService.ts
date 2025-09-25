@@ -58,7 +58,7 @@ export class ConfigService {
     return {
       isValid: errors.length === 0,
       errors,
-      warnings
+      warnings,
     };
   }
 
@@ -129,7 +129,12 @@ export class ConfigService {
     }
   }
 
-  private validatePosition(position: any, context: string, errors: string[], warnings: string[]): void {
+  private validatePosition(
+    position: any,
+    context: string,
+    errors: string[],
+    warnings: string[]
+  ): void {
     if (typeof position.cx !== 'number' || typeof position.cy !== 'number') {
       errors.push(`${context}: position must have numeric cx and cy values`);
     }
@@ -208,7 +213,7 @@ export class ConfigService {
       icon: entity.icon || '',
       unit: entity.unit || '',
       attribute: entity.attribute || '',
-      secondary_info: entity.secondary_info || ''
+      secondary_info: entity.secondary_info || '',
     };
   }
 
@@ -216,7 +221,7 @@ export class ConfigService {
     return {
       aspectratio: layout.aspectratio || '1/1',
       styles: layout.styles || {},
-      toolsets: (layout.toolsets || []).map((toolset: any) => this.sanitizeToolset(toolset))
+      toolsets: (layout.toolsets || []).map((toolset: any) => this.sanitizeToolset(toolset)),
     };
   }
 
@@ -226,7 +231,7 @@ export class ConfigService {
       position: this.sanitizePosition(toolset.position),
       scale: toolset.scale ? this.sanitizeScale(toolset.scale) : undefined,
       rotation: toolset.rotation ? this.sanitizeRotation(toolset.rotation) : undefined,
-      tools: (toolset.tools || []).map((tool: any) => this.sanitizeTool(tool))
+      tools: (toolset.tools || []).map((tool: any) => this.sanitizeTool(tool)),
     };
   }
 
@@ -235,14 +240,14 @@ export class ConfigService {
       cx: typeof position.cx === 'number' ? position.cx : 50,
       cy: typeof position.cy === 'number' ? position.cy : 50,
       x: position.x,
-      y: position.y
+      y: position.y,
     };
   }
 
   private sanitizeScale(scale: any): any {
     return {
       x: typeof scale.x === 'number' ? scale.x : 1,
-      y: typeof scale.y === 'number' ? scale.y : 1
+      y: typeof scale.y === 'number' ? scale.y : 1,
     };
   }
 
@@ -250,7 +255,7 @@ export class ConfigService {
     return {
       angle: typeof rotation.angle === 'number' ? rotation.angle : 0,
       cx: rotation.cx,
-      cy: rotation.cy
+      cy: rotation.cy,
     };
   }
 
@@ -270,7 +275,7 @@ export class ConfigService {
       animation: tool.animation,
       tap_action: tool.tap_action,
       hold_action: tool.hold_action,
-      double_tap_action: tool.double_tap_action
+      double_tap_action: tool.double_tap_action,
     };
   }
 
