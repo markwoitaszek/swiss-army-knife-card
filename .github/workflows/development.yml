@@ -1,0 +1,65 @@
+name: Development Workflow
+
+on:
+  workflow_dispatch:
+    inputs:
+      action:
+        description: 'Development action to perform'
+        required: true
+        type: choice
+        options:
+          - setup-dev
+          - run-tests
+          - build-release
+          - update-docs
+          - security-scan
+
+jobs:
+  development:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Setup Development Environment
+        if: ${{ github.event.inputs.action == 'setup-dev' }}
+        run: |
+          npm ci
+          npm run type-check
+          npm run lint
+          echo "Development environment setup complete!"
+
+      - name: Run All Tests
+        if: ${{ github.event.inputs.action == 'run-tests' }}
+        run: |
+          npm ci
+          npm run test:coverage
+          npm run test:e2e
+          npm run test:visual
+
+      - name: Build Release
+        if: ${{ github.event.inputs.action == 'build-release' }}
+        run: |
+          npm ci
+          npm run build
+          npm run analyze
+          echo "Release build complete!"
+
+      - name: Update Documentation
+        if: ${{ github.event.inputs.action == 'update-docs' }}
+        run: |
+          npm ci
+          npm run docs
+          echo "Documentation updated!"
+
+      - name: Security Scan
+        if: ${{ github.event.inputs.action == 'security-scan' }}
+        run: |
+          npm ci
+          npm audit --audit-level moderate
+          npm run lint
+          echo "Security scan complete!"
