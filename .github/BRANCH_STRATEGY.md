@@ -54,10 +54,10 @@ Future branches (created on-demand):
    - Reference issue numbers in commit messages
    - Keep commits focused and atomic
 
-3. **Create Pull Request**:
+3. **Create Pull Request** (Optional for solo development):
    - Target the appropriate phase branch
    - Link to the related issue
-   - Request reviews from team members
+   - **Note**: For solo development, you can also merge directly without PR
 
 4. **Merge Strategy**:
    - Use "Squash and merge" for feature branches
@@ -127,17 +127,16 @@ git push origin phase-2-core-features
 
 ### Phase Branches
 
-- Require pull request reviews (2 reviewers)
-- Require status checks to pass
-- Require branches to be up to date
-- Allow force pushes (for rebasing)
+- No branch protection (solo development)
+- Allow direct pushes for rapid iteration
+- Use pull requests for feature integration
 
 ### Master Branch
 
-- Require pull request reviews (2 reviewers)
-- Require status checks to pass
+- Require pull request reviews (0 reviewers - solo development)
+- Require status checks to pass (when CI is configured)
 - Require branches to be up to date
-- Require conversation resolution
+- Allow force pushes (for rebasing)
 - Restrict pushes to matching branches
 
 ## Naming Conventions
