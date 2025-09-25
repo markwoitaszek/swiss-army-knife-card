@@ -3,10 +3,16 @@
  * Unit tests for the abstract base tool class
  */
 
-import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { BaseTool } from '../BaseTool.js';
-import type { ToolConfig, EntityState, Position, Scale, Rotation } from '../../../types/SakTypes.js';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { mockHass } from '../../../test/mocks/hassMock.js';
+import type {
+  EntityState,
+  Position,
+  Rotation,
+  Scale,
+  ToolConfig,
+} from '../../../types/SakTypes.js';
+import { BaseTool } from '../BaseTool.js';
 
 // Create a concrete implementation of BaseTool for testing
 class TestTool extends BaseTool {
@@ -27,7 +33,7 @@ describe('BaseTool', () => {
 
   beforeEach(() => {
     mockHassInstance = mockHass();
-    
+
     mockConfig = {
       type: 'circle',
       id: 'test-tool',
@@ -83,9 +89,9 @@ describe('BaseTool', () => {
 
     it('should set up event listeners on connection', () => {
       const addEventListenerSpy = vi.spyOn(tool, 'addEventListener');
-      
+
       tool.connectedCallback();
-      
+
       expect(addEventListenerSpy).toHaveBeenCalledWith('click', expect.any(Function));
       expect(addEventListenerSpy).toHaveBeenCalledWith('mouseenter', expect.any(Function));
       expect(addEventListenerSpy).toHaveBeenCalledWith('mouseleave', expect.any(Function));
@@ -95,10 +101,10 @@ describe('BaseTool', () => {
 
     it('should cleanup event listeners on disconnection', () => {
       const removeEventListenerSpy = vi.spyOn(tool, 'removeEventListener');
-      
+
       tool.connectedCallback();
       tool.disconnectedCallback();
-      
+
       expect(removeEventListenerSpy).toHaveBeenCalledWith('click', expect.any(Function));
       expect(removeEventListenerSpy).toHaveBeenCalledWith('mouseenter', expect.any(Function));
       expect(removeEventListenerSpy).toHaveBeenCalledWith('mouseleave', expect.any(Function));
@@ -116,42 +122,42 @@ describe('BaseTool', () => {
       const mockEvent = new MouseEvent('click', { bubbles: true });
       const preventDefaultSpy = vi.spyOn(mockEvent, 'preventDefault');
       const stopPropagationSpy = vi.spyOn(mockEvent, 'stopPropagation');
-      
+
       tool.dispatchEvent(mockEvent);
-      
+
       expect(preventDefaultSpy).toHaveBeenCalled();
       expect(stopPropagationSpy).toHaveBeenCalled();
     });
 
     it('should handle mouse enter events', () => {
       const mockEvent = new MouseEvent('mouseenter');
-      
+
       tool.dispatchEvent(mockEvent);
-      
+
       expect(tool.isHovered).toBe(true);
     });
 
     it('should handle mouse leave events', () => {
       const mockEvent = new MouseEvent('mouseleave');
-      
+
       tool.dispatchEvent(mockEvent);
-      
+
       expect(tool.isHovered).toBe(false);
     });
 
     it('should handle touch start events', () => {
       const mockEvent = new TouchEvent('touchstart');
-      
+
       tool.dispatchEvent(mockEvent);
-      
+
       expect(tool.isHovered).toBe(true);
     });
 
     it('should handle touch end events', () => {
       const mockEvent = new TouchEvent('touchend');
-      
+
       tool.dispatchEvent(mockEvent);
-      
+
       expect(tool.isHovered).toBe(false);
     });
   });
@@ -164,9 +170,9 @@ describe('BaseTool', () => {
     it('should execute toggle action', () => {
       const callServiceSpy = vi.spyOn(tool.hass, 'callService');
       tool.config.tap_action = { action: 'toggle' };
-      
+
       tool.dispatchEvent(new MouseEvent('click'));
-      
+
       expect(callServiceSpy).toHaveBeenCalledWith('homeassistant', 'toggle', {
         entity_id: 'sensor.test_temperature',
       });
@@ -179,9 +185,9 @@ describe('BaseTool', () => {
         service: 'light.turn_on',
         service_data: { brightness: 255 },
       };
-      
+
       tool.dispatchEvent(new MouseEvent('click'));
-      
+
       expect(callServiceSpy).toHaveBeenCalledWith('light', 'turn_on', { brightness: 255 });
     });
 
@@ -191,9 +197,9 @@ describe('BaseTool', () => {
         action: 'navigate',
         navigation_path: '/lovelace/dashboard',
       };
-      
+
       tool.dispatchEvent(new MouseEvent('click'));
-      
+
       expect(callServiceSpy).toHaveBeenCalledWith('browser_mod', 'navigate', {
         path: '/lovelace/dashboard',
       });
@@ -205,18 +211,18 @@ describe('BaseTool', () => {
         action: 'url',
         url_path: 'https://example.com',
       };
-      
+
       tool.dispatchEvent(new MouseEvent('click'));
-      
+
       expect(openSpy).toHaveBeenCalledWith('https://example.com', '_blank');
     });
 
     it('should execute more-info action', () => {
       const callServiceSpy = vi.spyOn(tool.hass, 'callService');
       tool.config.tap_action = { action: 'more-info' };
-      
+
       tool.dispatchEvent(new MouseEvent('click'));
-      
+
       expect(callServiceSpy).toHaveBeenCalledWith('browser_mod', 'more_info', {
         entity_id: 'sensor.test_temperature',
       });
@@ -225,18 +231,18 @@ describe('BaseTool', () => {
     it('should handle unknown action gracefully', () => {
       const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
       tool.config.tap_action = { action: 'unknown-action' as any };
-      
+
       tool.dispatchEvent(new MouseEvent('click'));
-      
+
       expect(consoleSpy).toHaveBeenCalledWith('BaseTool: Unknown action type', 'unknown-action');
     });
 
     it('should not execute action when none specified', () => {
       const callServiceSpy = vi.spyOn(tool.hass, 'callService');
       tool.config.tap_action = { action: 'none' };
-      
+
       tool.dispatchEvent(new MouseEvent('click'));
-      
+
       expect(callServiceSpy).not.toHaveBeenCalled();
     });
   });
@@ -264,7 +270,7 @@ describe('BaseTool', () => {
 
     it('should handle missing entity state', () => {
       tool.entityState = undefined;
-      
+
       expect(tool.getEntityValue()).toBeUndefined();
       expect(tool.getEntityAttribute('unit_of_measurement')).toBeUndefined();
       expect(tool.getEntityIcon()).toBe('mdi:help-circle');
@@ -276,7 +282,7 @@ describe('BaseTool', () => {
     it('should generate transform string with position', () => {
       const position: Position = { cx: 100, cy: 200 };
       tool.position = position;
-      
+
       const transform = tool.getTransform();
       expect(transform).toBe('translate(100, 200)');
     });
@@ -286,7 +292,7 @@ describe('BaseTool', () => {
       const scale: Scale = { x: 2, y: 1.5 };
       tool.position = position;
       tool.scale = scale;
-      
+
       const transform = tool.getTransform();
       expect(transform).toBe('translate(50, 50) scale(2, 1.5)');
     });
@@ -296,7 +302,7 @@ describe('BaseTool', () => {
       const rotation: Rotation = { angle: 45, cx: 25, cy: 25 };
       tool.position = position;
       tool.rotation = rotation;
-      
+
       const transform = tool.getTransform();
       expect(transform).toBe('translate(50, 50) rotate(45 25 25)');
     });
@@ -308,7 +314,7 @@ describe('BaseTool', () => {
       tool.position = position;
       tool.scale = scale;
       tool.rotation = rotation;
-      
+
       const transform = tool.getTransform();
       expect(transform).toBe('translate(50, 50) scale(2, 2) rotate(90 50 50)');
     });
@@ -317,7 +323,7 @@ describe('BaseTool', () => {
   describe('Color Utilities', () => {
     it('should get string color', () => {
       tool.config.color = '#ff0000';
-      
+
       const color = tool.getColor();
       expect(color).toBe('#ff0000');
     });
@@ -327,7 +333,7 @@ describe('BaseTool', () => {
         type: 'fixed',
         color: '#00ff00',
       };
-      
+
       const color = tool.getColor();
       expect(color).toBe('#00ff00');
     });
@@ -337,14 +343,14 @@ describe('BaseTool', () => {
         type: 'entity',
         attribute: 'unit_of_measurement',
       };
-      
+
       const color = tool.getColor();
       expect(color).toBe('°C');
     });
 
     it('should return default color when no color specified', () => {
       tool.config.color = undefined;
-      
+
       const color = tool.getColor();
       expect(color).toBe('#000000');
     });
@@ -353,7 +359,7 @@ describe('BaseTool', () => {
       tool.config.color = {
         type: 'unknown' as any,
       };
-      
+
       const color = tool.getColor();
       expect(color).toBe('#000000');
     });
@@ -365,7 +371,7 @@ describe('BaseTool', () => {
         type: 'pulse',
         duration: 1000,
       };
-      
+
       const classes = tool.getAnimationClasses();
       expect(classes).toBe('animated animation-pulse');
     });
@@ -375,21 +381,21 @@ describe('BaseTool', () => {
         type: 'rotate',
         duration: 2000,
       };
-      
+
       const classes = tool.getAnimationClasses();
       expect(classes).toBe('animated animation-rotate');
     });
 
     it('should return empty string for no animation', () => {
       tool.config.animation = { type: 'none' };
-      
+
       const classes = tool.getAnimationClasses();
       expect(classes).toBe('');
     });
 
     it('should return empty string when no animation config', () => {
       tool.config.animation = undefined;
-      
+
       const classes = tool.getAnimationClasses();
       expect(classes).toBe('');
     });
@@ -398,14 +404,14 @@ describe('BaseTool', () => {
   describe('Visibility Utilities', () => {
     it('should show when visible', () => {
       tool.isVisible = true;
-      
+
       const shouldShow = tool.shouldShow();
       expect(shouldShow).toBe(true);
     });
 
     it('should not show when not visible', () => {
       tool.isVisible = false;
-      
+
       const shouldShow = tool.shouldShow();
       expect(shouldShow).toBe(false);
     });
@@ -417,33 +423,33 @@ describe('BaseTool', () => {
         ...mockEntityState,
         state: '25.0',
       };
-      
+
       tool.updateEntityState(newEntityState);
-      
+
       expect(tool.entityState).toBe(newEntityState);
     });
 
     it('should update position', () => {
       const newPosition: Position = { cx: 100, cy: 200 };
-      
+
       tool.updatePosition(newPosition);
-      
+
       expect(tool.position).toBe(newPosition);
     });
 
     it('should update scale', () => {
       const newScale: Scale = { x: 2, y: 2 };
-      
+
       tool.updateScale(newScale);
-      
+
       expect(tool.scale).toBe(newScale);
     });
 
     it('should update rotation', () => {
       const newRotation: Rotation = { angle: 180 };
-      
+
       tool.updateRotation(newRotation);
-      
+
       expect(tool.rotation).toBe(newRotation);
     });
   });
@@ -451,7 +457,7 @@ describe('BaseTool', () => {
   describe('Error Handling', () => {
     it('should handle missing configuration gracefully', () => {
       tool.config = undefined as any;
-      
+
       expect(() => {
         tool.connectedCallback();
       }).not.toThrow();
@@ -459,16 +465,18 @@ describe('BaseTool', () => {
 
     it('should handle missing hass connection', () => {
       tool.hass = null;
-      
+
       expect(() => {
         tool.dispatchEvent(new MouseEvent('click'));
       }).not.toThrow();
     });
 
     it('should handle service call errors', () => {
-      const callServiceSpy = vi.spyOn(tool.hass, 'callService').mockRejectedValue(new Error('Service error'));
+      const callServiceSpy = vi
+        .spyOn(tool.hass, 'callService')
+        .mockRejectedValue(new Error('Service error'));
       tool.config.tap_action = { action: 'toggle' };
-      
+
       expect(() => {
         tool.dispatchEvent(new MouseEvent('click'));
       }).not.toThrow();

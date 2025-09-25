@@ -3,10 +3,10 @@
  * Unit tests for theme management service
  */
 
-import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { ThemeService } from '../ThemeService.js';
-import type { SakConfig } from '../../types/SakTypes.js';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { mockHass } from '../../test/mocks/hassMock.js';
+import type { SakConfig } from '../../types/SakTypes.js';
+import { ThemeService } from '../ThemeService.js';
 
 describe('ThemeService', () => {
   let service: ThemeService;
@@ -16,7 +16,7 @@ describe('ThemeService', () => {
   beforeEach(() => {
     service = new ThemeService();
     mockHassInstance = mockHass();
-    
+
     mockConfig = {
       entities: [
         {
@@ -38,7 +38,7 @@ describe('ThemeService', () => {
 
     it('should initialize with configuration', () => {
       service.initialize(mockConfig, mockHassInstance);
-      
+
       expect(service.getTheme()).toBeTruthy();
     });
   });
@@ -50,7 +50,7 @@ describe('ThemeService', () => {
 
     it('should update theme when hass changes', () => {
       const result = service.updateTheme(mockHassInstance, mockConfig);
-      
+
       expect(result).toBe(true);
       expect(service.getTheme()).toBeTruthy();
     });
@@ -58,7 +58,7 @@ describe('ThemeService', () => {
     it('should detect theme mode changes', () => {
       // First update
       service.updateTheme(mockHassInstance, mockConfig);
-      
+
       // Change theme mode
       const lightModeHass = {
         ...mockHassInstance,
@@ -67,7 +67,7 @@ describe('ThemeService', () => {
           darkMode: false,
         },
       };
-      
+
       const result = service.updateTheme(lightModeHass, mockConfig);
       expect(result).toBe(true);
       expect(service.isDarkMode()).toBe(false);
@@ -84,7 +84,7 @@ describe('ThemeService', () => {
         ...mockConfig,
         theme: 'custom-theme',
       };
-      
+
       const hassWithCustomTheme = {
         ...mockHassInstance,
         themes: {
@@ -101,7 +101,7 @@ describe('ThemeService', () => {
           },
         },
       };
-      
+
       expect(() => {
         service.updateTheme(hassWithCustomTheme, configWithTheme);
       }).not.toThrow();
@@ -112,14 +112,14 @@ describe('ThemeService', () => {
         ...mockConfig,
         palette: {
           light: {
-            'primary': '#palette-light-primary',
+            primary: '#palette-light-primary',
           },
           dark: {
-            'primary': '#palette-dark-primary',
+            primary: '#palette-dark-primary',
           },
         },
       };
-      
+
       expect(() => {
         service.updateTheme(mockHassInstance, configWithPalette);
       }).not.toThrow();
@@ -188,7 +188,7 @@ describe('ThemeService', () => {
 
     it('should generate card styles', () => {
       const styles = service.generateCardStyles();
-      
+
       expect(styles).toHaveProperty('--sak-primary-color');
       expect(styles).toHaveProperty('--sak-accent-color');
       expect(styles).toHaveProperty('--sak-background-color');
@@ -209,24 +209,24 @@ describe('ThemeService', () => {
     it('should subscribe to theme updates', () => {
       const callback = vi.fn();
       const unsubscribe = service.subscribe(callback);
-      
+
       expect(typeof unsubscribe).toBe('function');
-      
+
       // Trigger update
       service.updateTheme(mockHassInstance, mockConfig);
-      
+
       expect(callback).toHaveBeenCalled();
     });
 
     it('should unsubscribe from theme updates', () => {
       const callback = vi.fn();
       const unsubscribe = service.subscribe(callback);
-      
+
       unsubscribe();
-      
+
       // Trigger update
       service.updateTheme(mockHassInstance, mockConfig);
-      
+
       expect(callback).not.toHaveBeenCalled();
     });
 
@@ -234,9 +234,9 @@ describe('ThemeService', () => {
       const errorCallback = vi.fn().mockImplementation(() => {
         throw new Error('Callback error');
       });
-      
+
       service.subscribe(errorCallback);
-      
+
       // Should not throw
       expect(() => {
         service.updateTheme(mockHassInstance, mockConfig);
@@ -248,9 +248,9 @@ describe('ThemeService', () => {
     it('should disconnect and cleanup', () => {
       service.initialize(mockConfig, mockHassInstance);
       service.subscribe(vi.fn());
-      
+
       service.disconnect();
-      
+
       expect(service.getTheme()).toBeNull();
       expect(service['hass']).toBeNull();
       expect(service['config']).toBeNull();
@@ -264,7 +264,7 @@ describe('ThemeService', () => {
         ...mockHassInstance,
         themes: null,
       };
-      
+
       expect(() => {
         service.updateTheme(hassWithoutThemes, mockConfig);
       }).not.toThrow();
@@ -283,7 +283,7 @@ describe('ThemeService', () => {
           },
         },
       };
-      
+
       expect(() => {
         service.updateTheme(hassWithIncompleteTheme, mockConfig);
       }).not.toThrow();
@@ -291,7 +291,7 @@ describe('ThemeService', () => {
 
     it('should handle null theme state', () => {
       service['theme'] = null;
-      
+
       expect(service.isDarkMode()).toBe(false);
       expect(service.getColorForMode('primary-color')).toBe('');
       expect(service.generateCardStyles()).toEqual({});

@@ -3,10 +3,10 @@
  * Unit tests for entity state management service
  */
 
-import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { EntityService } from '../EntityService.js';
-import type { SakConfig, EntityState } from '../../types/SakTypes.js';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { mockHass } from '../../test/mocks/hassMock.js';
+import type { SakConfig } from '../../types/SakTypes.js';
+import { EntityService } from '../EntityService.js';
 
 describe('EntityService', () => {
   let service: EntityService;
@@ -16,7 +16,7 @@ describe('EntityService', () => {
   beforeEach(() => {
     service = new EntityService();
     mockHassInstance = mockHass();
-    
+
     mockConfig = {
       entities: [
         {
@@ -45,7 +45,7 @@ describe('EntityService', () => {
 
     it('should initialize with configuration', () => {
       service.initialize(mockConfig, mockHassInstance);
-      
+
       expect(service.getEntityConfigs()).toEqual(mockConfig.entities);
     });
   });
@@ -57,7 +57,7 @@ describe('EntityService', () => {
 
     it('should update entities when hass changes', () => {
       const result = service.updateEntities(mockHassInstance, mockConfig);
-      
+
       expect(result).toBe(true);
       expect(service.getEntities()).toHaveLength(2);
     });
@@ -65,7 +65,7 @@ describe('EntityService', () => {
     it('should not update if no changes detected', () => {
       // First update
       service.updateEntities(mockHassInstance, mockConfig);
-      
+
       // Second update should return false (no changes)
       const result = service.updateEntities(mockHassInstance, mockConfig);
       expect(result).toBe(false);
@@ -89,12 +89,12 @@ describe('EntityService', () => {
 
     it('should throttle updates', async () => {
       const startTime = Date.now();
-      
+
       // Multiple rapid updates
       service.updateEntities(mockHassInstance, mockConfig);
       service.updateEntities(mockHassInstance, mockConfig);
       service.updateEntities(mockHassInstance, mockConfig);
-      
+
       const endTime = Date.now();
       expect(endTime - startTime).toBeLessThan(200); // Should be throttled
     });
@@ -209,11 +209,14 @@ describe('EntityService', () => {
           },
         ],
       };
-      
+
       service.initialize(configWithAttribute, mockHassInstance);
       service.updateEntities(mockHassInstance, configWithAttribute);
-      
-      const formatted = service.formatEntityState('sensor.test_temperature', configWithAttribute.entities[0]);
+
+      const formatted = service.formatEntityState(
+        'sensor.test_temperature',
+        configWithAttribute.entities[0]
+      );
       expect(formatted).toBe('°C');
     });
 
@@ -227,11 +230,14 @@ describe('EntityService', () => {
           },
         ],
       };
-      
+
       service.initialize(configWithSecondaryInfo, mockHassInstance);
       service.updateEntities(mockHassInstance, configWithSecondaryInfo);
-      
-      const formatted = service.formatEntityState('sensor.test_temperature', configWithSecondaryInfo.entities[0]);
+
+      const formatted = service.formatEntityState(
+        'sensor.test_temperature',
+        configWithSecondaryInfo.entities[0]
+      );
       expect(formatted).toBe('°C');
     });
 
@@ -249,50 +255,61 @@ describe('EntityService', () => {
     it('should call service', async () => {
       const mockCallService = vi.fn().mockResolvedValue(undefined);
       service['hass'] = { callService: mockCallService };
-      
+
       await service.callService('homeassistant', 'toggle', { entity_id: 'light.test_light' });
-      
-      expect(mockCallService).toHaveBeenCalledWith('homeassistant', 'toggle', { entity_id: 'light.test_light' });
+
+      expect(mockCallService).toHaveBeenCalledWith('homeassistant', 'toggle', {
+        entity_id: 'light.test_light',
+      });
     });
 
     it('should toggle entity', async () => {
       const mockCallService = vi.fn().mockResolvedValue(undefined);
       service['hass'] = { callService: mockCallService };
-      
+
       await service.toggleEntity('light.test_light');
-      
-      expect(mockCallService).toHaveBeenCalledWith('homeassistant', 'toggle', { entity_id: 'light.test_light' });
+
+      expect(mockCallService).toHaveBeenCalledWith('homeassistant', 'toggle', {
+        entity_id: 'light.test_light',
+      });
     });
 
     it('should turn on entity', async () => {
       const mockCallService = vi.fn().mockResolvedValue(undefined);
       service['hass'] = { callService: mockCallService };
-      
+
       await service.turnOnEntity('light.test_light', { brightness: 255 });
-      
-      expect(mockCallService).toHaveBeenCalledWith('light', 'turn_on', { entity_id: 'light.test_light', brightness: 255 });
+
+      expect(mockCallService).toHaveBeenCalledWith('light', 'turn_on', {
+        entity_id: 'light.test_light',
+        brightness: 255,
+      });
     });
 
     it('should turn off entity', async () => {
       const mockCallService = vi.fn().mockResolvedValue(undefined);
       service['hass'] = { callService: mockCallService };
-      
+
       await service.turnOffEntity('light.test_light');
-      
-      expect(mockCallService).toHaveBeenCalledWith('light', 'turn_off', { entity_id: 'light.test_light' });
+
+      expect(mockCallService).toHaveBeenCalledWith('light', 'turn_off', {
+        entity_id: 'light.test_light',
+      });
     });
 
     it('should handle service call errors', async () => {
       const mockCallService = vi.fn().mockRejectedValue(new Error('Service error'));
       service['hass'] = { callService: mockCallService };
-      
+
       await expect(service.callService('homeassistant', 'toggle')).rejects.toThrow('Service error');
     });
 
     it('should throw error when no hass connection', async () => {
       service['hass'] = null;
-      
-      await expect(service.callService('homeassistant', 'toggle')).rejects.toThrow('No Home Assistant connection available');
+
+      await expect(service.callService('homeassistant', 'toggle')).rejects.toThrow(
+        'No Home Assistant connection available'
+      );
     });
   });
 
@@ -300,24 +317,24 @@ describe('EntityService', () => {
     it('should subscribe to entity updates', () => {
       const callback = vi.fn();
       const unsubscribe = service.subscribe(callback);
-      
+
       expect(typeof unsubscribe).toBe('function');
-      
+
       // Trigger update
       service.updateEntities(mockHassInstance, mockConfig);
-      
+
       expect(callback).toHaveBeenCalled();
     });
 
     it('should unsubscribe from entity updates', () => {
       const callback = vi.fn();
       const unsubscribe = service.subscribe(callback);
-      
+
       unsubscribe();
-      
+
       // Trigger update
       service.updateEntities(mockHassInstance, mockConfig);
-      
+
       expect(callback).not.toHaveBeenCalled();
     });
 
@@ -325,9 +342,9 @@ describe('EntityService', () => {
       const errorCallback = vi.fn().mockImplementation(() => {
         throw new Error('Callback error');
       });
-      
+
       service.subscribe(errorCallback);
-      
+
       // Should not throw
       expect(() => {
         service.updateEntities(mockHassInstance, mockConfig);
@@ -339,9 +356,9 @@ describe('EntityService', () => {
     it('should disconnect and cleanup', () => {
       service.initialize(mockConfig, mockHassInstance);
       service.subscribe(vi.fn());
-      
+
       service.disconnect();
-      
+
       expect(service.getEntities()).toEqual([]);
       expect(service.getEntityConfigs()).toEqual([]);
       expect(service['hass']).toBeNull();

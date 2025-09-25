@@ -3,11 +3,11 @@
  * Comprehensive unit tests for the main SAK card component
  */
 
-import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
-import { html, render } from 'lit';
-import { SakCard } from '../SakCard.js';
-import type { SakConfig } from '../../types/SakTypes.js';
+import { html } from 'lit';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { mockHass } from '../../test/mocks/hassMock.js';
+import type { SakConfig } from '../../types/SakTypes.js';
+import { SakCard } from '../SakCard.js';
 
 // Mock the services
 vi.mock('../../services/EntityService.js', () => ({
@@ -31,7 +31,7 @@ vi.mock('../../services/ThemeService.js', () => ({
 vi.mock('../../services/ConfigService.js', () => ({
   ConfigService: vi.fn().mockImplementation(() => ({
     validateConfig: vi.fn().mockReturnValue({ isValid: true, errors: [], warnings: [] }),
-    sanitizeConfig: vi.fn().mockImplementation((config) => config),
+    sanitizeConfig: vi.fn().mockImplementation(config => config),
   })),
 }));
 
@@ -215,7 +215,7 @@ describe('SakCard', () => {
       });
 
       card.setConfig(basicConfig);
-      
+
       // Should not throw, but handle error gracefully
       expect(() => {
         card.render();
@@ -226,10 +226,10 @@ describe('SakCard', () => {
   describe('Lifecycle', () => {
     it('should handle connection lifecycle', () => {
       expect(card.connected).toBe(false);
-      
+
       card.connectedCallback();
       expect(card.connected).toBe(true);
-      
+
       card.disconnectedCallback();
       expect(card.connected).toBe(false);
     });
@@ -237,15 +237,15 @@ describe('SakCard', () => {
     it('should cleanup services on disconnect', () => {
       const EntityService = require('../../services/EntityService.js').EntityService;
       const ThemeService = require('../../services/ThemeService.js').ThemeService;
-      
+
       const mockEntityService = new EntityService();
       const mockThemeService = new ThemeService();
-      
+
       card.entityService = mockEntityService;
       card.themeService = mockThemeService;
-      
+
       card.disconnectedCallback();
-      
+
       expect(mockEntityService.disconnect).toHaveBeenCalled();
       expect(mockThemeService.disconnect).toHaveBeenCalled();
     });
@@ -254,7 +254,7 @@ describe('SakCard', () => {
   describe('Error Handling', () => {
     it('should handle configuration errors', () => {
       const invalidConfig = { invalid: 'config' } as any;
-      
+
       // Mock validation to fail
       const ConfigService = require('../../services/ConfigService.js').ConfigService;
       const mockInstance = new ConfigService();
@@ -285,27 +285,27 @@ describe('SakCard', () => {
   describe('Development Mode', () => {
     it('should enable debug logging when dev.debug is true', () => {
       const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
-      
+
       const configWithDebug = {
         ...basicConfig,
         dev: { debug: true, performance: false, m3: false },
       };
-      
+
       card.setConfig(configWithDebug);
       card.connected = true;
       card.hass = mockHass();
-      
+
       expect(consoleSpy).toHaveBeenCalled();
       consoleSpy.mockRestore();
     });
 
     it('should not log when dev.debug is false', () => {
       const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
-      
+
       card.setConfig(basicConfig);
       card.connected = true;
       card.hass = mockHass();
-      
+
       expect(consoleSpy).not.toHaveBeenCalled();
       consoleSpy.mockRestore();
     });

@@ -3,7 +3,7 @@
  * Simple tests for existing functionality without dependencies
  */
 
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
 describe('Basic Functionality', () => {
   it('should pass basic arithmetic', () => {
@@ -81,11 +81,11 @@ describe('DOM Operations', () => {
   it('should handle event listeners', () => {
     const button = document.createElement('button');
     let clicked = false;
-    
+
     button.addEventListener('click', () => {
       clicked = true;
     });
-    
+
     button.click();
     expect(clicked).toBe(true);
   });
@@ -94,7 +94,7 @@ describe('DOM Operations', () => {
     const element = document.createElement('div');
     element.classList.add('test-class');
     expect(element.classList.contains('test-class')).toBe(true);
-    
+
     element.classList.remove('test-class');
     expect(element.classList.contains('test-class')).toBe(false);
   });

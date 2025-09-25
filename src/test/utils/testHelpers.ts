@@ -3,7 +3,7 @@
  * Common utilities for testing the SAK Card
  */
 
-import type { SakConfig, EntityState, ToolConfig, ToolsetConfig } from '../../types/SakTypes.js';
+import type { EntityState, SakConfig, ToolConfig, ToolsetConfig } from '../../types/SakTypes.js';
 import { mockHass } from '../mocks/hassMock.js';
 
 /**
@@ -179,9 +179,7 @@ export function createToolsetConfig(overrides: Partial<ToolsetConfig> = {}): Too
   return {
     toolset: 'test-toolset',
     position: { cx: 50, cy: 50 },
-    tools: [
-      createToolConfig(),
-    ],
+    tools: [createToolConfig()],
     ...overrides,
   };
 }
@@ -257,7 +255,7 @@ export function createMockHass(overrides: any = {}) {
 export function waitFor(condition: () => boolean, timeout: number = 1000): Promise<void> {
   return new Promise((resolve, reject) => {
     const startTime = Date.now();
-    
+
     const check = () => {
       if (condition()) {
         resolve();
@@ -267,7 +265,7 @@ export function waitFor(condition: () => boolean, timeout: number = 1000): Promi
         setTimeout(check, 10);
       }
     };
-    
+
     check();
   });
 }
@@ -275,13 +273,16 @@ export function waitFor(condition: () => boolean, timeout: number = 1000): Promi
 /**
  * Create a mock DOM element for testing
  */
-export function createMockElement(tagName: string = 'div', attributes: Record<string, string> = {}): HTMLElement {
+export function createMockElement(
+  tagName: string = 'div',
+  attributes: Record<string, string> = {}
+): HTMLElement {
   const element = document.createElement(tagName);
-  
+
   Object.entries(attributes).forEach(([key, value]) => {
     element.setAttribute(key, value);
   });
-  
+
   return element;
 }
 
@@ -294,10 +295,10 @@ export function createMockEvent(type: string, options: any = {}): Event {
     cancelable: true,
     ...options,
   });
-  
+
   // Add any additional properties
   Object.assign(event, options);
-  
+
   return event;
 }
 
@@ -328,7 +329,7 @@ export function createMockTouchEvent(type: string, options: any = {}): TouchEven
  */
 export function mockConsole() {
   const originalConsole = { ...console };
-  
+
   const mockConsole = {
     log: vi.fn(),
     warn: vi.fn(),
@@ -336,9 +337,9 @@ export function mockConsole() {
     info: vi.fn(),
     debug: vi.fn(),
   };
-  
+
   Object.assign(console, mockConsole);
-  
+
   return {
     mockConsole,
     restore: () => Object.assign(console, originalConsole),
@@ -350,7 +351,7 @@ export function mockConsole() {
  */
 export function createTestEnvironment() {
   const mockConsoleInstance = mockConsole();
-  
+
   return {
     config: createBasicConfig(),
     complexConfig: createComplexConfig(),
@@ -374,7 +375,9 @@ export function expectToThrow(fn: () => void, expectedMessage?: string): void {
     throw new Error('Expected function to throw an error');
   } catch (error) {
     if (expectedMessage && !error.message.includes(expectedMessage)) {
-      throw new Error(`Expected error message to contain "${expectedMessage}", but got "${error.message}"`);
+      throw new Error(
+        `Expected error message to contain "${expectedMessage}", but got "${error.message}"`
+      );
     }
   }
 }
@@ -382,13 +385,18 @@ export function expectToThrow(fn: () => void, expectedMessage?: string): void {
 /**
  * Assert that a promise rejects with a specific message
  */
-export async function expectToReject(promise: Promise<any>, expectedMessage?: string): Promise<void> {
+export async function expectToReject(
+  promise: Promise<any>,
+  expectedMessage?: string
+): Promise<void> {
   try {
     await promise;
     throw new Error('Expected promise to reject');
   } catch (error) {
     if (expectedMessage && !error.message.includes(expectedMessage)) {
-      throw new Error(`Expected error message to contain "${expectedMessage}", but got "${error.message}"`);
+      throw new Error(
+        `Expected error message to contain "${expectedMessage}", but got "${error.message}"`
+      );
     }
   }
 }
@@ -398,19 +406,19 @@ export async function expectToReject(promise: Promise<any>, expectedMessage?: st
  */
 export function createTestFixture() {
   let container: HTMLElement;
-  
+
   const setup = () => {
     container = document.createElement('div');
     document.body.appendChild(container);
     return container;
   };
-  
+
   const teardown = () => {
     if (container && container.parentNode) {
       container.parentNode.removeChild(container);
     }
   };
-  
+
   return {
     setup,
     teardown,

@@ -3,9 +3,9 @@
  * Unit tests for configuration validation and processing service
  */
 
-import { describe, it, expect, beforeEach } from 'vitest';
-import { ConfigService } from '../ConfigService.js';
+import { beforeEach, describe, expect, it } from 'vitest';
 import type { SakConfig } from '../../types/SakTypes.js';
+import { ConfigService } from '../ConfigService.js';
 
 describe('ConfigService', () => {
   let service: ConfigService;
@@ -13,7 +13,7 @@ describe('ConfigService', () => {
 
   beforeEach(() => {
     service = new ConfigService();
-    
+
     validConfig = {
       entities: [
         {
@@ -47,7 +47,7 @@ describe('ConfigService', () => {
   describe('Configuration Validation', () => {
     it('should validate correct configuration', () => {
       const result = service.validateConfig(validConfig);
-      
+
       expect(result.isValid).toBe(true);
       expect(result.errors).toHaveLength(0);
       expect(result.warnings).toHaveLength(0);
@@ -55,14 +55,14 @@ describe('ConfigService', () => {
 
     it('should reject null configuration', () => {
       const result = service.validateConfig(null);
-      
+
       expect(result.isValid).toBe(false);
       expect(result.errors).toContain('Configuration is required');
     });
 
     it('should reject non-object configuration', () => {
       const result = service.validateConfig('invalid');
-      
+
       expect(result.isValid).toBe(false);
       expect(result.errors).toContain('Configuration must be an object');
     });
@@ -71,9 +71,9 @@ describe('ConfigService', () => {
       const configWithoutLayout = {
         entities: [{ entity: 'sensor.test' }],
       };
-      
+
       const result = service.validateConfig(configWithoutLayout);
-      
+
       expect(result.isValid).toBe(false);
       expect(result.errors).toContain('Layout configuration is required');
     });
@@ -82,9 +82,9 @@ describe('ConfigService', () => {
       const configWithoutEntities = {
         layout: { toolsets: [] },
       };
-      
+
       const result = service.validateConfig(configWithoutEntities);
-      
+
       expect(result.isValid).toBe(false);
       expect(result.errors).toContain('Entities configuration is required and must be an array');
     });
@@ -94,9 +94,9 @@ describe('ConfigService', () => {
         entities: 'invalid',
         layout: { toolsets: [] },
       };
-      
+
       const result = service.validateConfig(configWithInvalidEntities);
-      
+
       expect(result.isValid).toBe(false);
       expect(result.errors).toContain('Entities configuration is required and must be an array');
     });
@@ -112,9 +112,9 @@ describe('ConfigService', () => {
           ],
         },
       };
-      
+
       const result = service.validateConfig(configWithInvalidToolset);
-      
+
       expect(result.isValid).toBe(false);
       expect(result.errors.some(error => error.includes('toolset name is required'))).toBe(true);
     });
@@ -136,9 +136,9 @@ describe('ConfigService', () => {
           ],
         },
       };
-      
+
       const result = service.validateConfig(configWithInvalidTool);
-      
+
       expect(result.isValid).toBe(false);
       expect(result.errors.some(error => error.includes('type is required'))).toBe(true);
     });
@@ -156,11 +156,13 @@ describe('ConfigService', () => {
           ],
         },
       };
-      
+
       const result = service.validateConfig(configWithInvalidPosition);
-      
+
       expect(result.isValid).toBe(false);
-      expect(result.errors.some(error => error.includes('position must have numeric cx and cy values'))).toBe(true);
+      expect(
+        result.errors.some(error => error.includes('position must have numeric cx and cy values'))
+      ).toBe(true);
     });
 
     it('should validate entity configuration', () => {
@@ -173,9 +175,9 @@ describe('ConfigService', () => {
         ],
         layout: { toolsets: [] },
       };
-      
+
       const result = service.validateConfig(configWithInvalidEntity);
-      
+
       expect(result.isValid).toBe(false);
       expect(result.errors.some(error => error.includes('entity ID is required'))).toBe(true);
     });
@@ -188,19 +190,21 @@ describe('ConfigService', () => {
         theme: 456, // Should be string
         styles: 'invalid', // Should be object
       };
-      
+
       const result = service.validateConfig(configWithWarnings);
-      
+
       expect(result.isValid).toBe(true);
       expect(result.warnings.length).toBeGreaterThan(0);
-      expect(result.warnings.some(warning => warning.includes('Aspect ratio should be a string'))).toBe(true);
+      expect(
+        result.warnings.some(warning => warning.includes('Aspect ratio should be a string'))
+      ).toBe(true);
     });
   });
 
   describe('Configuration Sanitization', () => {
     it('should sanitize valid configuration', () => {
       const sanitized = service.sanitizeConfig(validConfig);
-      
+
       expect(sanitized).toEqual(validConfig);
       expect(service.getConfig()).toEqual(validConfig);
     });
@@ -210,9 +214,9 @@ describe('ConfigService', () => {
         entities: [],
         layout: { toolsets: [] },
       };
-      
+
       const sanitized = service.sanitizeConfig(incompleteConfig);
-      
+
       expect(sanitized.aspectratio).toBe('1/1');
       expect(sanitized.dev).toEqual({});
     });
@@ -227,9 +231,9 @@ describe('ConfigService', () => {
         ],
         layout: { toolsets: [] },
       };
-      
+
       const sanitized = service.sanitizeConfig(configWithIncompleteEntity);
-      
+
       expect(sanitized.entities[0]).toEqual({
         entity: 'sensor.test',
         name: '',
@@ -253,9 +257,9 @@ describe('ConfigService', () => {
           ],
         },
       };
-      
+
       const sanitized = service.sanitizeConfig(configWithIncompleteToolset);
-      
+
       expect(sanitized.layout.toolsets[0].position).toEqual({
         cx: 50,
         cy: 50,
@@ -284,9 +288,9 @@ describe('ConfigService', () => {
           ],
         },
       };
-      
+
       const sanitized = service.sanitizeConfig(configWithIncompleteTool);
-      
+
       expect(sanitized.layout.toolsets[0].tools[0]).toEqual({
         type: 'circle',
         id: 'test',
@@ -311,9 +315,9 @@ describe('ConfigService', () => {
         entities: null,
         layout: null,
       };
-      
+
       const sanitized = service.sanitizeConfig(configWithNulls);
-      
+
       expect(sanitized.entities).toEqual([]);
       expect(sanitized.layout).toEqual({ toolsets: [] });
     });
@@ -326,14 +330,14 @@ describe('ConfigService', () => {
         layout: { toolsets: [] },
         aspectratio: '1/1',
       };
-      
+
       const overrideConfig = {
         aspectratio: '16/9',
         theme: 'custom-theme',
       };
-      
+
       const merged = service.mergeConfigs(baseConfig, overrideConfig);
-      
+
       expect(merged).toEqual({
         entities: [{ entity: 'sensor.base' }],
         layout: { toolsets: [] },
@@ -347,13 +351,13 @@ describe('ConfigService', () => {
         entities: [{ entity: 'sensor.base', name: 'Base' }],
         layout: { toolsets: [] },
       };
-      
+
       const overrideConfig = {
         entities: [{ entity: 'sensor.override', name: 'Override' }],
       };
-      
+
       const merged = service.mergeConfigs(baseConfig, overrideConfig);
-      
+
       expect(merged.entities).toEqual([{ entity: 'sensor.override', name: 'Override' }]);
     });
 
@@ -362,9 +366,9 @@ describe('ConfigService', () => {
         entities: [{ entity: 'sensor.base' }],
         layout: { toolsets: [] },
       };
-      
+
       const merged = service.mergeConfigs(baseConfig, {});
-      
+
       expect(merged).toEqual(baseConfig);
     });
   });
@@ -372,7 +376,7 @@ describe('ConfigService', () => {
   describe('Edge Cases', () => {
     it('should handle empty configuration object', () => {
       const result = service.validateConfig({});
-      
+
       expect(result.isValid).toBe(false);
       expect(result.errors.length).toBeGreaterThan(0);
     });
@@ -382,11 +386,13 @@ describe('ConfigService', () => {
         entities: [],
         layout: { toolsets: [] },
       };
-      
+
       const result = service.validateConfig(configWithEmptyArrays);
-      
+
       expect(result.isValid).toBe(true);
-      expect(result.warnings.some(warning => warning.includes('No entities configured'))).toBe(true);
+      expect(result.warnings.some(warning => warning.includes('No entities configured'))).toBe(
+        true
+      );
     });
 
     it('should handle configuration with nested null values', () => {
@@ -394,9 +400,9 @@ describe('ConfigService', () => {
         entities: [{ entity: 'sensor.test', name: null }],
         layout: { toolsets: [] },
       };
-      
+
       const sanitized = service.sanitizeConfig(configWithNulls);
-      
+
       expect(sanitized.entities[0].name).toBe('');
     });
 
@@ -419,10 +425,10 @@ describe('ConfigService', () => {
           })),
         },
       };
-      
+
       const result = service.validateConfig(largeConfig);
       expect(result.isValid).toBe(true);
-      
+
       const sanitized = service.sanitizeConfig(largeConfig);
       expect(sanitized.entities).toHaveLength(100);
       expect(sanitized.layout.toolsets).toHaveLength(10);
