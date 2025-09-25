@@ -64,17 +64,17 @@ get_issue_title() {
 # Function to start work on an issue
 start_issue() {
     local issue_number=$1
-    
+
     if [ -z "$issue_number" ]; then
         print_error "Issue number is required"
         show_usage
         exit 1
     fi
-    
+
     # Determine the current phase branch
     local current_branch=$(git branch --show-current)
     local phase_branch=""
-    
+
     if [[ "$current_branch" == "phase-1-foundation" ]]; then
         phase_branch="phase-1-foundation"
     elif [[ "$current_branch" == "phase-2-core-features" ]]; then
@@ -89,22 +89,30 @@ start_issue() {
         print_status "Available phase branches: phase-1-foundation, phase-2-core-features, phase-3-advanced-features, phase-4-polish-release"
         exit 1
     fi
-    
+
     print_status "Starting work on issue #$issue_number from $phase_branch"
-    
+
     # Get issue title and create branch name
     local issue_title=$(get_issue_title "$issue_number")
     local feature_branch="feature/$issue_number-$issue_title"
-    
+
     print_status "Creating feature branch: $feature_branch"
-    
+
     # Ensure we're on the phase branch and up to date
     git checkout "$phase_branch"
     git pull origin "$phase_branch"
-    
+
     # Create and checkout feature branch
     git checkout -b "$feature_branch"
-    
+
+    # Move issue to In Progress (if project management is set up)
+    print_status "Moving issue #$issue_number to In Progress..."
+    if ./.github/scripts/move-issue-to-progress.sh "$issue_number" 2>/dev/null; then
+        print_success "Issue #$issue_number moved to In Progress"
+    else
+        print_warning "Could not move issue to In Progress (project management not set up)"
+    fi
+
     print_success "Created and checked out feature branch: $feature_branch"
     print_status "You can now start working on issue #$issue_number"
     print_status "When ready, create a PR targeting: $phase_branch"
@@ -113,35 +121,35 @@ start_issue() {
 # Function to finish work on an issue
 finish_issue() {
     local issue_number=$1
-    
+
     if [ -z "$issue_number" ]; then
         print_error "Issue number is required"
         show_usage
         exit 1
     fi
-    
+
     local current_branch=$(git branch --show-current)
-    
+
     if [[ ! "$current_branch" =~ ^feature/$issue_number- ]]; then
         print_error "You must be on a feature branch for issue #$issue_number"
         print_status "Current branch: $current_branch"
         exit 1
     fi
-    
+
     print_status "Finishing work on issue #$issue_number"
     print_status "Current branch: $current_branch"
-    
+
     # Check if there are uncommitted changes
     if ! git diff-index --quiet HEAD --; then
         print_warning "You have uncommitted changes. Please commit or stash them first."
         git status --short
         exit 1
     fi
-    
+
     # Push the feature branch
     print_status "Pushing feature branch to remote..."
     git push origin "$current_branch"
-    
+
     print_success "Feature branch pushed to remote: $current_branch"
     print_status "Next steps:"
     print_status "1. Create a Pull Request targeting the appropriate phase branch"
@@ -152,23 +160,23 @@ finish_issue() {
 # Function to cleanup after PR is merged
 cleanup_issue() {
     local issue_number=$1
-    
+
     if [ -z "$issue_number" ]; then
         print_error "Issue number is required"
         show_usage
         exit 1
     fi
-    
+
     # Find the feature branch
     local feature_branch=$(git branch -a | grep "feature/$issue_number-" | sed 's/.*\///' | head -1)
-    
+
     if [ -z "$feature_branch" ]; then
         print_error "No feature branch found for issue #$issue_number"
         exit 1
     fi
-    
+
     print_status "Cleaning up feature branch: $feature_branch"
-    
+
     # Switch to the phase branch
     local current_branch=$(git branch --show-current)
     if [[ "$current_branch" == "$feature_branch" ]]; then
@@ -177,25 +185,25 @@ cleanup_issue() {
         git checkout "$phase_branch"
         git pull origin "$phase_branch"
     fi
-    
+
     # Delete local feature branch
     git branch -d "$feature_branch" 2>/dev/null || print_warning "Local branch $feature_branch not found or already deleted"
-    
+
     # Delete remote feature branch
     git push origin --delete "$feature_branch" 2>/dev/null || print_warning "Remote branch $feature_branch not found or already deleted"
-    
+
     print_success "Cleaned up feature branch: $feature_branch"
 }
 
 # Function to sync current branch
 sync_branch() {
     local current_branch=$(git branch --show-current)
-    
+
     print_status "Syncing branch: $current_branch"
-    
+
     git fetch origin
     git pull origin "$current_branch"
-    
+
     print_success "Branch synced with remote: $current_branch"
 }
 
@@ -203,19 +211,19 @@ sync_branch() {
 show_status() {
     local current_branch=$(git branch --show-current)
     local remote_branch="origin/$current_branch"
-    
+
     echo "Branch Status:"
     echo "=============="
     echo "Current branch: $current_branch"
-    
+
     if git show-ref --verify --quiet "refs/remotes/$remote_branch"; then
         local ahead=$(git rev-list --count "$current_branch" ^"$remote_branch" 2>/dev/null || echo "0")
         local behind=$(git rev-list --count "$remote_branch" ^"$current_branch" 2>/dev/null || echo "0")
-        
+
         echo "Remote branch: $remote_branch"
         echo "Ahead of remote: $ahead commits"
         echo "Behind remote: $behind commits"
-        
+
         if [ "$ahead" -gt 0 ] || [ "$behind" -gt 0 ]; then
             print_warning "Branch is not in sync with remote"
         else
@@ -224,7 +232,7 @@ show_status() {
     else
         print_warning "No remote branch found for $current_branch"
     fi
-    
+
     echo ""
     echo "Recent commits:"
     git log --oneline -5
@@ -233,13 +241,13 @@ show_status() {
 # Function to create a new phase branch
 create_phase_branch() {
     local phase_name=$1
-    
+
     if [ -z "$phase_name" ]; then
         print_error "Phase name is required"
         print_status "Example: $0 create-phase phase-2-core-features"
         exit 1
     fi
-    
+
     # Validate phase name format
     if [[ ! "$phase_name" =~ ^phase-[1-4]-(foundation|core-features|advanced-features|polish-release)$ ]]; then
         print_error "Invalid phase name format"
@@ -250,17 +258,43 @@ create_phase_branch() {
         print_status "  phase-4-polish-release"
         exit 1
     fi
-    
+
     print_status "Creating phase branch: $phase_name"
-    
+
     # Ensure we're on master and up to date
     git checkout master
     git pull origin master
-    
+
     # Create the phase branch
     git checkout -b "$phase_name"
     git push origin "$phase_name"
-    
+
+    # Move issues from milestone to To Do (if project management is set up)
+    local milestone_name=""
+    case "$phase_name" in
+        "phase-1-foundation")
+            milestone_name="Phase 1: Foundation"
+            ;;
+        "phase-2-core-features")
+            milestone_name="Phase 2: Core Features"
+            ;;
+        "phase-3-advanced-features")
+            milestone_name="Phase 3: Advanced Features"
+            ;;
+        "phase-4-polish-release")
+            milestone_name="Phase 4: Polish & Release"
+            ;;
+    esac
+
+    if [ -n "$milestone_name" ]; then
+        print_status "Moving issues from milestone '$milestone_name' to To Do..."
+        if ./.github/scripts/move-issues-to-todo.sh "$milestone_name" 2>/dev/null; then
+            print_success "Issues from milestone '$milestone_name' moved to To Do"
+        else
+            print_warning "Could not move issues to To Do (project management not set up)"
+        fi
+    fi
+
     print_success "Created phase branch: $phase_name"
     print_status "You can now start working on issues for this phase"
     print_status "Use: $0 start <issue-number> to begin work on an issue"

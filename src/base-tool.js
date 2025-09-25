@@ -1,6 +1,24 @@
 import { fireEvent } from './frontend_mods/common/dom/fire_event';
 
 import Merge from './merge';
+
+// Simple replacements for Lit 3.x compatibility
+function classMap(classes) {
+  if (!classes) return '';
+  return Object.entries(classes)
+    .filter(([_, value]) => value)
+    .map(([key, _]) => key)
+    .join(' ');
+}
+
+function styleMap(styles) {
+  if (!styles) return '';
+  return Object.entries(styles)
+    .filter(([_, value]) => value != null && value !== '')
+    .map(([key, value]) => `${key}: ${value}`)
+    .join('; ');
+}
+
 import Utils from './utils';
 import Templates from './templates';
 import Colors from './colors';
