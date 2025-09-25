@@ -1,9 +1,27 @@
 import { svg } from 'lit';
-import { classMap } from 'lit/directives/class-map';
-import { styleMap } from 'lit/directives/style-map';
+// import { classMap } from 'lit/directives/class-map'; // Not available in Lit 3.x
+// import { styleMap } from 'lit/directives/style-map'; // Not available in Lit 3.x
 import { SVGInjector } from '@tanem/svg-injector';
 
 import Merge from './merge';
+
+// Simple replacements for Lit 3.x compatibility
+function classMap(classes) {
+  if (!classes) return '';
+  return Object.entries(classes)
+    .filter(([_, value]) => value)
+    .map(([key, _]) => key)
+    .join(' ');
+}
+
+function styleMap(styles) {
+  if (!styles) return '';
+  return Object.entries(styles)
+    .filter(([_, value]) => value != null && value !== '')
+    .map(([key, value]) => `${key}: ${value}`)
+    .join('; ');
+}
+
 import Utils from './utils';
 import BaseTool from './base-tool';
 import Templates from './templates';

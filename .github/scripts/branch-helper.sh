@@ -105,6 +105,14 @@ start_issue() {
     # Create and checkout feature branch
     git checkout -b "$feature_branch"
     
+    # Move issue to In Progress (if project management is set up)
+    print_status "Moving issue #$issue_number to In Progress..."
+    if ./.github/scripts/move-issue-to-progress.sh "$issue_number" 2>/dev/null; then
+        print_success "Issue #$issue_number moved to In Progress"
+    else
+        print_warning "Could not move issue to In Progress (project management not set up)"
+    fi
+    
     print_success "Created and checked out feature branch: $feature_branch"
     print_status "You can now start working on issue #$issue_number"
     print_status "When ready, create a PR targeting: $phase_branch"
@@ -260,6 +268,32 @@ create_phase_branch() {
     # Create the phase branch
     git checkout -b "$phase_name"
     git push origin "$phase_name"
+    
+    # Move issues from milestone to To Do (if project management is set up)
+    local milestone_name=""
+    case "$phase_name" in
+        "phase-1-foundation")
+            milestone_name="Phase 1: Foundation"
+            ;;
+        "phase-2-core-features")
+            milestone_name="Phase 2: Core Features"
+            ;;
+        "phase-3-advanced-features")
+            milestone_name="Phase 3: Advanced Features"
+            ;;
+        "phase-4-polish-release")
+            milestone_name="Phase 4: Polish & Release"
+            ;;
+    esac
+    
+    if [ -n "$milestone_name" ]; then
+        print_status "Moving issues from milestone '$milestone_name' to To Do..."
+        if ./.github/scripts/move-issues-to-todo.sh "$milestone_name" 2>/dev/null; then
+            print_success "Issues from milestone '$milestone_name' moved to To Do"
+        else
+            print_warning "Could not move issues to To Do (project management not set up)"
+        fi
+    fi
     
     print_success "Created phase branch: $phase_name"
     print_status "You can now start working on issues for this phase"

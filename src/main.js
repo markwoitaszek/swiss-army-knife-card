@@ -26,31 +26,43 @@
 // Lit 3.x provides better performance and modern web standards support
 
 import {
-  LitElement, html, css, svg, unsafeCSS,
+  LitElement,
+  css,
+  html,
+  svg, unsafeCSS,
 } from 'lit';
 
-import { styleMap } from 'lit/directives/style-map.js';
-import { unsafeSVG } from 'lit/directives/unsafe-svg.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
+// import { styleMap } from 'lit/directives/style-map.js'; // Not available in Lit 3.x
+import { unsafeSVG } from 'lit/directives/unsafe-svg.js';
+
+// Simple styleMap replacement for Lit 3.x compatibility
+function styleMap(styles) {
+  if (!styles) return '';
+  return Object.entries(styles)
+    .filter(([_, value]) => value != null && value !== '')
+    .map(([key, value]) => `${key}: ${value}`)
+    .join('; ');
+}
 import { version } from '../package.json';
 
 import {
+  FONT_SIZE,
   SVG_DEFAULT_DIMENSIONS,
   SVG_VIEW_BOX,
-  FONT_SIZE,
 } from './const';
 
+import Colors from './colors';
 import Merge from './merge';
-import Utils from './utils';
 import Templates from './templates';
 import Toolset from './toolset';
-import Colors from './colors';
+import Utils from './utils';
 
 import {
   hs2rgb,
+  hsv2rgb,
   rgb2hex,
   rgb2hsv,
-  hsv2rgb,
 } from './frontend_mods/color/convert-color';
 import {
   rgbw2rgb,
@@ -156,8 +168,8 @@ class SwissArmyKnifeCard extends LitElement {
     // eslint-disable-next-line no-useless-escape
     this.isSafari = !!window.navigator.userAgent.match(/Version\/[\d\.]+.*Safari/);
     this.iOS = (/iPad|iPhone|iPod/.test(window.navigator.userAgent)
-                || (window.navigator.platform === 'MacIntel' && window.navigator.maxTouchPoints > 1))
-                && !window.MSStream;
+      || (window.navigator.platform === 'MacIntel' && window.navigator.maxTouchPoints > 1))
+      && !window.MSStream;
     this.isSafari14 = this.isSafari && /Version\/14\.[0-9]/.test(window.navigator.userAgent);
     this.isSafari15 = this.isSafari && /Version\/15\.[0-9]/.test(window.navigator.userAgent);
     this.isSafari16 = this.isSafari && /Version\/16\.[0-9]/.test(window.navigator.userAgent);
@@ -222,10 +234,10 @@ class SwissArmyKnifeCard extends LitElement {
       ha-card {
         cursor: default;
         overflow: hidden;
-        
-        -webkit-touch-callout: none;  
+
+        -webkit-touch-callout: none;
       }
-      
+
       /* For disabled parts of tools/toolsets */
       /* - No input */
       ha-card.disabled {
@@ -257,8 +269,8 @@ class SwissArmyKnifeCard extends LitElement {
       focus-visible {
         outline: 3px solid blanchedalmond; /* That'll show 'em */
       }
-      
-      
+
+
       @media (print), (prefers-reduced-motion: reduce) {
         .animated {
           animation-duration: 1ms !important;
@@ -267,7 +279,7 @@ class SwissArmyKnifeCard extends LitElement {
         }
       }
 
-      
+
       /* Set default host font-size to 10 pixels.
        * In that case 1em = 10 pixels = 1% of 100x100 matrix used
        */
@@ -423,7 +435,7 @@ class SwissArmyKnifeCard extends LitElement {
                 drop-shadow(0px 24px 2px rgba(0,0,0,0.1))
                 drop-shadow(0px 34px 30px rgba(0,0,0,0.1));
       }
-      
+
       .card--filter-none {
       }
 
@@ -447,7 +459,7 @@ class SwissArmyKnifeCard extends LitElement {
     this.userContent = '';
 
     if ((SwissArmyKnifeCard.lovelace.config.sak_user_templates)
-        && (SwissArmyKnifeCard.lovelace.config.sak_user_templates.definitions.user_css_definitions)) {
+      && (SwissArmyKnifeCard.lovelace.config.sak_user_templates.definitions.user_css_definitions)) {
       this.userContent = SwissArmyKnifeCard.lovelace.config.sak_user_templates.definitions.user_css_definitions.reduce((accumulator, currentValue) => accumulator + currentValue.content, '');
     }
 
@@ -458,7 +470,7 @@ class SwissArmyKnifeCard extends LitElement {
     this.sakContent = '';
 
     if ((SwissArmyKnifeCard.lovelace.config.sak_sys_templates)
-        && (SwissArmyKnifeCard.lovelace.config.sak_sys_templates.definitions.sak_css_definitions)) {
+      && (SwissArmyKnifeCard.lovelace.config.sak_sys_templates.definitions.sak_css_definitions)) {
       this.sakContent = SwissArmyKnifeCard.lovelace.config.sak_sys_templates.definitions.sak_css_definitions.reduce((accumulator, currentValue) => accumulator + currentValue.content, '');
     }
 
@@ -470,7 +482,7 @@ class SwissArmyKnifeCard extends LitElement {
     let sakSvgContent = '';
 
     if ((SwissArmyKnifeCard.lovelace.config.sak_sys_templates)
-        && (SwissArmyKnifeCard.lovelace.config.sak_sys_templates.definitions.sak_svg_definitions)) {
+      && (SwissArmyKnifeCard.lovelace.config.sak_sys_templates.definitions.sak_svg_definitions)) {
       sakSvgContent = SwissArmyKnifeCard.lovelace.config.sak_sys_templates.definitions.sak_svg_definitions.reduce((accumulator, currentValue) => accumulator + currentValue.content, '');
     }
     // Cache result for later use in other cards
@@ -482,7 +494,7 @@ class SwissArmyKnifeCard extends LitElement {
     let userSvgContent = '';
 
     if ((SwissArmyKnifeCard.lovelace.config.sak_user_templates)
-        && (SwissArmyKnifeCard.lovelace.config.sak_user_templates.definitions.user_svg_definitions)) {
+      && (SwissArmyKnifeCard.lovelace.config.sak_user_templates.definitions.user_svg_definitions)) {
       userSvgContent = SwissArmyKnifeCard.lovelace.config.sak_user_templates.definitions.user_svg_definitions.reduce((accumulator, currentValue) => accumulator + currentValue.content, '');
     }
     // Cache result for later use other cards
@@ -579,7 +591,7 @@ class SwissArmyKnifeCard extends LitElement {
       // Independent of theme loaded, adjust full card styles for light and dark mode
       // Load (if present) theme and palette stylings for optimum performance during rendering
       this.styles.card.light = {
-         ...this.styles.card.default, ...this.theme.light, ...this.palette.light,
+        ...this.styles.card.default, ...this.theme.light, ...this.palette.light,
       };
       this.styles.card.dark = {
         ...this.styles.card.default, ...this.theme.dark, ...this.palette.dark,
@@ -1122,8 +1134,8 @@ class SwissArmyKnifeCard extends LitElement {
         // Dump full theme contents to console.
         // User should copy this content into the theme definition YAML file.
         console.log(surfacenL + surfacenvL + surfacepL + surfacesL + surfacetL + surfaceeL
-                    + surfacenD + surfacenvD + surfacepD + surfacesD + surfacetD + surfaceeD
-                    + themeDefs);
+          + surfacenD + surfacenvD + surfacepD + surfacesD + surfacetD + surfaceeD
+          + themeDefs);
 
         console.log('*** M3 - Material 3 conversion DONE. You should copy the above output...');
       }
@@ -1268,7 +1280,7 @@ class SwissArmyKnifeCard extends LitElement {
       } else {
         myHtml = html`
                   <ha-card style="${styleMap(this.styles.card.default)}">
-                    <div class="container" id="container" 
+                    <div class="container" id="container"
                     >
                       ${this._renderSvg()}
                     </div>
@@ -1392,8 +1404,8 @@ class SwissArmyKnifeCard extends LitElement {
       <svg id="rootsvg" xmlns="http://www/w3.org/2000/svg" xmlns:xlink="http://www/w3.org/1999/xlink"
        class="${cardFilter}"
        style="${styleMap(this.themeIsDarkMode()
-          ? this.styles.card.dark
-          : this.styles.card.light)}"
+      ? this.styles.card.dark
+      : this.styles.card.light)}"
        data-entity-0="${this._attributes[0]}"
        data-entity-1="${ifDefined(this._attributes[1])}"
        data-entity-2="${ifDefined(this._attributes[2])}"
@@ -1437,115 +1449,115 @@ class SwissArmyKnifeCard extends LitElement {
     return (resources && resources[string] ? resources[string] : fallback);
   }
 
-/** *****************************************************************************
-  * card::_buildStateString()
-  *
-  * Summary.
-  * Builds the State string.
-  * If state is not a number, the state is returned AS IS, otherwise the state
-  * is converted if specified before it is returned as a string
-  *
-  * IMPORTANT NOTE:
-  * - do NOT replace isNaN() by Number.isNaN(). They are INCOMPATIBLE !!!!!!!!!
-  */
+  /** *****************************************************************************
+    * card::_buildStateString()
+    *
+    * Summary.
+    * Builds the State string.
+    * If state is not a number, the state is returned AS IS, otherwise the state
+    * is converted if specified before it is returned as a string
+    *
+    * IMPORTANT NOTE:
+    * - do NOT replace isNaN() by Number.isNaN(). They are INCOMPATIBLE !!!!!!!!!
+    */
 
-_buildStateString(inState, entityConfig) {
-  // Keep undefined as state. Do NOT change this one!!
-  if (typeof inState === 'undefined') return inState;
+  _buildStateString(inState, entityConfig) {
+    // Keep undefined as state. Do NOT change this one!!
+    if (typeof inState === 'undefined') return inState;
 
-  // New in v2.5.1: Check for built-in state converters
-  if (entityConfig.convert) {
-    // Match converter with parameter between ()
-    let splitted = entityConfig.convert.match(/(^\w+)\((\d+)\)/);
-    let converter;
-    let parameter;
-    // If no parameters found, just the converter
-    if (splitted === null) {
-      converter = entityConfig.convert;
-    } else if (splitted.length === 3) { // If parameter found, process...
-      converter = splitted[1];
-      parameter = Number(splitted[2]);
-    }
-    switch (converter) {
-      case 'brightness_pct':
-        inState = inState === 'undefined' ? 'undefined' : `${Math.round((inState / 255) * 100)}`;
-        break;
-      case 'multiply':
-        inState = `${Math.round((inState * parameter))}`;
-        break;
-      case 'divide':
-        inState = `${Math.round((inState / parameter))}`;
-        break;
-      case 'rgb_csv':
-      case 'rgb_hex':
-        // https://github.com/home-assistant/frontend/blob/1bf03f020e2b2523081d4f03580886b51e970c72/src/dialogs/more-info/components/lights/ha-favorite-color-button.ts#L39
-        // https://github.com/home-assistant/frontend/blob/1bf03f020e2b2523081d4f03580886b51e970c72/src/common/color/convert-light-color.ts
-        // private get _rgbColor(): [number, number, number] {
-        //   if (this.color) {
-        //     if ("hs_color" in this.color) {
-        //       return hs2rgb([this.color.hs_color[0], this.color.hs_color[1] / 100]);
-        //     }
-        //     if ("color_temp_kelvin" in this.color) {
-        //       return temperature2rgb(this.color.color_temp_kelvin);
-        //     }
-        //     if ("rgb_color" in this.color) {
-        //       return this.color.rgb_color;
-        //     }
-        //     if ("rgbw_color" in this.color) {
-        //       return rgbw2rgb(this.color.rgbw_color);
-        //     }
-        //     if ("rgbww_color" in this.color) {
-        //       return rgbww2rgb(
-        //         this.color.rgbww_color,
-        //         this.stateObj?.attributes.min_color_temp_kelvin,
-        //         this.stateObj?.attributes.max_color_temp_kelvin
-        //       );
-        //     }
-        //   }
-        //   return [255, 255, 255];
-        // }
-        if (entityConfig.attribute) {
-          let entity = this._hass.states[entityConfig.entity];
-          switch (entity.attributes.color_mode) {
-            case 'unknown':
-              break;
-            case 'onoff':
-              break;
-            case 'brightness':
+    // New in v2.5.1: Check for built-in state converters
+    if (entityConfig.convert) {
+      // Match converter with parameter between ()
+      let splitted = entityConfig.convert.match(/(^\w+)\((\d+)\)/);
+      let converter;
+      let parameter;
+      // If no parameters found, just the converter
+      if (splitted === null) {
+        converter = entityConfig.convert;
+      } else if (splitted.length === 3) { // If parameter found, process...
+        converter = splitted[1];
+        parameter = Number(splitted[2]);
+      }
+      switch (converter) {
+        case 'brightness_pct':
+          inState = inState === 'undefined' ? 'undefined' : `${Math.round((inState / 255) * 100)}`;
+          break;
+        case 'multiply':
+          inState = `${Math.round((inState * parameter))}`;
+          break;
+        case 'divide':
+          inState = `${Math.round((inState / parameter))}`;
+          break;
+        case 'rgb_csv':
+        case 'rgb_hex':
+          // https://github.com/home-assistant/frontend/blob/1bf03f020e2b2523081d4f03580886b51e970c72/src/dialogs/more-info/components/lights/ha-favorite-color-button.ts#L39
+          // https://github.com/home-assistant/frontend/blob/1bf03f020e2b2523081d4f03580886b51e970c72/src/common/color/convert-light-color.ts
+          // private get _rgbColor(): [number, number, number] {
+          //   if (this.color) {
+          //     if ("hs_color" in this.color) {
+          //       return hs2rgb([this.color.hs_color[0], this.color.hs_color[1] / 100]);
+          //     }
+          //     if ("color_temp_kelvin" in this.color) {
+          //       return temperature2rgb(this.color.color_temp_kelvin);
+          //     }
+          //     if ("rgb_color" in this.color) {
+          //       return this.color.rgb_color;
+          //     }
+          //     if ("rgbw_color" in this.color) {
+          //       return rgbw2rgb(this.color.rgbw_color);
+          //     }
+          //     if ("rgbww_color" in this.color) {
+          //       return rgbww2rgb(
+          //         this.color.rgbww_color,
+          //         this.stateObj?.attributes.min_color_temp_kelvin,
+          //         this.stateObj?.attributes.max_color_temp_kelvin
+          //       );
+          //     }
+          //   }
+          //   return [255, 255, 255];
+          // }
+          if (entityConfig.attribute) {
+            let entity = this._hass.states[entityConfig.entity];
+            switch (entity.attributes.color_mode) {
+              case 'unknown':
                 break;
-            case 'color_temp':
-              if (entity.attributes.color_temp_kelvin) {
-                let rgb = temperature2rgb(entity.attributes.color_temp_kelvin);
+              case 'onoff':
+                break;
+              case 'brightness':
+                break;
+              case 'color_temp':
+                if (entity.attributes.color_temp_kelvin) {
+                  let rgb = temperature2rgb(entity.attributes.color_temp_kelvin);
 
-                const hsvColor = rgb2hsv(rgb);
-                // Modify the real rgb color for better contrast
-                if (hsvColor[1] < 0.4) {
-                  // Special case for very light color (e.g: white)
-                  if (hsvColor[1] < 0.1) {
-                    hsvColor[2] = 225;
+                  const hsvColor = rgb2hsv(rgb);
+                  // Modify the real rgb color for better contrast
+                  if (hsvColor[1] < 0.4) {
+                    // Special case for very light color (e.g: white)
+                    if (hsvColor[1] < 0.1) {
+                      hsvColor[2] = 225;
+                    } else {
+                      hsvColor[1] = 0.4;
+                    }
+                  }
+                  rgb = hsv2rgb(hsvColor);
+
+                  rgb[0] = Math.round(rgb[0]);
+                  rgb[1] = Math.round(rgb[1]);
+                  rgb[2] = Math.round(rgb[2]);
+                  if (converter === 'rgb_csv') {
+                    inState = `${rgb[0]},${rgb[1]},${rgb[2]}`;
                   } else {
-                    hsvColor[1] = 0.4;
+                    inState = rgb2hex(rgb);
+                  }
+                } else {
+                  if (converter === 'rgb_csv') {
+                    inState = `${255},${255},${255}`;
+                  } else {
+                    inState = '#ffffff00';
                   }
                 }
-                rgb = hsv2rgb(hsvColor);
-
-                rgb[0] = Math.round(rgb[0]);
-                rgb[1] = Math.round(rgb[1]);
-                rgb[2] = Math.round(rgb[2]);
-                if (converter === 'rgb_csv') {
-                  inState = `${rgb[0]},${rgb[1]},${rgb[2]}`;
-                } else {
-                  inState = rgb2hex(rgb);
-                }
-              } else {
-                if (converter === 'rgb_csv') {
-                  inState = `${255},${255},${255}`;
-                } else {
-                  inState = '#ffffff00';
-                }
-              }
-              break;
-            case 'hs': {
+                break;
+              case 'hs': {
                 let rgb = hs2rgb([entity.attributes.hs_color[0], entity.attributes.hs_color[1] / 100]);
                 rgb[0] = Math.round(rgb[0]);
                 rgb[1] = Math.round(rgb[1]);
@@ -1557,8 +1569,8 @@ _buildStateString(inState, entityConfig) {
                   inState = rgb2hex(rgb);
                 }
               }
-              break;
-            case 'rgb': {
+                break;
+              case 'rgb': {
                 const hsvColor = rgb2hsv(this.stateObj.attributes.rgb_color);
                 // Modify the real rgb color for better contrast
                 if (hsvColor[1] < 0.4) {
@@ -1576,8 +1588,8 @@ _buildStateString(inState, entityConfig) {
                   inState = rgb2hex(rgbColor);
                 }
               }
-              break;
-            case 'rgbw': {
+                break;
+              case 'rgbw': {
                 let rgb = rgbw2rgb(entity.attributes.rgbw_color);
                 rgb[0] = Math.round(rgb[0]);
                 rgb[1] = Math.round(rgb[1]);
@@ -1589,40 +1601,11 @@ _buildStateString(inState, entityConfig) {
                   inState = rgb2hex(rgb);
                 }
               }
-              break;
-            case 'rgbww': {
-              let rgb = rgbww2rgb(entity.attributes.rgbww_color,
-                                  entity.attributes?.min_color_temp_kelvin,
-                                  entity.attributes?.max_color_temp_kelvin);
-              rgb[0] = Math.round(rgb[0]);
-              rgb[1] = Math.round(rgb[1]);
-              rgb[2] = Math.round(rgb[2]);
-
-              if (converter === 'rgb_csv') {
-                inState = `${rgb[0]},${rgb[1]},${rgb[2]}`;
-              } else {
-                inState = rgb2hex(rgb);
-              }
-            }
-            break;
-            case 'white':
-              break;
-            case 'xy':
-              if (entity.attributes.hs_color) {
-                let rgb = hs2rgb([entity.attributes.hs_color[0], entity.attributes.hs_color[1] / 100]);
-// https://github.com/home-assistant/frontend/blob/8580d3f9bf59ffbcbe4187a0d7a58cc23d9822df/src/dialogs/more-info/components/lights/ha-more-info-light-brightness.ts#L76
-                // background slider has opacity of 0.2. Looks nice also, yes??
-                const hsvColor = rgb2hsv(rgb);
-                // Modify the real rgb color for better contrast
-                if (hsvColor[1] < 0.4) {
-                  // Special case for very light color (e.g: white)
-                  if (hsvColor[1] < 0.1) {
-                    hsvColor[2] = 225;
-                  } else {
-                    hsvColor[1] = 0.4;
-                  }
-                }
-                rgb = hsv2rgb(hsvColor);
+                break;
+              case 'rgbww': {
+                let rgb = rgbww2rgb(entity.attributes.rgbww_color,
+                  entity.attributes?.min_color_temp_kelvin,
+                  entity.attributes?.max_color_temp_kelvin);
                 rgb[0] = Math.round(rgb[0]);
                 rgb[1] = Math.round(rgb[1]);
                 rgb[2] = Math.round(rgb[2]);
@@ -1632,42 +1615,71 @@ _buildStateString(inState, entityConfig) {
                 } else {
                   inState = rgb2hex(rgb);
                 }
-              } else if (entity.attributes.color) {
-                // We should have h and s, including brightness...
-                let hsl = {};
-                hsl.l = entity.attributes.brightness;
-                hsl.h = entity.attributes.color.h || entity.attributes.color.hue;
-                hsl.s = entity.attributes.color.s || entity.attributes.color.saturation;
-                // Convert HSL value to RGB
-                // HERE
-                let { r, g, b } = Colors.hslToRgb(hsl);
-                if (converter === 'rgb_csv') {
-                  inState = `${r},${g},${b}`;
-                } else {
-                  const rHex = Colors.padZero(r.toString(16));
-                  const gHex = Colors.padZero(g.toString(16));
-                  const bHex = Colors.padZero(b.toString(16));
-                  inState = `#${rHex}${gHex}${bHex}`;
-                }
-              } else if (entity.attributes.xy_color) {
               }
-              break;
-            default:
-              break;
+                break;
+              case 'white':
+                break;
+              case 'xy':
+                if (entity.attributes.hs_color) {
+                  let rgb = hs2rgb([entity.attributes.hs_color[0], entity.attributes.hs_color[1] / 100]);
+                  // https://github.com/home-assistant/frontend/blob/8580d3f9bf59ffbcbe4187a0d7a58cc23d9822df/src/dialogs/more-info/components/lights/ha-more-info-light-brightness.ts#L76
+                  // background slider has opacity of 0.2. Looks nice also, yes??
+                  const hsvColor = rgb2hsv(rgb);
+                  // Modify the real rgb color for better contrast
+                  if (hsvColor[1] < 0.4) {
+                    // Special case for very light color (e.g: white)
+                    if (hsvColor[1] < 0.1) {
+                      hsvColor[2] = 225;
+                    } else {
+                      hsvColor[1] = 0.4;
+                    }
+                  }
+                  rgb = hsv2rgb(hsvColor);
+                  rgb[0] = Math.round(rgb[0]);
+                  rgb[1] = Math.round(rgb[1]);
+                  rgb[2] = Math.round(rgb[2]);
+
+                  if (converter === 'rgb_csv') {
+                    inState = `${rgb[0]},${rgb[1]},${rgb[2]}`;
+                  } else {
+                    inState = rgb2hex(rgb);
+                  }
+                } else if (entity.attributes.color) {
+                  // We should have h and s, including brightness...
+                  let hsl = {};
+                  hsl.l = entity.attributes.brightness;
+                  hsl.h = entity.attributes.color.h || entity.attributes.color.hue;
+                  hsl.s = entity.attributes.color.s || entity.attributes.color.saturation;
+                  // Convert HSL value to RGB
+                  // HERE
+                  let { r, g, b } = Colors.hslToRgb(hsl);
+                  if (converter === 'rgb_csv') {
+                    inState = `${r},${g},${b}`;
+                  } else {
+                    const rHex = Colors.padZero(r.toString(16));
+                    const gHex = Colors.padZero(g.toString(16));
+                    const bHex = Colors.padZero(b.toString(16));
+                    inState = `#${rHex}${gHex}${bHex}`;
+                  }
+                } else if (entity.attributes.xy_color) {
+                }
+                break;
+              default:
+                break;
+            }
           }
-        }
-        break;
-      default:
-        console.error(`Unknown converter [${converter}] specified for entity [${entityConfig.entity}]!`);
-        break;
+          break;
+        default:
+          console.error(`Unknown converter [${converter}] specified for entity [${entityConfig.entity}]!`);
+          break;
+      }
     }
+    if (typeof inState === 'undefined') { return undefined; }
+    if (Number.isNaN(inState)) {
+      return inState;
+    }
+    return inState.toString();
   }
-  if (typeof inState === 'undefined') { return undefined; }
-  if (Number.isNaN(inState)) {
-    return inState;
-  }
-  return inState.toString();
-}
 
   _computeEntity(entityId) {
     return entityId.substr(entityId.indexOf('.') + 1);
@@ -1745,7 +1757,7 @@ _buildStateString(inState, entityConfig) {
     this.toolsets.map((toolset, k) => {
       toolset.tools.map((item, i) => {
         if ((item.type === 'bar')
-        || (item.type === 'sparkline')) {
+          || (item.type === 'sparkline')) {
           if (item.tool.config?.period?.type === 'real_time') return true;
           const end = new Date();
           const start = new Date();
@@ -1861,7 +1873,7 @@ _buildStateString(inState, entityConfig) {
     let barhours = 2;
 
     if ((entity.type === 'bar')
-    || (entity.type === 'sparkline')) {
+      || (entity.type === 'sparkline')) {
       if (this.dev.debug) console.log('entity.type == bar', entity);
 
       hours = this.toolsets[entity.tsidx].tools[entity.idx].tool.config.hours;
@@ -1910,7 +1922,7 @@ _buildStateString(inState, entityConfig) {
 
     // now push data into object...
     if (['bar'].includes(entity.type)) {
-    // if (entity.type === 'bar') {
+      // if (entity.type === 'bar') {
       this.toolsets[entity.tsidx].tools[entity.idx].tool.series = [...theData];
     }
 

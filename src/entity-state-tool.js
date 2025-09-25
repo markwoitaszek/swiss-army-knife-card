@@ -1,9 +1,27 @@
 import { svg } from 'lit';
-import { classMap } from 'lit/directives/class-map';
-import { styleMap } from 'lit/directives/style-map';
+// import { classMap } from 'lit/directives/class-map'; // Not available in Lit 3.x
+// import { styleMap } from 'lit/directives/style-map'; // Not available in Lit 3.x
 
 import { selectUnit } from '@formatjs/intl-utils';
 import Merge from './merge';
+
+// Simple replacements for Lit 3.x compatibility
+function classMap(classes) {
+  if (!classes) return '';
+  return Object.entries(classes)
+    .filter(([_, value]) => value)
+    .map(([key, _]) => key)
+    .join(' ');
+}
+
+function styleMap(styles) {
+  if (!styles) return '';
+  return Object.entries(styles)
+    .filter(([_, value]) => value != null && value !== '')
+    .map(([key, value]) => `${key}: ${value}`)
+    .join('; ');
+}
+
 import BaseTool from './base-tool';
 
 import { formatNumber, getDefaultFormatOptions } from './frontend_mods/format_number';
