@@ -6,7 +6,7 @@ on:
   pull_request:
     types: [opened, edited, closed, reopened, synchronize, labeled, unlabeled, assigned, unassigned]
   project:
-    types: [created, edited, deleted, closed, reopened, converted]
+    types: [created, edited, deleted, closed, reopened]
 
 jobs:
   auto-label:

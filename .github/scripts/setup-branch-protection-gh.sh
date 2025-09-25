@@ -12,7 +12,7 @@ cat > /tmp/branch-protection.json << 'EOF'
     "strict": true,
     "contexts": [
       "CI/CD Pipeline",
-      "Unit Tests", 
+      "Unit Tests",
       "E2E Tests",
       "Security Scanning",
       "Build Process"
