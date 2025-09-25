@@ -37,8 +37,21 @@ import { ifDefined } from 'lit/directives/if-defined.js';
 import { unsafeSVG } from 'lit/directives/unsafe-svg.js';
 import { version } from '../package.json';
 
+// Import TypeScript types
+import type { 
+  SakConfig, 
+  EntityConfig, 
+  LayoutConfig, 
+  ToolsetConfig, 
+  ToolConfig,
+  EntityState,
+  SakError 
+} from './types/SakTypes.js';
+
+// Module declarations are loaded automatically from types/modules.d.ts
+
 // Simple styleMap replacement for Lit 3.x compatibility
-function styleMap(styles) {
+function styleMap(styles: Record<string, string | number | undefined> | null | undefined): string {
   if (!styles) return '';
   return Object.entries(styles)
     .filter(([_, value]) => value != null && value !== '')
@@ -50,27 +63,27 @@ import {
   FONT_SIZE,
   SVG_DEFAULT_DIMENSIONS,
   SVG_VIEW_BOX,
-} from './const';
+} from './const.js';
 
-import Colors from './colors';
-import Merge from './merge';
-import Templates from './templates';
-import Toolset from './toolset';
-import Utils from './utils';
+import Colors from './colors.js';
+import Merge from './merge.js';
+import Templates from './templates.js';
+import Toolset from './toolset.js';
+import Utils from './utils.js';
 
 import {
   hs2rgb,
   hsv2rgb,
   rgb2hex,
   rgb2hsv,
-} from './frontend_mods/color/convert-color';
+} from './frontend_mods/color/convert-color.js';
 import {
   rgbw2rgb,
   rgbww2rgb,
   temperature2rgb,
-} from './frontend_mods/color/convert-light-color';
+} from './frontend_mods/color/convert-light-color.js';
 
-import { computeDomain } from './frontend_mods/common/entity/compute_domain';
+import { computeDomain } from './frontend_mods/common/entity/compute_domain.js';
 
 console.info(
   `%c  SWISS-ARMY-KNIFE-CARD  \n%c      Version ${version}      `,
@@ -87,6 +100,96 @@ console.info(
  */
 
 class SwissArmyKnifeCard extends LitElement {
+  // TypeScript property declarations
+  private connected: boolean = false;
+  private cardId: string = '';
+  private entities: EntityState[] = [];
+  private entitiesStr: string[] = [];
+  private attributesStr: string[] = [];
+  private secondaryInfoStr: string[] = [];
+  private iconStr: string[] = [];
+  private viewBoxSize: number = 0;
+  private viewBox: { width: number; height: number } = { width: 0, height: 0 };
+  private toolsets: any[] = [];
+  private tools: any[] = [];
+  private styles: {
+    card: {
+      default: Record<string, string>;
+      light: Record<string, string>;
+      dark: Record<string, string>;
+    };
+  } = {
+    card: {
+      default: {},
+      light: {},
+      dark: {}
+    }
+  };
+  private entityHistory: {
+    needed: boolean;
+    updating: boolean;
+    update_interval: number;
+  } = {
+    needed: false,
+    updating: false,
+    update_interval: 300
+  };
+  private stateChanged: boolean = true;
+  private dev: {
+    debug: boolean;
+    performance: boolean;
+    m3: boolean;
+  } = {
+    debug: false,
+    performance: false,
+    m3: false
+  };
+  private configIsSet: boolean = false;
+  private theme: {
+    checked: boolean;
+    isLoaded: boolean;
+    modeChanged: boolean;
+    darkMode: boolean;
+    light: Record<string, string>;
+    dark: Record<string, string>;
+  } = {
+    checked: false,
+    isLoaded: false,
+    modeChanged: false,
+    darkMode: false,
+    light: {},
+    dark: {}
+  };
+  private isSafari: boolean = false;
+  private iOS: boolean = false;
+  private isSafari14: boolean = false;
+  private isSafari15: boolean = false;
+  private isSafari16: boolean = false;
+  private lovelace: any;
+  private palette: {
+    light: Record<string, string>;
+    dark: Record<string, string>;
+  } = {
+    light: {},
+    dark: {}
+  };
+  private aspectratio: string = '1/1';
+  private counter: number = 0;
+  private _hass: any;
+  private config: SakConfig | null = null;
+  private interval: NodeJS.Timeout | null = null;
+  private _attributes: any;
+  private stateObj: any;
+  private coords: any;
+
+  // Static properties
+  static colorCache: any[] = [];
+  static lovelace: any;
+  static sakSvgContent: any;
+  static userSvgContent: any;
+  static userContent: string = '';
+  static sakContent: string = '';
+
   // card::constructor
   constructor() {
     super();
@@ -96,7 +199,7 @@ class SwissArmyKnifeCard extends LitElement {
     Colors.setElement(this);
 
     // Get cardId for unique SVG gradient Id
-    this.cardId = Math.random().toString(36).substr(2, 9);
+    this.cardId = Math.random().toString(36).substring(2, 11);
     this.entities = [];
     this.entitiesStr = [];
     this.attributesStr = [];
@@ -113,14 +216,11 @@ class SwissArmyKnifeCard extends LitElement {
 
     // 2022.01.24
     // Add card styles functionality
-    this.styles = {};
-    this.styles.card = {};
     this.styles.card.default = {};
     this.styles.card.light = {};
     this.styles.card.dark = {};
 
     // For history query interval updates.
-    this.entityHistory = {};
     this.entityHistory.needed = false;
     this.stateChanged = true;
     this.entityHistory.updating = false;
@@ -128,7 +228,6 @@ class SwissArmyKnifeCard extends LitElement {
     // console.log("SAK Constructor,", this.entityHistory);
 
     // Development settings
-    this.dev = {};
     this.dev.debug = false;
     this.dev.performance = false;
     this.dev.m3 = false;
@@ -136,7 +235,6 @@ class SwissArmyKnifeCard extends LitElement {
     this.configIsSet = false;
 
     // Theme mode support
-    this.theme = {};
     // Did not check for theme loading yet!
     this.theme.checked = false;
     this.theme.isLoaded = false;
@@ -169,7 +267,7 @@ class SwissArmyKnifeCard extends LitElement {
     this.isSafari = !!window.navigator.userAgent.match(/Version\/[\d\.]+.*Safari/);
     this.iOS = (/iPad|iPhone|iPod/.test(window.navigator.userAgent)
       || (window.navigator.platform === 'MacIntel' && window.navigator.maxTouchPoints > 1))
-      && !window.MSStream;
+      && !(window as any).MSStream;
     this.isSafari14 = this.isSafari && /Version\/14\.[0-9]/.test(window.navigator.userAgent);
     this.isSafari15 = this.isSafari && /Version\/15\.[0-9]/.test(window.navigator.userAgent);
     this.isSafari16 = this.isSafari && /Version\/16\.[0-9]/.test(window.navigator.userAgent);
@@ -194,7 +292,6 @@ class SwissArmyKnifeCard extends LitElement {
       SwissArmyKnifeCard.colorCache = [];
     }
 
-    this.palette = {};
     this.palette.light = {};
     this.palette.dark = {};
 
@@ -525,10 +622,10 @@ class SwissArmyKnifeCard extends LitElement {
     }
     if (!SwissArmyKnifeCard.lovelace.config.sak_sys_templates) {
       console.error(version, ' - SAK - System Templates reference NOT defined.');
-      throw Error(version, ' - card::get styles - System Templates reference NOT defined!');
+        throw new Error(`${version} - card::get styles - System Templates reference NOT defined!`);
     }
     if (!SwissArmyKnifeCard.lovelace.config.sak_user_templates) {
-      console.warning(version, ' - SAK - User Templates reference NOT defined. Did you NOT include them?');
+      console.warn(version, ' - SAK - User Templates reference NOT defined. Did you NOT include them?');
     }
 
     // #TESTING
@@ -566,7 +663,7 @@ class SwissArmyKnifeCard extends LitElement {
   *
   */
 
-  set hass(hass) {
+  set hass(hass: any) {
     if (!this.counter) this.counter = 0;
     this.counter += 1;
 
@@ -680,21 +777,21 @@ class SwissArmyKnifeCard extends LitElement {
 
         if (arrayPos !== -1) {
           // We have an array. Split...
-          attribute = this.config.entities[index].attribute.substr(0, arrayPos);
-          attrMore = this.config.entities[index].attribute.substr(arrayPos, this.config.entities[index].attribute.length - arrayPos);
+          attribute = this.config.entities[index].attribute!.substring(0, arrayPos);
+          attrMore = this.config.entities[index].attribute!.substring(arrayPos);
 
           // Just hack, assume single digit index...
-          arrayIdx = attrMore[1];
-          arrayMap = attrMore.substr(4, attrMore.length - 4);
+          arrayIdx = Number(attrMore[1]);
+          arrayMap = attrMore.substring(4);
 
           // Fetch state
           attributeState = this.entities[index].attributes[attribute][arrayIdx][arrayMap];
           // console.log('set hass, attributes with array/map', this.config.entities[index].attribute, attribute, attrMore, arrayIdx, arrayMap, attributeState);
         } else if (dotPos !== -1) {
           // We have a map. Split...
-          attribute = this.config.entities[index].attribute.substr(0, dotPos);
-          attrMore = this.config.entities[index].attribute.substr(arrayPos, this.config.entities[index].attribute.length - arrayPos);
-          arrayMap = attrMore.substr(1, attrMore.length - 1);
+          attribute = this.config.entities[index].attribute!.substring(0, dotPos);
+          attrMore = this.config.entities[index].attribute!.substring(arrayPos);
+          arrayMap = attrMore.substring(1);
 
           // Fetch state
           attributeState = this.entities[index].attributes[attribute][arrayMap];
@@ -722,7 +819,7 @@ class SwissArmyKnifeCard extends LitElement {
       if ((!attrSet) && (!secInfoSet)) {
         newStateStr = entityIsUndefined ? undefined : this._buildStateString(this.entities[index].state, this.config.entities[index]);
         if (newStateStr !== this.entitiesStr[index]) {
-          this.entitiesStr[index] = newStateStr;
+          this.entitiesStr[index] = newStateStr || '';
           entityHasChanged = true;
         }
         if (this.dev.debug) console.log('set hass - attrSet=false', this.cardId, `${new Date().getSeconds().toString()}.${new Date().getMilliseconds().toString()}`, newStateStr);
@@ -779,7 +876,7 @@ class SwissArmyKnifeCard extends LitElement {
   *
   */
 
-  setConfig(config) {
+  setConfig(config: SakConfig): void {
     if (this.dev.performance) console.time(`--> ${this.cardId} PERFORMANCE card::setConfig`);
 
     if (this.dev.debug) console.log('*****Event - setConfig', this.cardId, new Date().getTime());
@@ -803,7 +900,7 @@ class SwissArmyKnifeCard extends LitElement {
       const newdomain = computeDomain(config.entities[0].entity);
       if (newdomain !== 'sensor') {
         // If not a sensor, check if attribute is a number. If so, continue, otherwise Error...
-        if (config.entities[0].attribute && !isNaN(config.entities[0].attribute)) {
+        if (config.entities[0].attribute && !isNaN(Number(config.entities[0].attribute))) {
           throw Error('card::setConfig - First entity or attribute must be a numbered sensorvalue, but is NOT');
         }
       }
@@ -816,7 +913,7 @@ class SwissArmyKnifeCard extends LitElement {
     this.config = newConfig;
 
     // NEW for ts processing
-    this.toolset = [];
+        // this.toolset = []; // Removed - using toolsets instead
 
     const thisMe = this;
     function findTemplate(key, value) {
@@ -1039,20 +1136,20 @@ class SwissArmyKnifeCard extends LitElement {
         // eslint-disable-next-line no-restricted-syntax
         for (const [index, entity] of Object.entries(colorEntities)) {
           // eslint-disable-next-line no-use-before-define
-          cssNames[index] = `theme-${entity.tags[1]}-${entity.tags[2]}-${entity.tags[3]}: rgb(${hex2rgb(entity.value)})`;
+          cssNames[index] = `theme-${(entity as any).tags[1]}-${(entity as any).tags[2]}-${(entity as any).tags[3]}: rgb(${hex2rgb((entity as any).value)})`;
           // eslint-disable-next-line no-use-before-define
-          cssNamesRgb[index] = `theme-${entity.tags[1]}-${entity.tags[2]}-${entity.tags[3]}-rgb: ${hex2rgb(entity.value)}`;
+          cssNamesRgb[index] = `theme-${(entity as any).tags[1]}-${(entity as any).tags[2]}-${(entity as any).tags[3]}-rgb: ${hex2rgb((entity as any).value)}`;
         }
 
         // https://filosophy.org/code/online-tool-to-lighten-color-without-alpha-channel/
 
         // eslint-disable-next-line no-inner-declarations
-        function hex2rgb(hexColor) {
-          const rgbCol = {};
+        function hex2rgb(hexColor: string) {
+          const rgbCol: any = {};
 
-          rgbCol.r = Math.round(parseInt(hexColor.substr(1, 2), 16));
-          rgbCol.g = Math.round(parseInt(hexColor.substr(3, 2), 16));
-          rgbCol.b = Math.round(parseInt(hexColor.substr(5, 2), 16));
+          rgbCol.r = Math.round(parseInt(hexColor.substring(1, 3), 16));
+          rgbCol.g = Math.round(parseInt(hexColor.substring(3, 5), 16));
+          rgbCol.b = Math.round(parseInt(hexColor.substring(5, 7), 16));
 
           // const cssRgbColor = "rgb(" + rgbCol.r + "," + rgbCol.g + "," + rgbCol.b + ")";
           const cssRgbColor = `${rgbCol.r},${rgbCol.g},${rgbCol.b}`;
@@ -1060,21 +1157,21 @@ class SwissArmyKnifeCard extends LitElement {
         }
 
         // eslint-disable-next-line no-inner-declarations
-        function getSurfaces(surfaceColor, paletteColor, opacities, cssName, mode) {
-          const bgCol = {};
-          const fgCol = {};
+        function getSurfaces(surfaceColor: string, paletteColor: string, opacities: number[], cssName: string, mode: string) {
+          const bgCol: any = {};
+          const fgCol: any = {};
 
-          bgCol.r = Math.round(parseInt(surfaceColor.substr(1, 2), 16));
-          bgCol.g = Math.round(parseInt(surfaceColor.substr(3, 2), 16));
-          bgCol.b = Math.round(parseInt(surfaceColor.substr(5, 2), 16));
+          bgCol.r = Math.round(parseInt(surfaceColor.substring(1, 3), 16));
+          bgCol.g = Math.round(parseInt(surfaceColor.substring(3, 5), 16));
+          bgCol.b = Math.round(parseInt(surfaceColor.substring(5, 7), 16));
 
-          fgCol.r = Math.round(parseInt(paletteColor.substr(1, 2), 16));
-          fgCol.g = Math.round(parseInt(paletteColor.substr(3, 2), 16));
-          fgCol.b = Math.round(parseInt(paletteColor.substr(5, 2), 16));
+          fgCol.r = Math.round(parseInt(paletteColor.substring(1, 3), 16));
+          fgCol.g = Math.round(parseInt(paletteColor.substring(3, 5), 16));
+          fgCol.b = Math.round(parseInt(paletteColor.substring(5, 7), 16));
 
           let surfaceColors = '';
           let r; let g; let b;
-          opacities.forEach((opacity, index) => {
+          opacities.forEach((opacity: number, index: number) => {
             r = Math.round(opacity * fgCol.r + (1 - opacity) * bgCol.r);
             g = Math.round(opacity * fgCol.g + (1 - opacity) * bgCol.g);
             b = Math.round(opacity * fgCol.b + (1 - opacity) * bgCol.b);
@@ -1126,7 +1223,7 @@ class SwissArmyKnifeCard extends LitElement {
         let themeDefs = '';
         // eslint-disable-next-line no-restricted-syntax
         for (const [index, cssName] of Object.entries(cssNames)) { // lgtm[js/unused-local-variable]
-          if (cssName.substring(0, 9) === 'theme-ref') {
+            if ((cssName as string).substring(0, 9) === 'theme-ref') {
             themeDefs += `  ${cssName}\n`;
             themeDefs += `  ${cssNamesRgb[index]}\n`;
           }
@@ -1145,12 +1242,11 @@ class SwissArmyKnifeCard extends LitElement {
     this.aspectratio = (this.config.layout.aspectratio || this.config.aspectratio || '1/1').trim();
 
     const ar = this.aspectratio.split('/');
-    if (!this.viewBox) this.viewBox = {};
-    this.viewBox.width = ar[0] * SVG_DEFAULT_DIMENSIONS;
-    this.viewBox.height = ar[1] * SVG_DEFAULT_DIMENSIONS;
+        this.viewBox.width = Number(ar[0]) * SVG_DEFAULT_DIMENSIONS;
+        this.viewBox.height = Number(ar[1]) * SVG_DEFAULT_DIMENSIONS;
 
     if (this.config.layout.styles?.card) {
-      this.styles.card.default = this.config.layout.styles.card;
+      this.styles.card.default = this.config.layout.styles.card as unknown as Record<string, string>;
     }
 
     if (this.dev.debug) console.log('Step 5: toolconfig, list of toolsets', this.toolsets);
@@ -1178,11 +1274,13 @@ class SwissArmyKnifeCard extends LitElement {
       this.updateOnInterval();
       // #TODO, modify to total interval
       // Use fast interval at start, and normal interval after that, if _hass is defined...
-      clearInterval(this.interval);
-      this.interval = setInterval(
-        () => this.updateOnInterval(),
-        this._hass ? this.entityHistory.update_interval * 1000 : 100,
-      );
+          if (this.interval) {
+            clearInterval(this.interval);
+          }
+          this.interval = setInterval(
+            () => this.updateOnInterval(),
+            this._hass ? this.entityHistory.update_interval * 1000 : 100,
+          );
     }
     if (this.dev.debug) console.log('ConnectedCallback', this.cardId);
 
@@ -1201,10 +1299,10 @@ class SwissArmyKnifeCard extends LitElement {
     if (this.dev.performance) console.time(`--> ${this.cardId} PERFORMANCE card::disconnectedCallback`);
 
     if (this.dev.debug) console.log('*****Event - disconnectedCallback', this.cardId, new Date().getTime());
-    if (this.interval) {
-      clearInterval(this.interval);
-      this.interval = 0;
-    }
+        if (this.interval) {
+          clearInterval(this.interval);
+          this.interval = null;
+        }
     super.disconnectedCallback();
     if (this.dev.debug) console.log('disconnectedCallback', this.cardId);
     this.connected = false;
@@ -1418,7 +1516,7 @@ class SwissArmyKnifeCard extends LitElement {
        data-entity-9="${ifDefined(this._attributes[9])}"
        viewBox="0 0 ${this.viewBox.width} ${this.viewBox.height}"
       >
-        <g style="${styleMap(this.config.layout?.styles?.toolsets)}">
+        <g style="${styleMap(this.config.layout?.styles?.toolsets as unknown as Record<string, string | number | undefined>)}">
           ${toolsetsSvg}
         </g>
       </svg>`);
@@ -1646,7 +1744,7 @@ class SwissArmyKnifeCard extends LitElement {
                   }
                 } else if (entity.attributes.color) {
                   // We should have h and s, including brightness...
-                  let hsl = {};
+                  let hsl: any = {};
                   hsl.l = entity.attributes.brightness;
                   hsl.h = entity.attributes.color.h || entity.attributes.color.hue;
                   hsl.s = entity.attributes.color.s || entity.attributes.color.saturation;
@@ -1682,7 +1780,7 @@ class SwissArmyKnifeCard extends LitElement {
   }
 
   _computeEntity(entityId) {
-    return entityId.substr(entityId.indexOf('.') + 1);
+    return entityId.substring(entityId.indexOf('.') + 1);
   }
 
   // 2022.01.25 #TODO
@@ -1716,10 +1814,12 @@ class SwissArmyKnifeCard extends LitElement {
       // console.log("*RC* updateOnInterval -> stop timer", this.entityHistory, this.interval);
       if (this.interval) {
         window.clearInterval(this.interval);
-        this.interval = 0;
+        this.interval = null;
       }
     } else {
-      window.clearInterval(this.interval);
+      if (this.interval) {
+        window.clearInterval(this.interval);
+      }
       this.interval = setInterval(
         () => this.updateOnInterval(),
         // 30 * 1000,

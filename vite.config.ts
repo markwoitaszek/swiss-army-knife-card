@@ -13,7 +13,7 @@ export default defineConfig({
 
   build: {
     lib: {
-      entry: resolve(__dirname, 'src/main.js'),
+        entry: resolve(__dirname, 'src/main.ts'),
       name: 'SwissArmyKnifeCard',
       fileName: 'swiss-army-knife-card',
       formats: ['es'],
