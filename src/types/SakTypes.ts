@@ -5,6 +5,14 @@ export interface SakConfig {
   aspectratio?: string;
   theme?: string;
   styles?: Record<string, string>;
+  dev?: {
+    debug?: boolean;
+    performance?: boolean;
+    m3?: boolean;
+  };
+  palette?: Record<string, any>;
+  disable_card?: boolean;
+  card_filter?: string;
 }
 
 export interface EntityConfig {
@@ -20,6 +28,7 @@ export interface LayoutConfig {
   aspectratio?: string;
   styles?: Record<string, string>;
   toolsets: ToolsetConfig[];
+  template?: any;
 }
 
 export interface ToolsetConfig {
@@ -28,6 +37,7 @@ export interface ToolsetConfig {
   scale?: Scale;
   rotation?: Rotation;
   tools: ToolConfig[];
+  template?: any;
 }
 
 // Position and Transform Types
