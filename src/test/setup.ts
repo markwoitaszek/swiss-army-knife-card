@@ -1,19 +1,18 @@
 import '@testing-library/jest-dom';
-import { cleanup } from '@testing-library/lit';
 import { afterEach } from 'vitest';
 
 // Mock Home Assistant
-global.hass = {
+(globalThis as any).hass = {
   states: {},
   themes: {
     darkMode: false,
     themes: {},
-    defaultTheme: 'default'
+    defaultTheme: 'default',
   },
   config: {
     unit_system: 'metric',
     time_zone: 'UTC',
-    language: 'en'
+    language: 'en',
   },
   callService: vi.fn(),
   callApi: vi.fn(),
@@ -21,7 +20,7 @@ global.hass = {
 } as any;
 
 // Mock console methods to reduce noise in tests
-global.console = {
+(globalThis as any).console = {
   ...console,
   log: vi.fn(),
   debug: vi.fn(),
@@ -30,6 +29,8 @@ global.console = {
   error: vi.fn(),
 };
 
+// Cleanup after each test
 afterEach(() => {
-  cleanup();
+  // Clean up any DOM elements created during tests
+  document.body.innerHTML = '';
 });

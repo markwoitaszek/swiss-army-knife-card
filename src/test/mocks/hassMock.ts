@@ -1,4 +1,13 @@
-import { HomeAssistant } from 'home-assistant-js-websocket';
+// Mock Home Assistant interface
+interface HomeAssistant {
+  states: Record<string, any>;
+  themes: any;
+  config: any;
+  callService: any;
+  callApi: any;
+  sendWS: any;
+  connection: any;
+}
 
 export const mockHass: Partial<HomeAssistant> = {
   states: {
@@ -8,15 +17,15 @@ export const mockHass: Partial<HomeAssistant> = {
       attributes: {
         unit_of_measurement: '°C',
         friendly_name: 'Temperature',
-        device_class: 'temperature'
+        device_class: 'temperature',
       },
       last_changed: new Date().toISOString(),
       last_updated: new Date().toISOString(),
       context: {
         id: 'test-context',
         user_id: 'test-user',
-        parent_id: null
-      }
+        parent_id: null,
+      },
     },
     'sensor.humidity': {
       entity_id: 'sensor.humidity',
@@ -24,15 +33,15 @@ export const mockHass: Partial<HomeAssistant> = {
       attributes: {
         unit_of_measurement: '%',
         friendly_name: 'Humidity',
-        device_class: 'humidity'
+        device_class: 'humidity',
       },
       last_changed: new Date().toISOString(),
       last_updated: new Date().toISOString(),
       context: {
         id: 'test-context',
         user_id: 'test-user',
-        parent_id: null
-      }
+        parent_id: null,
+      },
     },
     'light.living_room': {
       entity_id: 'light.living_room',
@@ -41,16 +50,16 @@ export const mockHass: Partial<HomeAssistant> = {
         friendly_name: 'Living Room Light',
         brightness: 255,
         color_temp: 370,
-        rgb_color: [255, 255, 255]
+        rgb_color: [255, 255, 255],
       },
       last_changed: new Date().toISOString(),
       last_updated: new Date().toISOString(),
       context: {
         id: 'test-context',
         user_id: 'test-user',
-        parent_id: null
-      }
-    }
+        parent_id: null,
+      },
+    },
   },
   themes: {
     darkMode: false,
@@ -59,10 +68,10 @@ export const mockHass: Partial<HomeAssistant> = {
         'primary-color': '#1976d2',
         'accent-color': '#dc004e',
         'card-background-color': '#ffffff',
-        'primary-text-color': '#000000'
-      }
+        'primary-text-color': '#000000',
+      },
     },
-    defaultTheme: 'default'
+    defaultTheme: 'default',
   },
   config: {
     unit_system: 'metric',
@@ -75,7 +84,7 @@ export const mockHass: Partial<HomeAssistant> = {
     longitude: 0,
     location_name: 'Home',
     version: '2024.1.0',
-    config_source: 'storage'
+    config_source: 'storage',
   },
   callService: vi.fn(),
   callApi: vi.fn(),
@@ -84,6 +93,6 @@ export const mockHass: Partial<HomeAssistant> = {
     close: vi.fn(),
     sendMessage: vi.fn(),
     subscribeEvents: vi.fn(),
-    subscribeMessage: vi.fn()
-  } as any
+    subscribeMessage: vi.fn(),
+  } as any,
 };

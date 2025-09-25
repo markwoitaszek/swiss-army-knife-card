@@ -2,11 +2,11 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [main, develop]
   pull_request:
-    branches: [ main, develop ]
+    branches: [main, develop]
   release:
-    types: [ published ]
+    types: [published]
 
 jobs:
   quality:
@@ -49,6 +49,16 @@ jobs:
           file: ./coverage/lcov.info
 
       - run: npm run test:e2e
+
+      - name: Run Visual Tests (if Chromatic token available)
+        if: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
+        run: npm run test:visual
+
+      - name: Skip Visual Tests (No Chromatic Token)
+        if: ${{ !secrets.CHROMATIC_PROJECT_TOKEN }}
+        run: |
+          echo "⚠️ Skipping visual tests - CHROMATIC_PROJECT_TOKEN not found"
+          echo "Visual tests will be skipped until token is added"
 
       - uses: actions/upload-artifact@v4
         if: always()
