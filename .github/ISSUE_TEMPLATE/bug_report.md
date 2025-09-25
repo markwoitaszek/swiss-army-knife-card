@@ -1,50 +1,123 @@
 ---
-name: Bug report
+name: Bug Report
 about: Create a report to help us improve
-title: ''
-labels: bug
+title: '[BUG] '
+labels: ['bug', 'needs-triage']
 assignees: ''
-
 ---
 
-## Bug report notice
-**Before** you file a bug, make sure that you did not make a configuration mistake. The Swiss Army Knife in its current state does not yet have full configuration sanity checks!
+## 🐛 Bug Report
 
-So make sure your problem is not related to that!
-- [ ] Yes, I'm sure that it is not a configuration mistake
+**Before filing this bug, please ensure:**
+- [ ] You have checked the [troubleshooting guide](https://github.com/AmoebeLabs/swiss-army-knife-card/blob/main/docs/reference/troubleshooting.md)
+- [ ] You have searched existing issues to avoid duplicates
+- [ ] You have tested with the latest version
+- [ ] This is not a configuration issue
 
-## Swiss Army Knife version
-The version you are using. See HACS or the Browser console
+## 📋 Bug Information
 
-## Bug description
-A clear and concise description of what the bug is.
+### Swiss Army Knife Version
+<!-- Please provide the version you are using -->
+- Version:
+- Installation method: [HACS/Manual]
+- Home Assistant version:
 
-### To Reproduce
-Steps to reproduce the behavior:
+### Bug Description
+<!-- A clear and concise description of what the bug is -->
+
+### Steps to Reproduce
+<!-- Steps to reproduce the behavior -->
 1. Go to '...'
 2. Click on '....'
 3. Scroll down to '....'
 4. See error
 
-### Expected behavior
-A clear and concise description of what you expected to happen.
+### Expected Behavior
+<!-- A clear and concise description of what you expected to happen -->
+
+### Actual Behavior
+<!-- A clear and concise description of what actually happened -->
 
 ### Screenshots
-If applicable, add screenshots to help explain your problem.
+<!-- If applicable, add screenshots to help explain your problem -->
 
-### Desktop browser (please complete the following information):
- - OS: [e.g. Windows]
- - Browser [e.g. chrome, safari]
- - Version [e.g. 110]
+## 🔧 Environment
 
-### Companion App on Smartphone/Tablet (please complete the following information):
- - Device: [e.g. iPhone16]
- - OS: [e.g. iOS16]
- - Browser [e.g. stock browser, safari]
- - Version [e.g. 16]
+### Desktop Browser
+- OS: [e.g. Windows 11, macOS 13, Ubuntu 22.04]
+- Browser: [e.g. Chrome 120, Firefox 121, Safari 17]
+- Version:
 
-**Additional context**
-Add any other context about the problem here.
+### Mobile Device
+- Device: [e.g. iPhone 15, Samsung Galaxy S24]
+- OS: [e.g. iOS 17, Android 14]
+- Browser: [e.g. Safari, Chrome, Samsung Internet]
+- Version:
 
-## (Optional): Suggested Solution
-Any suggested solution to this bug.
+### Home Assistant
+- Version:
+- Installation type: [e.g. Home Assistant OS, Docker, Core]
+- Frontend version:
+
+## 📝 Configuration
+
+```yaml
+# Please provide your SAK configuration (remove sensitive data)
+type: custom:swiss-army-knife-card
+entities:
+  - entity: sensor.example
+layout:
+  toolsets:
+    - toolset: main
+      position:
+        cx: 50
+        cy: 50
+      tools:
+        - type: circle
+          id: example
+          position:
+            cx: 50
+            cy: 50
+            radius: 20
+          entity_index: 0
+```
+
+## 🚨 Error Information
+
+### Browser Console
+<!-- Any error messages from browser console -->
+```
+Paste console errors here
+```
+
+### Home Assistant Logs
+<!-- Any relevant Home Assistant logs -->
+```
+Paste HA logs here
+```
+
+### Network Tab
+<!-- Any failed network requests -->
+- Failed requests:
+- Status codes:
+
+## 🔍 Additional Context
+
+<!-- Add any other context about the problem here -->
+
+## 💡 Suggested Solution
+
+<!-- If you have ideas on how to fix this bug, please describe them -->
+
+## 📊 Impact Assessment
+
+- [ ] Critical - Card doesn't work at all
+- [ ] High - Major functionality broken
+- [ ] Medium - Minor functionality affected
+- [ ] Low - Cosmetic issue only
+
+## 🏷️ Labels
+
+<!-- The following labels will be automatically applied -->
+- `bug`
+- `needs-triage`

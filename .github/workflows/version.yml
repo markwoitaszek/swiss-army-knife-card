@@ -1,0 +1,75 @@
+name: Automated Versioning
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+    inputs:
+      version_type:
+        description: 'Version bump type'
+        required: true
+        default: 'patch'
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+
+jobs:
+  version:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Configure Git
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+
+      - name: Bump Version
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            VERSION_TYPE="${{ github.event.inputs.version_type }}"
+          else
+            # Auto-detect version type based on commit messages
+            COMMITS=$(git log --oneline --since="$(git describe --tags --abbrev=0 2>/dev/null || echo 'HEAD~10')" HEAD)
+            if echo "$COMMITS" | grep -q "BREAKING CHANGE\|!:"; then
+              VERSION_TYPE="major"
+            elif echo "$COMMITS" | grep -q "feat:"; then
+              VERSION_TYPE="minor"
+            else
+              VERSION_TYPE="patch"
+            fi
+          fi
+
+          echo "VERSION_TYPE=$VERSION_TYPE" >> $GITHUB_ENV
+          npm version $VERSION_TYPE --no-git-tag-version
+
+      - name: Update HACS Version
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          sed -i "s/\"version\": \".*\"/\"version\": \"$VERSION\"/" hacs.json
+
+      - name: Generate Changelog
+        run: |
+          npm run changelog
+
+      - name: Commit Changes
+        run: |
+          git add package.json package-lock.json hacs.json CHANGELOG.md
+          git commit -m "chore: bump version to $(node -p "require('./package.json').version")"
+          git push
+
+      - name: Create Tag
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          git tag -a "v$VERSION" -m "Release version $VERSION"
+          git push origin "v$VERSION"

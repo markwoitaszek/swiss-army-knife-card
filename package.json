@@ -1,35 +1,93 @@
 {
-  "name": "swiss-army-knife",
-  "version": "2.5.1-dev.2",
-  "description": "Swiss Army Knife for Lovelace",
-  "main": "src/main.js",
+  "name": "swiss-army-knife-card",
+  "version": "3.0.0-dev.1",
+  "description": "Swiss Army Knife for Lovelace - Modern TypeScript implementation",
+  "main": "dist/swiss-army-knife-card.js",
   "type": "module",
   "scripts": {
-    "build": "npm run lint && npm run rollup",
-    "rollup": "rollup -c",
-    "lint": "eslint src/*.js",
-    "watch": "rollup -c --watch",
-    "postversion": "npm run build",
-    "audit-fix": "npx yarn-audit-fix",
-    "serve": "rollup -c serve.config.js --watch"
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "type-check": "tsc --noEmit",
+    "lint": "eslint src --ext .ts,.js",
+    "lint:fix": "eslint src --ext .ts,.js --fix",
+    "format": "prettier --write \"src/**/*.{ts,js,json,md}\"",
+    "format:check": "prettier --check \"src/**/*.{ts,js,json,md}\"",
+    "test": "vitest",
+    "test:watch": "vitest --watch",
+    "test:coverage": "vitest --coverage",
+    "test:e2e": "playwright test",
+    "test:visual": "playwright test --grep visual",
+    "test:performance": "playwright test --grep performance",
+    "analyze": "vite-bundle-analyzer dist/swiss-army-knife-card.js",
+    "clean": "rm -rf dist coverage test-results",
+    "docs": "typedoc src --out docs/api",
+    "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s",
+    "release": "npm run build && npm run test && npm run changelog",
+    "legacy:build": "rollup -c",
+    "legacy:watch": "rollup -c --watch",
+    "legacy:serve": "rollup -c serve.config.js --watch"
+  },
+  "keywords": [
+    "home-assistant",
+    "lovelace",
+    "custom-card",
+    "typescript",
+    "lit"
+  ],
+  "author": "AmoebeLabs",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/AmoebeLabs/swiss-army-knife-card.git"
+  },
+  "bugs": {
+    "url": "https://github.com/AmoebeLabs/swiss-army-knife-card/issues"
+  },
+  "homepage": "https://github.com/AmoebeLabs/swiss-army-knife-card#readme",
+  "dependencies": {
+    "lit": "^3.0.0",
+    "home-assistant-js-websocket": "^8.0.0",
+    "@formatjs/intl-utils": "^3.8.4",
+    "@mdi/js": "^7.2.96",
+    "@tanem/svg-injector": "^10.1.53",
+    "memoize-one": "^6.0.0"
   },
   "devDependencies": {
+    "typescript": "^5.0.0",
+    "vite": "^5.0.0",
+    "vite-plugin-dts": "^3.0.0",
+    "vite-bundle-analyzer": "^0.7.0",
+    "vitest": "^1.0.0",
+    "@vitest/ui": "^1.0.0",
+    "@vitest/coverage-v8": "^1.0.0",
+    "@testing-library/lit": "^0.0.1",
+    "@testing-library/jest-dom": "^6.0.0",
+    "jsdom": "^23.0.0",
+    "playwright": "^1.40.0",
+    "@playwright/test": "^1.40.0",
+    "eslint": "^8.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-prettier": "^5.0.0",
+    "prettier": "^3.0.0",
+    "conventional-changelog-cli": "^2.2.0",
+    "typedoc": "^0.25.0",
     "@rollup/plugin-commonjs": "^24.1.0",
     "@rollup/plugin-json": "^6.0.0",
     "@rollup/plugin-node-resolve": "^15.0.2",
     "@rollup/plugin-terser": "^0.4.1",
-    "eslint": "^8.39.0",
-    "eslint-config-airbnb-base": "^15.0.0",
     "rollup": "^3.21.4",
     "rollup-plugin-serve": "^2.0.2"
   },
-  "dependencies": {
-    "@formatjs/intl-utils": "^3.8.4",
-    "@mdi/js": "^7.2.96",
-    "@tanem/svg-injector": "^10.1.53",
-    "home-assistant-js-websocket": "^5.7.0",
-    "lit-element": "^2.5.1",
-    "lit-html": "^1.4.1",
-    "memoize-one": "^6.0.0"
-  }
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ]
 }
