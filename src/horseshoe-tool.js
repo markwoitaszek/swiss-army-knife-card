@@ -1,6 +1,24 @@
-import { svg } from 'lit-element';
+import { svg } from 'lit';
 import { SVG_VIEW_BOX } from './const';
 import Merge from './merge';
+
+// Simple replacements for Lit 3.x compatibility
+function classMap(classes) {
+  if (!classes) return '';
+  return Object.entries(classes)
+    .filter(([_, value]) => value)
+    .map(([key, _]) => key)
+    .join(' ');
+}
+
+function styleMap(styles) {
+  if (!styles) return '';
+  return Object.entries(styles)
+    .filter(([_, value]) => value != null && value !== '')
+    .map(([key, value]) => `${key}: ${value}`)
+    .join('; ');
+}
+
 import Utils from './utils';
 import BaseTool from './base-tool';
 import Colors from './colors';

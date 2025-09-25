@@ -7,16 +7,16 @@ export default defineConfig({
     dts({
       insertTypesEntry: true,
       include: ['src/**/*'],
-      exclude: ['src/**/*.test.ts', 'src/**/*.spec.ts']
+      exclude: ['src/**/*.test.ts', 'src/**/*.spec.ts'],
     }),
   ],
 
   build: {
     lib: {
-      entry: resolve(__dirname, 'src/main.ts'),
+        entry: resolve(__dirname, 'src/main.ts'),
       name: 'SwissArmyKnifeCard',
       fileName: 'swiss-army-knife-card',
-      formats: ['es']
+      formats: ['es'],
     },
 
     rollupOptions: {
@@ -24,9 +24,9 @@ export default defineConfig({
       output: {
         globals: {
           lit: 'Lit',
-          'home-assistant-js-websocket': 'HomeAssistantWebSocket'
-        }
-      }
+          'home-assistant-js-websocket': 'HomeAssistantWebSocket',
+        },
+      },
     },
 
     // Performance optimizations
@@ -34,26 +34,26 @@ export default defineConfig({
     terserOptions: {
       compress: {
         drop_console: true,
-        drop_debugger: true
-      }
+        drop_debugger: true,
+      },
     },
 
     sourcemap: true,
-    target: 'es2022'
+    target: 'es2022',
   },
 
   server: {
     port: 3000,
     open: true,
-    cors: true
+    cors: true,
   },
 
   preview: {
     port: 4173,
-    open: true
+    open: true,
   },
 
   define: {
-    'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development')
-  }
+    'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development'),
+  },
 });
