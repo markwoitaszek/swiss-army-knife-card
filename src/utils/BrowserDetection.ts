@@ -26,7 +26,7 @@ export class BrowserDetection {
 
   // Safari detection
   private detectSafari(): boolean {
-    return !!window.navigator.userAgent.match(/Version\/[\d\.]+.*Safari/);
+    return !!window.navigator.userAgent.match(/Version\/[\d.]+.*Safari/);
   }
 
   private detectSafari14(): boolean {
