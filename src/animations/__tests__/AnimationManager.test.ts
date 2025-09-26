@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { AnimationManager, ANIMATION_PRESETS } from '../AnimationManager.js';
 import type { AnimationConfig, StateAnimationConfig } from '../AnimationManager.js';
+import { ANIMATION_PRESETS, AnimationManager } from '../AnimationManager.js';
 
 // Mock Web Animations API
 global.Element.prototype.animate = vi.fn().mockImplementation(() => ({
