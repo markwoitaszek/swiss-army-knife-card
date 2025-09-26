@@ -10,6 +10,8 @@ import { EntityStateTool } from './entity/EntityStateTool.js';
 import { CircleTool } from './shapes/CircleTool.js';
 import { RectangleTool } from './shapes/RectangleTool.js';
 import { TextTool } from './text/TextTool.js';
+import { SparklineBarChartTool } from './charts/SparklineBarChartTool.js';
+import { GaugeTool } from './charts/GaugeTool.js';
 
 // Import legacy JavaScript tools (temporarily for compatibility)
 import BadgeTool from '../badge-tool.js';
@@ -24,7 +26,7 @@ import RangeSliderTool from '../range-slider-tool.js';
 import RectangleToolEx from '../rectangle-ex-tool.js';
 import RegPolyTool from '../regular-polygon-tool.js';
 import SegmentedArcTool from '../segmented-arc-tool.js';
-import SparklineBarChartTool from '../sparkline-barchart-tool.js';
+import LegacySparklineBarChartTool from '../sparkline-barchart-tool.js';
 import SparklineGraphTool from '../sparkline-graph-tool.js';
 import SwitchTool from '../switch-tool.js';
 import UserSvgTool from '../user-svg-tool.js';
@@ -48,7 +50,9 @@ export type ToolType =
   | 'circslider'
   | 'switch'
   | 'sparkline'
+  | 'sparkline_barchart'
   | 'bar'
+  | 'gauge'
   | 'usersvg';
 
 export type ToolConstructor = new (...args: any[]) => BaseTool;
@@ -80,6 +84,8 @@ export class ToolRegistry {
     this.modernTools.set('rectangle', RectangleTool);
     this.modernTools.set('text', TextTool);
     this.modernTools.set('entity_state', EntityStateTool);
+    this.modernTools.set('sparkline_barchart', SparklineBarChartTool);
+    this.modernTools.set('gauge', GaugeTool);
   }
 
   private registerLegacyTools(): void {
@@ -96,7 +102,7 @@ export class ToolRegistry {
     this.legacyTools.set('rectex', RectangleToolEx);
     this.legacyTools.set('regpoly', RegPolyTool);
     this.legacyTools.set('segarc', SegmentedArcTool);
-    this.legacyTools.set('bar', SparklineBarChartTool);
+    this.legacyTools.set('bar', LegacySparklineBarChartTool);
     this.legacyTools.set('sparkline', SparklineGraphTool);
     this.legacyTools.set('switch', SwitchTool);
     this.legacyTools.set('usersvg', UserSvgTool);
