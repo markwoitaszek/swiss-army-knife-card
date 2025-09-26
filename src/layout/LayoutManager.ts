@@ -5,7 +5,7 @@
 
 import type { TemplateResult } from 'lit';
 import { html } from 'lit';
-import type { Position, ToolsetConfig } from '../types/SakTypes.js';
+import type { Position } from '../types/SakTypes.js';
 import { styleMap } from '../utils/StyleUtils.js';
 
 export interface GridLayoutConfig {

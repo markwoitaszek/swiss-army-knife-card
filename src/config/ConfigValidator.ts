@@ -3,8 +3,8 @@
  * Provides comprehensive validation for SAK card configurations
  */
 
-import type { SakConfig, ToolConfig, ToolsetConfig } from '../types/SakTypes.js';
 import { toolRegistry } from '../tools/ToolRegistry.js';
+import type { SakConfig, ToolConfig, ToolsetConfig } from '../types/SakTypes.js';
 
 export interface ValidationResult {
   isValid: boolean;
