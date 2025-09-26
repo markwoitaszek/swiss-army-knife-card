@@ -430,7 +430,7 @@ export class RangeSliderTool extends BaseTool {
         rx="${track.radius}"
         style="${styleMap(trackStyles)}"
       />
-      
+
       <!-- Active track (filled portion) -->
       ${
         this.config.show?.active !== false
@@ -447,7 +447,7 @@ export class RangeSliderTool extends BaseTool {
       `
           : ''
       }
-      
+
       <!-- Thumb -->
       <circle
         class="sak-slider__thumb"
@@ -456,7 +456,7 @@ export class RangeSliderTool extends BaseTool {
         r="${thumb.radius}"
         style="${styleMap(thumbStyles)}"
       />
-      
+
       <!-- Value label -->
       ${
         this.config.show?.label !== false

@@ -207,7 +207,7 @@ describe('RangeSliderTool', () => {
   it('should show active track when configured', async () => {
     element.config.show!.active = true;
     await element.updateComplete;
-    
+
     const active = element.shadowRoot?.querySelector('.sak-slider__active');
     expect(active).toBeTruthy();
   });
