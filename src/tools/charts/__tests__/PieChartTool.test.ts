@@ -80,7 +80,7 @@ describe('PieChartTool', () => {
   it('should show labels when configured', async () => {
     element.config.labels!.show = true;
     await element.updateComplete;
-    
+
     const labels = element.shadowRoot?.querySelectorAll('.sak-pie-chart__label');
     expect(labels?.length).toBe(3);
   });

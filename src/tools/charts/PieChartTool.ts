@@ -247,7 +247,7 @@ export class PieChartTool extends BaseTool {
       const innerEnd = this.polarToCartesian(centerX, centerY, innerRadius, startAngle);
 
       return `
-        M ${start.x} ${start.y} 
+        M ${start.x} ${start.y}
         A ${radius} ${radius} 0 ${largeArcFlag} 0 ${end.x} ${end.y}
         L ${innerEnd.x} ${innerEnd.y}
         A ${innerRadius} ${innerRadius} 0 ${largeArcFlag} 1 ${innerStart.x} ${innerStart.y}
