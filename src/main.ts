@@ -42,7 +42,7 @@ function styleMap(styles: Record<string, string | number | undefined> | null | u
   if (!styles) return '';
   return (
     Object.entries(styles)
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      // eslint-disable-next-line no-unused-vars
       .filter(([_, value]) => value != null && value !== '')
       .map(([key, value]) => `${key}: ${value}`)
       .join('; ')
@@ -154,7 +154,7 @@ class SwissArmyKnifeCard extends LitElement {
   private counter: number = 0;
   private _hass: any;
   private config: SakConfig | null = null;
-  private interval: number | null = null;
+  private interval: ReturnType<typeof setInterval> | null = null;
   private _attributes: any;
   private stateObj: any;
   private coords: any;
@@ -1760,7 +1760,7 @@ class SwissArmyKnifeCard extends LitElement {
                 break;
               case 'color_temp':
                 if (entity.attributes.color_temp_kelvin) {
-                  const rgb = temperature2rgb(entity.attributes.color_temp_kelvin);
+                  let rgb = temperature2rgb(entity.attributes.color_temp_kelvin);
 
                   const hsvColor = rgb2hsv(rgb);
                   // Modify the real rgb color for better contrast
