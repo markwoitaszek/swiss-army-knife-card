@@ -225,7 +225,7 @@ export class ConfigValidator {
         break;
 
       case 'switch':
-      case 'range_slider':
+      case 'slider':
         if (tool.entity_index === undefined) {
           this.addError(
             `${path}.entity_index`,

@@ -72,7 +72,7 @@ export class RangeSliderTool extends BaseTool {
 
   @state() private currentValue = 0;
   @state() private isDragging = false;
-  @state() private isActive = false;
+  @state() protected isActiveSlider = false;
 
   private startDragValue = 0;
   private trackElement?: SVGElement;
@@ -250,7 +250,7 @@ export class RangeSliderTool extends BaseTool {
 
   private startDrag(clientX: number, clientY: number): void {
     this.isDragging = true;
-    this.isActive = true;
+    this.isActiveSlider = true;
     this.startDragValue = this.currentValue;
 
     // Update value based on initial click position
@@ -264,7 +264,7 @@ export class RangeSliderTool extends BaseTool {
   private endDrag(): void {
     if (this.isDragging) {
       this.isDragging = false;
-      this.isActive = false;
+      this.isActiveSlider = false;
 
       // Send value to Home Assistant
       this.sendValueToHA();
@@ -524,7 +524,7 @@ export class RangeSliderTool extends BaseTool {
     return svg`
       <g
         id="range-slider-${this.toolId || 'unknown'}"
-        class="sak-slider ${this.isDragging ? 'sak-slider--dragging' : ''} ${this.isActive ? 'sak-slider--active' : ''}"
+        class="sak-slider ${this.isDragging ? 'sak-slider--dragging' : ''} ${this.isActiveSlider ? 'sak-slider--active' : ''}"
         style="${styleMap(toolStyles)}"
         @mouseenter=${this.handleMouseEnter}
         @mouseleave=${this.handleMouseLeave}

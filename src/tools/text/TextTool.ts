@@ -45,7 +45,7 @@ export class TextTool extends BaseTool {
   // Additional properties
   protected toolId = Math.random().toString(36).substr(2, 9);
   protected dev = { debug: false };
-  protected textContent = '';
+  protected textContentValue = '';
 
   static get defaultConfig(): Partial<TextToolConfig> {
     return {
@@ -140,7 +140,7 @@ export class TextTool extends BaseTool {
 
   private updateTextContent(): void {
     // Process text content with template support
-    this.textContent = this.processTextTemplate(this.config.text || '');
+    this.textContentValue = this.processTextTemplate(this.config.text || '');
   }
 
   private processTextTemplate(text: string): string {
@@ -183,7 +183,7 @@ export class TextTool extends BaseTool {
           y="${this.config.position.cy}%"
           style="${styleMap(textStyles)}"
         >
-          ${this.textContent}
+          ${this.textContentValue}
         </tspan>
       </text>
     `;
