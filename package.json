@@ -2,7 +2,7 @@
   "name": "swiss-army-knife-card",
   "version": "3.0.0-dev.1",
   "description": "Swiss Army Knife for Lovelace - Modern TypeScript implementation",
-  "main": "dist/swiss-army-knife-card.js",
+  "main": "dist/swiss-army-knife-card.es.js",
   "type": "module",
   "scripts": {
     "dev": "vite --mode development",

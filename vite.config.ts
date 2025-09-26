@@ -30,7 +30,7 @@ export default defineConfig(({ mode, command }) => {
       lib: {
         entry: resolve(__dirname, 'src/main.ts'),
         name: 'SwissArmyKnifeCard',
-        fileName: format => `swiss-army-knife-card.${format}.js`,
+        fileName: format => format === 'es' ? 'swiss-army-knife-card.js' : `swiss-army-knife-card.${format}.js`,
         formats: ['es', 'umd'],
       },
 
