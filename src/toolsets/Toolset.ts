@@ -85,25 +85,40 @@ export class Toolset {
     });
   }
 
-  // eslint-disable-next-line no-unused-vars
   private createTool(toolConfig: any): BaseTool | null {
-    // This would create the appropriate tool based on type
-    // For now, we'll return null as the tool creation logic
-    // would need to be implemented based on the existing tool classes
+    try {
+      // Use the modern ToolRegistry to create tools
+      const { toolRegistry } = require('../tools/ToolRegistry.js');
 
-    // Tool creation would look something like:
-    // switch (toolConfig.type) {
-    //   case 'circle':
-    //     return new CircleTool(toolConfig, this.hass);
-    //   case 'rectangle':
-    //     return new RectangleTool(toolConfig, this.hass);
-    //   // ... other tool types
-    //   default:
-    //     console.warn('Unknown tool type:', toolConfig.type);
-    //     return null;
-    // }
+      if (!toolRegistry.isToolSupported(toolConfig.type)) {
+        console.warn('Unknown tool type:', toolConfig.type);
+        return null;
+      }
 
-    return null;
+      // Create tool using registry (handles both modern and legacy tools)
+      const tool = toolRegistry.createTool(toolConfig.type, this, toolConfig, {
+        cx: 0,
+        cy: 0,
+        scale: 1,
+      });
+
+      // Set up tool properties for modern tools
+      if (tool && toolRegistry.isModernTool(toolConfig.type)) {
+        tool.config = toolConfig;
+        tool.entityIndex = toolConfig.entity_index || 0;
+        tool.hass = this.hass;
+
+        // Set entity state if available
+        if (this.entities && toolConfig.entity_index !== undefined) {
+          tool.entityState = this.entities[toolConfig.entity_index];
+        }
+      }
+
+      return tool;
+    } catch (error) {
+      console.error('Error creating tool:', toolConfig.type, error);
+      return null;
+    }
   }
 
   private getTransform(): string {
