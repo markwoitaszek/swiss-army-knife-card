@@ -176,7 +176,7 @@ export class ThemeCSSGenerator {
         justify-content: center;
         position: relative;
       }
-      
+
       .theme-preview-${theme.name}::before {
         content: '';
         position: absolute;

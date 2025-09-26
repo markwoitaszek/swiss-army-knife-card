@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { AdvancedThemeManager, DEFAULT_THEMES } from '../AdvancedThemeManager.js';
 import type { ThemeDefinition } from '../AdvancedThemeManager.js';
+import { AdvancedThemeManager, DEFAULT_THEMES } from '../AdvancedThemeManager.js';
 
 // Mock window.matchMedia
 Object.defineProperty(window, 'matchMedia', {
