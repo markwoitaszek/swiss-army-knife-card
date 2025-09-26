@@ -2,7 +2,7 @@
   "name": "Swiss Army Knife custom card",
   "description": "A highly customizable and flexible Lovelace card for Home Assistant",
   "version": "3.0.0-dev.1",
-  "category": "plugin",
+  "category": "lovelace",
   "render_readme": true,
   "content_in_root": false,
   "resources": [
