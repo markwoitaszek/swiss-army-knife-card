@@ -8,20 +8,26 @@ export function styleMap(
 ): string {
   if (!styles) return '';
 
-  return Object.entries(styles)
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    .filter(([_, value]) => value != null && value !== '')
-    .map(([key, value]) => `${key}: ${value}`)
-    .join('; ');
+  return (
+    Object.entries(styles)
+      // eslint-disable-next-line no-unused-vars
+      .filter(([_, value]) => value != null && value !== '')
+      .map(([key, value]) => `${key}: ${value}`)
+      .join('; ')
+  );
 }
 
 export function classMap(classes: Record<string, boolean | undefined> | null | undefined): string {
   if (!classes) return '';
 
-  return Object.entries(classes)
-    .filter(([_, value]) => value === true)
-    .map(([key, _]) => key)
-    .join(' ');
+  return (
+    Object.entries(classes)
+      // eslint-disable-next-line no-unused-vars
+      .filter(([_, value]) => value === true)
+      // eslint-disable-next-line no-unused-vars
+      .map(([key, _]) => key)
+      .join(' ')
+  );
 }
 
 export function generateCSSVariables(variables: Record<string, string>): string {

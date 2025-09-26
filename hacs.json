@@ -1,5 +1,24 @@
 {
+  "name": "Swiss Army Knife Custom Card",
   "content_in_root": false,
-  "name": "Swiss Army Knife custom card",
-  "render_readme": true
+  "render_readme": true,
+  "filename": "swiss-army-knife-card.js",
+  "country": ["US", "NL", "GB", "DE", "FR", "ES", "IT", "CA", "AU"],
+  "homeassistant": "2022.11.0",
+  "persistent_directory": false,
+  "iot_class": "Local Push",
+  "zip_release": false,
+  "hide_default_branch": false,
+  "manifest": {
+    "name": "Swiss Army Knife Custom Card",
+    "description": "A versatile custom card for Home Assistant with 17+ SVG-based tools for creating custom visualizations",
+    "version": "3.0.0-dev.1",
+    "documentation": "https://swiss-army-knife-card-manual.amoebelabs.com/",
+    "issue_tracker": "https://github.com/AmoebeLabs/swiss-army-knife-card/issues",
+    "codeowners": ["@AmoebeLabs"],
+    "requirements": [],
+    "dependencies": [],
+    "after_dependencies": [],
+    "domain": "lovelace"
+  }
 }

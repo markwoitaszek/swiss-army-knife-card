@@ -41,7 +41,7 @@ export class EntityService {
     let hasChanges = false;
 
     // Update entity states
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    // eslint-disable-next-line no-unused-vars
     config.entities.forEach((entityConfig, index) => {
       const entityState = hass.states[entityConfig.entity];
       const previousState = this.entities.get(entityConfig.entity);

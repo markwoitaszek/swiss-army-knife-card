@@ -82,25 +82,25 @@ export abstract class BaseTool extends LitElement {
     }
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  // eslint-disable-next-line no-unused-vars
   protected handleMouseEnter(event: Event): void {
     this.isHovered = true;
     this.requestUpdate();
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  // eslint-disable-next-line no-unused-vars
   protected handleMouseLeave(event: Event): void {
     this.isHovered = false;
     this.requestUpdate();
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  // eslint-disable-next-line no-unused-vars
   protected handleTouchStart(event: Event): void {
     // Handle touch start for mobile devices
     this.isHovered = true;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  // eslint-disable-next-line no-unused-vars
   protected handleTouchEnd(event: Event): void {
     // Handle touch end for mobile devices
     this.isHovered = false;
