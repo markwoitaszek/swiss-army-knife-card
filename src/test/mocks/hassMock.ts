@@ -1,3 +1,5 @@
+import { vi } from 'vitest';
+
 // Mock Home Assistant interface
 interface HomeAssistant {
   states: Record<string, any>;
@@ -9,8 +11,40 @@ interface HomeAssistant {
   connection: any;
 }
 
-export const mockHass: Partial<HomeAssistant> = {
+export const mockHass = (): Partial<HomeAssistant> => ({
   states: {
+    'sensor.test_temperature': {
+      entity_id: 'sensor.test_temperature',
+      state: '21.5',
+      attributes: {
+        unit_of_measurement: '°C',
+        friendly_name: 'Test Temperature',
+        icon: 'mdi:thermometer',
+      },
+      last_changed: new Date().toISOString(),
+      last_updated: new Date().toISOString(),
+      context: {
+        id: 'test-context',
+        user_id: 'test-user',
+        parent_id: null,
+      },
+    },
+    'light.test_light': {
+      entity_id: 'light.test_light',
+      state: 'on',
+      attributes: {
+        friendly_name: 'Test Light',
+        icon: 'mdi:lightbulb',
+        brightness: 255,
+      },
+      last_changed: new Date().toISOString(),
+      last_updated: new Date().toISOString(),
+      context: {
+        id: 'test-context',
+        user_id: 'test-user',
+        parent_id: null,
+      },
+    },
     'sensor.temperature': {
       entity_id: 'sensor.temperature',
       state: '20',
@@ -95,4 +129,4 @@ export const mockHass: Partial<HomeAssistant> = {
     subscribeEvents: vi.fn(),
     subscribeMessage: vi.fn(),
   } as any,
-};
+});

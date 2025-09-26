@@ -4,13 +4,13 @@
 var NumberFormat;
 // eslint-disable-next-line func-names
 (function (NumberFormat) {
-    NumberFormat.language = 'language';
-    NumberFormat.system = 'system';
-    NumberFormat.comma_decimal = 'comma_decimal';
-    NumberFormat.decimal_comma = 'decimal_comma';
-    NumberFormat.space_comma = 'space_comma';
-    NumberFormat.none = 'none';
-}(NumberFormat = NumberFormat || (NumberFormat = {})));
+  NumberFormat.language = 'language';
+  NumberFormat.system = 'system';
+  NumberFormat.comma_decimal = 'comma_decimal';
+  NumberFormat.decimal_comma = 'decimal_comma';
+  NumberFormat.space_comma = 'space_comma';
+  NumberFormat.none = 'none';
+})((NumberFormat = NumberFormat || (NumberFormat = {})));
 
 // export const NumberFormat = () => {
 //   NumberFormat.language = 'language';
@@ -25,13 +25,15 @@ var NumberFormat;
  * Returns true if the entity is considered numeric based on the attributes it has
  * @param stateObj The entity state object
  */
-export const isNumericState = (stateObj) => isNumericFromAttributes(stateObj.attributes);
+export const isNumericState = stateObj => isNumericFromAttributes(stateObj.attributes);
 
-export const round = (value, precision = 2) => Math.round(value * 10 ** precision) / 10 ** precision;
+export const round = (value, precision = 2) =>
+  Math.round(value * 10 ** precision) / 10 ** precision;
 
-export const isNumericFromAttributes = (attributes) => !!attributes.unit_of_measurement || !!attributes.state_class;
+export const isNumericFromAttributes = attributes =>
+  !!attributes.unit_of_measurement || !!attributes.state_class;
 
-export const numberFormatToLocale = (localeOptions) => {
+export const numberFormatToLocale = localeOptions => {
   switch (localeOptions.number_format) {
     case NumberFormat.comma_decimal:
       return ['en-US', 'en']; // Use United States with fallback to English formatting 1,234,567.89
@@ -57,37 +59,32 @@ export const formatNumber = (num, localeOptions, options) => {
   const locale = localeOptions ? numberFormatToLocale(localeOptions) : undefined;
 
   // Polyfill for Number.isNaN, which is more reliable than the global isNaN()
-  Number.isNaN = Number.isNaN
-    || function isNaN(input) {
+  Number.isNaN =
+    Number.isNaN ||
+    function isNaN(input) {
       return typeof input === 'number' && isNaN(input);
     };
 
-  if (
-    localeOptions?.number_format !== NumberFormat.none
-    && !Number.isNaN(Number(num))
-    && Intl
-  ) {
+  if (localeOptions?.number_format !== NumberFormat.none && !Number.isNaN(Number(num)) && Intl) {
     try {
-      return new Intl.NumberFormat(
-        locale,
-        getDefaultFormatOptions(num, options),
-      ).format(Number(num));
+      return new Intl.NumberFormat(locale, getDefaultFormatOptions(num, options)).format(
+        Number(num)
+      );
     } catch (err) {
       // Don't fail when using "TEST" language
       // eslint-disable-next-line no-console
       console.error(err);
-      return new Intl.NumberFormat(
-        undefined,
-        getDefaultFormatOptions(num, options),
-      ).format(Number(num));
+      return new Intl.NumberFormat(undefined, getDefaultFormatOptions(num, options)).format(
+        Number(num)
+      );
     }
   }
 
   if (
-    !Number.isNaN(Number(num))
-    && num !== ''
-    && localeOptions?.number_format === NumberFormat.none
-    && Intl
+    !Number.isNaN(Number(num)) &&
+    num !== '' &&
+    localeOptions?.number_format === NumberFormat.none &&
+    Intl
   ) {
     // If NumberFormat is none, use en-US format without grouping.
     return new Intl.NumberFormat(
@@ -95,7 +92,7 @@ export const formatNumber = (num, localeOptions, options) => {
       getDefaultFormatOptions(num, {
         ...options,
         useGrouping: false,
-      }),
+      })
     ).format(Number(num));
   }
 
@@ -121,8 +118,8 @@ export const getNumberFormatOptions = (entityState, entity) => {
     };
   }
   if (
-    Number.isInteger(Number(entityState.attributes?.step))
-    && Number.isInteger(Number(entityState.state))
+    Number.isInteger(Number(entityState.attributes?.step)) &&
+    Number.isInteger(Number(entityState.state))
   ) {
     return { maximumFractionDigits: 0 };
   }
@@ -146,9 +143,8 @@ export const getDefaultFormatOptions = (num, options) => {
 
   // Keep decimal trailing zeros if they are present in a string numeric value
   if (
-    !options
-    || (options.minimumFractionDigits === undefined
-      && options.maximumFractionDigits === undefined)
+    !options ||
+    (options.minimumFractionDigits === undefined && options.maximumFractionDigits === undefined)
   ) {
     const digits = num.indexOf('.') > -1 ? num.split('.')[1].length : 0;
     defaultOptions.minimumFractionDigits = digits;

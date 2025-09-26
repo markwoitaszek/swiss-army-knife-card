@@ -25,11 +25,11 @@ import BaseTool from './base-tool';
 import Utils from './utils';
 
 /** ****************************************************************************
-  * SparklineBarChartTool class
-  *
-  * Summary.
-  *
-  */
+ * SparklineBarChartTool class
+ *
+ * Summary.
+ *
+ */
 export default class SparklineBarChartTool extends BaseTool {
   constructor(argToolset, argConfig, argPos) {
     const DEFAULT_BARCHART_CONFIG = {
@@ -49,20 +49,16 @@ export default class SparklineBarChartTool extends BaseTool {
           'sak-barchart': true,
           hover: true,
         },
-        bar: {
-        },
+        bar: {},
         line: {
           'sak-barchart__line': true,
           hover: true,
         },
       },
       styles: {
-        tool: {
-        },
-        line: {
-        },
-        bar: {
-        },
+        tool: {},
+        line: {},
+        bar: {},
       },
       colorstops: [],
       show: { style: 'fixedcolor' },
@@ -71,10 +67,12 @@ export default class SparklineBarChartTool extends BaseTool {
     super(argToolset, Merge.mergeDeep(DEFAULT_BARCHART_CONFIG, argConfig), argPos);
 
     this.svg.margin = Utils.calculateSvgDimension(this.config.position.margin);
-    const theWidth = (this.config.position.orientation === 'vertical') ? this.svg.width : this.svg.height;
+    const theWidth =
+      this.config.position.orientation === 'vertical' ? this.svg.width : this.svg.height;
 
-    this.svg.barWidth = (theWidth - (((this.config.hours / this.config.barhours) - 1)
-                                  * this.svg.margin)) / (this.config.hours / this.config.barhours);
+    this.svg.barWidth =
+      (theWidth - (this.config.hours / this.config.barhours - 1) * this.svg.margin) /
+      (this.config.hours / this.config.barhours);
     this._data = [];
     this._bars = [];
     this._scale = {};
@@ -87,28 +85,35 @@ export default class SparklineBarChartTool extends BaseTool {
     this.styles.line = {};
     this.stylesBar = {};
 
-    if (this.dev.debug) console.log('SparkleBarChart constructor coords, dimensions', this.coords, this.dimensions, this.svg, this.config);
+    if (this.dev.debug)
+      console.log(
+        'SparkleBarChart constructor coords, dimensions',
+        this.coords,
+        this.dimensions,
+        this.svg,
+        this.config
+      );
   }
 
   /** *****************************************************************************
-    * SparklineBarChartTool::computeMinMax()
-    *
-    * Summary.
-    * Compute min/max values of bars to scale them to the maximum amount.
-    *
-    */
+   * SparklineBarChartTool::computeMinMax()
+   *
+   * Summary.
+   * Compute min/max values of bars to scale them to the maximum amount.
+   *
+   */
   computeMinMax() {
-    let min = this._series[0]; let
-      max = this._series[0];
+    let min = this._series[0];
+    let max = this._series[0];
 
     for (let i = 1, len = this._series.length; i < len; i++) {
       const v = this._series[i];
-      min = (v < min) ? v : min;
-      max = (v > max) ? v : max;
+      min = v < min ? v : min;
+      max = v > max ? v : max;
     }
     this._scale.min = min;
     this._scale.max = max;
-    this._scale.size = (max - min);
+    this._scale.size = max - min;
 
     // 2020.11.05
     // Add 5% to the size of the scale and adjust the minimum value displayed.
@@ -118,14 +123,14 @@ export default class SparklineBarChartTool extends BaseTool {
   }
 
   /** *****************************************************************************
-    * SparklineBarChartTool::set series
-    *
-    * Summary.
-    * Sets the timeseries for the barchart tool. Is an array of states.
-    * If this is historical data, the caller has taken the time to create this.
-    * This tool only displays the result...
-    *
-    */
+   * SparklineBarChartTool::set series
+   *
+   * Summary.
+   * Sets the timeseries for the barchart tool. Is an array of states.
+   * If this is historical data, the caller has taken the time to create this.
+   * This tool only displays the result...
+   *
+   */
   set data(states) {
     this._series = Object.assign(states);
     this.computeBars();
@@ -143,12 +148,12 @@ export default class SparklineBarChartTool extends BaseTool {
   }
 
   /** *****************************************************************************
-    * SparklineBarChartTool::computeBars()
-    *
-    * Summary.
-    * Compute start and end of bars for easy rendering.
-    *
-    */
+   * SparklineBarChartTool::computeBars()
+   *
+   * Summary.
+   * Compute start and end of bars for easy rendering.
+   *
+   */
   computeBars({ _bars } = this) {
     this.computeMinMax();
 
@@ -165,8 +170,12 @@ export default class SparklineBarChartTool extends BaseTool {
       if (this.dev.debug) console.log('bar is vertical');
       this._series.forEach((item, index) => {
         if (!_bars[index]) _bars[index] = {};
-        _bars[index].length = (this._scale.size === 0) ? 0 : ((item - this._scale.min) / (this._scale.size)) * this.svg.height;
-        _bars[index].x1 = this.svg.x + this.svg.barWidth / 2 + ((this.svg.barWidth + this.svg.margin) * index);
+        _bars[index].length =
+          this._scale.size === 0
+            ? 0
+            : ((item - this._scale.min) / this._scale.size) * this.svg.height;
+        _bars[index].x1 =
+          this.svg.x + this.svg.barWidth / 2 + (this.svg.barWidth + this.svg.margin) * index;
         _bars[index].x2 = _bars[index].x1;
         _bars[index].y1 = this.svg.y + this.svg.height;
         _bars[index].y2 = _bars[index].y1 - this._bars[index].length;
@@ -178,23 +187,28 @@ export default class SparklineBarChartTool extends BaseTool {
       this._data.forEach((item, index) => {
         if (!_bars[index]) _bars[index] = {};
         // if (!item || isNaN(item)) item = this._scale.min;
-        _bars[index].length = (this._scale.size === 0) ? 0 : ((item - this._scale.min) / (this._scale.size)) * this.svg.width;
-        _bars[index].y1 = this.svg.y + this.svg.barWidth / 2 + ((this.svg.barWidth + this.svg.margin) * index);
+        _bars[index].length =
+          this._scale.size === 0
+            ? 0
+            : ((item - this._scale.min) / this._scale.size) * this.svg.width;
+        _bars[index].y1 =
+          this.svg.y + this.svg.barWidth / 2 + (this.svg.barWidth + this.svg.margin) * index;
         _bars[index].y2 = _bars[index].y1;
         _bars[index].x1 = this.svg.x;
         _bars[index].x2 = _bars[index].x1 + this._bars[index].length;
         _bars[index].dataLength = this._bars[index].length;
       });
-    } else if (this.dev.debug) console.log('SparklineBarChartTool - unknown barchart orientation (horizontal or vertical)');
+    } else if (this.dev.debug)
+      console.log('SparklineBarChartTool - unknown barchart orientation (horizontal or vertical)');
   }
 
   /** *****************************************************************************
-    * SparklineBarChartTool::_renderBars()
-    *
-    * Summary.
-    * Render all the bars. Number of bars depend on hours and barhours settings.
-    *
-    */
+   * SparklineBarChartTool::_renderBars()
+   *
+   * Summary.
+   * Render all the bars. Number of bars depend on hours and barhours settings.
+   *
+   */
   // _renderBars({ _bars } = this) {
   _renderBars() {
     const svgItems = [];
@@ -208,8 +222,7 @@ export default class SparklineBarChartTool extends BaseTool {
 
       const stroke = this.getColorFromState(this._series[index]);
 
-      if (!this.stylesBar[index])
-        this.stylesBar[index] = { ...this.config.styles.bar };
+      if (!this.stylesBar[index]) this.stylesBar[index] = { ...this.config.styles.bar };
 
       // NOTE @ 2021.10.27
       // Lijkt dat this.classes niet gevuld wordt. geen merge enzo. is dat een bug?
@@ -217,7 +230,7 @@ export default class SparklineBarChartTool extends BaseTool {
       // naar de andere tools...
 
       // Safeguard...
-      if (!(this._bars[index].y2)) console.log('sparklebarchart y2 invalid', this._bars[index]);
+      if (!this._bars[index].y2) console.log('sparklebarchart y2 invalid', this._bars[index]);
       svgItems.push(svg`
           <line id="line-segment-${this.toolId}-${index}" class="${classMap(this.config.classes.line)}"
                     style="${styleMap(this.stylesBar[index])}"
@@ -237,17 +250,17 @@ export default class SparklineBarChartTool extends BaseTool {
   }
 
   /** *****************************************************************************
-    * SparklineBarChartTool::render()
-    *
-    * Summary.
-    * The actual render() function called by the card for each tool.
-    *
-    */
+   * SparklineBarChartTool::render()
+   *
+   * Summary.
+   * The actual render() function called by the card for each tool.
+   *
+   */
   render() {
     return svg`
         <g id="barchart-${this.toolId}"
           class="${classMap(this.classes.tool)}" style="${styleMap(this.styles.tool)}"
-          @click=${(e) => this.handleTapEvent(e, this.config)}>
+          @click=${e => this.handleTapEvent(e, this.config)}>
           ${this._renderBars()}
         </g>
       `;

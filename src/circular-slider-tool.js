@@ -27,11 +27,11 @@ import BaseTool from './base-tool';
 import { angle360, range, round, clamp } from './const';
 
 /** ****************************************************************************
-  * CircularSliderTool::constructor class
-  *
-  * Summary.
-  *
-  */
+ * CircularSliderTool::constructor class
+ *
+ * Summary.
+ *
+ */
 
 export default class CircularSliderTool extends BaseTool {
   constructor(argToolset, argConfig, argPos) {
@@ -95,20 +95,13 @@ export default class CircularSliderTool extends BaseTool {
         },
       },
       styles: {
-        tool: {
-        },
-        active: {
-        },
-        capture: {
-        },
-        track: {
-        },
-        thumb: {
-        },
-        label: {
-        },
-        uom: {
-        },
+        tool: {},
+        active: {},
+        capture: {},
+        track: {},
+        thumb: {},
+        label: {},
+        uom: {},
       },
       scale: {
         min: 0,
@@ -128,26 +121,38 @@ export default class CircularSliderTool extends BaseTool {
     this.arc.size = range(this.config.position.end_angle, this.config.position.start_angle);
     this.arc.clockwise = this.config.position.end_angle > this.config.position.start_angle;
     this.arc.direction = this.arc.clockwise ? 1 : -1;
-    this.arc.pathLength = 2 * this.arc.size / 360 * Math.PI * this.svg.radius;
+    this.arc.pathLength = ((2 * this.arc.size) / 360) * Math.PI * this.svg.radius;
     this.arc.arcLength = 2 * Math.PI * this.svg.radius;
 
     this.arc.startAngle360 = angle360(this.arc.startAngle, this.arc.startAngle, this.arc.endAngle);
     this.arc.endAngle360 = angle360(this.arc.startAngle, this.arc.endAngle, this.arc.endAngle);
 
-    this.arc.startAngleSvgPoint = this.polarToCartesian(this.svg.cx, this.svg.cy, this.svg.radius, this.svg.radius, this.arc.startAngle360);
-    this.arc.endAngleSvgPoint = this.polarToCartesian(this.svg.cx, this.svg.cy, this.svg.radius, this.svg.radius, this.arc.endAngle360);
+    this.arc.startAngleSvgPoint = this.polarToCartesian(
+      this.svg.cx,
+      this.svg.cy,
+      this.svg.radius,
+      this.svg.radius,
+      this.arc.startAngle360
+    );
+    this.arc.endAngleSvgPoint = this.polarToCartesian(
+      this.svg.cx,
+      this.svg.cy,
+      this.svg.radius,
+      this.svg.radius,
+      this.arc.endAngle360
+    );
 
-    this.arc.scaleDasharray = 2 * this.arc.size / 360 * Math.PI * this.svg.radius;
+    this.arc.scaleDasharray = ((2 * this.arc.size) / 360) * Math.PI * this.svg.radius;
     this.arc.dashOffset = this.arc.clockwise ? 0 : -this.arc.scaleDasharray - this.arc.arcLength;
 
     this.arc.currentAngle = this.arc.startAngle;
 
     this.svg.startAngle = this.config.position.start_angle;
     this.svg.endAngle = this.config.position.end_angle;
-    this.svg.diffAngle = (this.config.position.end_angle - this.config.position.start_angle);
+    this.svg.diffAngle = this.config.position.end_angle - this.config.position.start_angle;
 
     // this.svg.pathLength = 2 * 260/360 * Math.PI * this.svg.radius;
-    this.svg.pathLength = 2 * this.arc.size / 360 * Math.PI * this.svg.radius;
+    this.svg.pathLength = ((2 * this.arc.size) / 360) * Math.PI * this.svg.radius;
     this.svg.circleLength = 2 * Math.PI * this.svg.radius;
 
     this.svg.label = {};
@@ -166,8 +171,14 @@ export default class CircularSliderTool extends BaseTool {
         break;
 
       default:
-        console.error('CircularSliderTool - constructor: invalid label placement [none, position, thumb] = ', this.config.position.label.placement);
-        throw Error('CircularSliderTool::constructor - invalid label placement [none, position, thumb] = ', this.config.position.label.placement);
+        console.error(
+          'CircularSliderTool - constructor: invalid label placement [none, position, thumb] = ',
+          this.config.position.label.placement
+        );
+        throw Error(
+          'CircularSliderTool::constructor - invalid label placement [none, position, thumb] = ',
+          this.config.position.label.placement
+        );
     }
 
     this.svg.track = {};
@@ -185,8 +196,12 @@ export default class CircularSliderTool extends BaseTool {
 
     // This should be a moving capture element, larger than the thumb!!
     this.svg.capture = {};
-    this.svg.capture.width = Utils.calculateSvgDimension(Math.max(this.config.position.capture.width, this.config.position.thumb.width * 1.2));
-    this.svg.capture.height = Utils.calculateSvgDimension(Math.max(this.config.position.capture.height, this.config.position.thumb.height * 1.2));
+    this.svg.capture.width = Utils.calculateSvgDimension(
+      Math.max(this.config.position.capture.width, this.config.position.thumb.width * 1.2)
+    );
+    this.svg.capture.height = Utils.calculateSvgDimension(
+      Math.max(this.config.position.capture.height, this.config.position.thumb.height * 1.2)
+    );
     this.svg.capture.radius = Utils.calculateSvgDimension(this.config.position.capture.radius);
     this.svg.capture.x1 = this.svg.cx - this.svg.capture.width / 2;
     this.svg.capture.y1 = this.svg.cy - this.svg.capture.height / 2;
@@ -194,7 +209,9 @@ export default class CircularSliderTool extends BaseTool {
     // The CircularSliderTool is rotated around its svg base point. This is NOT the center of the circle!
     // Adjust x and y positions within the svg viewport to re-center the circle after rotating
     this.svg.rotate = {};
-    this.svg.rotate.degrees = this.arc.clockwise ? (-90 + this.arc.startAngle) : (this.arc.endAngle360 - 90);
+    this.svg.rotate.degrees = this.arc.clockwise
+      ? -90 + this.arc.startAngle
+      : this.arc.endAngle360 - 90;
     this.svg.rotate.cx = this.svg.cx;
     this.svg.rotate.cy = this.svg.cy;
 
@@ -219,7 +236,8 @@ export default class CircularSliderTool extends BaseTool {
     // this.svg.scale.min = myScale.min;
     // this.svg.scale.max = myScale.max;
 
-    this.svg.scale.center = Math.abs(this.svg.scale.max - this.svg.scale.min) / 2 + this.svg.scale.min;
+    this.svg.scale.center =
+      Math.abs(this.svg.scale.max - this.svg.scale.min) / 2 + this.svg.scale.min;
     this.svg.scale.svgPointMin = this.sliderValueToPoint(this.svg.scale.min);
     this.svg.scale.svgPointMax = this.sliderValueToPoint(this.svg.scale.max);
     this.svg.scale.svgPointCenter = this.sliderValueToPoint(this.svg.scale.center);
@@ -243,7 +261,7 @@ export default class CircularSliderTool extends BaseTool {
   // eslint-disable-next-line no-unused-vars
   pointToAngle360(point, center, isDrag) {
     const radian = Math.atan2(point.y - center.y, center.x - point.x);
-    let angle = (-radian / (Math.PI / 180));
+    let angle = -radian / (Math.PI / 180);
     // the angle value between -180 to 180.. so convert to a 360 angle
     angle += -90;
 
@@ -261,19 +279,19 @@ export default class CircularSliderTool extends BaseTool {
   isAngle360InBetween(argAngle) {
     let inBetween;
     if (this.arc.clockwise) {
-      inBetween = ((argAngle >= this.arc.startAngle360) && (argAngle <= this.arc.endAngle360));
+      inBetween = argAngle >= this.arc.startAngle360 && argAngle <= this.arc.endAngle360;
     } else {
-      inBetween = ((argAngle <= this.arc.startAngle360) && (argAngle >= this.arc.endAngle360));
+      inBetween = argAngle <= this.arc.startAngle360 && argAngle >= this.arc.endAngle360;
     }
     return !!inBetween;
   }
 
   polarToCartesian(centerX, centerY, radiusX, radiusY, angleInDegrees) {
-    const angleInRadians = (angleInDegrees - 90) * Math.PI / 180.0;
+    const angleInRadians = ((angleInDegrees - 90) * Math.PI) / 180.0;
 
     return {
-      x: centerX + (radiusX * Math.cos(angleInRadians)),
-      y: centerY + (radiusY * Math.sin(angleInRadians)),
+      x: centerX + radiusX * Math.cos(angleInRadians),
+      y: centerY + radiusY * Math.sin(angleInRadians),
     };
   }
 
@@ -300,13 +318,13 @@ export default class CircularSliderTool extends BaseTool {
     if (this.arc.clockwise) scalePos = (myAngle - this.arc.startAngle360) / this.arc.size;
     if (!this.arc.clockwise) scalePos = (this.arc.startAngle360 - myAngle) / this.arc.size;
 
-    state = ((this.config.scale.max - this.config.scale.min) * scalePos) + this.config.scale.min;
+    state = (this.config.scale.max - this.config.scale.min) * scalePos + this.config.scale.min;
     state = Math.round(state / this.svg.scale.step) * this.svg.scale.step;
     state = Math.max(Math.min(this.config.scale.max, state), this.config.scale.min);
 
     this.arc.currentAngle = myAngle;
 
-    if ((this.dragging) && (!inBetween)) {
+    if (this.dragging && !inBetween) {
       // Clip to max or min value
       state = round(this.svg.scale.min, state, this.svg.scale.max);
       this.m = this.sliderValueToPoint(state);
@@ -320,13 +338,19 @@ export default class CircularSliderTool extends BaseTool {
     if (isNaN(state)) state = 0;
     let angle;
     if (this.arc.clockwise) {
-      angle = (this.arc.size * state) + this.arc.startAngle360;
+      angle = this.arc.size * state + this.arc.startAngle360;
     } else {
-      angle = (this.arc.size * (1 - state)) + this.arc.endAngle360;
+      angle = this.arc.size * (1 - state) + this.arc.endAngle360;
     }
 
     if (angle < 0) angle += 360;
-    const svgPoint = this.polarToCartesian(this.svg.cx, this.svg.cy, this.svg.radius, this.svg.radius, angle);
+    const svgPoint = this.polarToCartesian(
+      this.svg.cx,
+      this.svg.cy,
+      this.svg.radius,
+      this.svg.radius,
+      angle
+    );
 
     this.arc.currentAngle = angle;
 
@@ -380,10 +404,11 @@ export default class CircularSliderTool extends BaseTool {
   }
 
   updateLabel(m) {
-    if (this.dev.debug) console.log('SLIDER - updateLabel start', m, this.config.position.orientation);
+    if (this.dev.debug)
+      console.log('SLIDER - updateLabel start', m, this.config.position.orientation);
 
     // const dec = (this._card.config.entities[this.config.entity_index].decimals || 0);
-    const dec = (this._card.config.entities[this.defaultEntityIndex()].decimals || 0);
+    const dec = this._card.config.entities[this.defaultEntityIndex()].decimals || 0;
 
     const x = 10 ** dec;
     this.labelValue2 = (Math.round(this.pointToSliderValue(m) * x) / x).toFixed(dec);
@@ -394,11 +419,11 @@ export default class CircularSliderTool extends BaseTool {
   }
 
   /*
-  * mouseEventToPoint
-  *
-  * Translate mouse/touch client window coordinates to SVG window coordinates
-  *
-  */
+   * mouseEventToPoint
+   *
+   * Translate mouse/touch client window coordinates to SVG window coordinates
+   *
+   */
   mouseEventToPoint(e) {
     let p = this.elements.svg.createSVGPoint();
     p.x = e.touches ? e.touches[0].clientX : e.clientX;
@@ -420,11 +445,14 @@ export default class CircularSliderTool extends BaseTool {
         this.config,
         this.config.user_actions.tap_action,
         this._card.config.entities[this.defaultEntityIndex()]?.entity,
-        this.labelValue2,
+        this.labelValue2
       );
     }
     if (this.dragging)
-      this.timeOutId = setTimeout(() => this.callDragService(), this.config.user_actions.drag_action.update_interval);
+      this.timeOutId = setTimeout(
+        () => this.callDragService(),
+        this.config.user_actions.drag_action.update_interval
+      );
   }
 
   callTapService() {
@@ -436,7 +464,7 @@ export default class CircularSliderTool extends BaseTool {
       this.config,
       this.config.user_actions?.tap_action,
       this._card.config.entities[this.defaultEntityIndex()]?.entity,
-      this.labelValue2,
+      this.labelValue2
     );
   }
 
@@ -461,10 +489,19 @@ export default class CircularSliderTool extends BaseTool {
     this.elements.thumb = this.elements.svg.querySelector('#thumb');
     this.elements.label = this.elements.svg.querySelector('#label tspan');
 
-    if (this.dev.debug) console.log('circslider - firstUpdated svg = ',
-      this.elements.svg, 'activeTrack=', this.elements.activeTrack,
-      'thumb=', this.elements.thumb, 'label=', this.elements.label, 'text=', this.elements.text,
-    );
+    if (this.dev.debug)
+      console.log(
+        'circslider - firstUpdated svg = ',
+        this.elements.svg,
+        'activeTrack=',
+        this.elements.activeTrack,
+        'thumb=',
+        this.elements.thumb,
+        'label=',
+        this.elements.label,
+        'text=',
+        this.elements.text
+      );
 
     const protectBorderPassing = () => {
       const diffMax = range(this.svg.scale.max, this.labelValue) <= this.rangeMax;
@@ -477,21 +514,21 @@ export default class CircularSliderTool extends BaseTool {
         this.labelValue = this.svg.scale.max;
         this.m = this.sliderValueToPoint(this.labelValue);
         this.rangeMax = this.svg.scale.max / 10;
-        this.rangeMin = range(this.svg.scale.max, this.svg.scale.min + (this.svg.scale.max / 5));
+        this.rangeMin = range(this.svg.scale.max, this.svg.scale.min + this.svg.scale.max / 5);
       } else if (fromMinToMax) {
         this.labelValue = this.svg.scale.min;
         this.m = this.sliderValueToPoint(this.labelValue);
-        this.rangeMax = range(this.svg.scale.min, this.svg.scale.max - (this.svg.scale.max / 5));
+        this.rangeMax = range(this.svg.scale.min, this.svg.scale.max - this.svg.scale.max / 5);
         this.rangeMin = this.svg.scale.max / 10;
       } else {
         this.diffMax = diffMax;
         this.diffMin = diffMin;
-        this.rangeMin = (this.svg.scale.max / 5);
-        this.rangeMax = (this.svg.scale.max / 5);
+        this.rangeMin = this.svg.scale.max / 5;
+        this.rangeMax = this.svg.scale.max / 5;
       }
     };
 
-    const pointerMove = (e) => {
+    const pointerMove = e => {
       e.preventDefault();
 
       if (this.dragging) {
@@ -504,7 +541,7 @@ export default class CircularSliderTool extends BaseTool {
       }
     };
 
-    const pointerDown = (e) => {
+    const pointerDown = e => {
       e.preventDefault();
 
       // User is dragging the thumb of the slider!
@@ -521,9 +558,15 @@ export default class CircularSliderTool extends BaseTool {
 
       // Check for drag_action. If none specified, or update_interval = 0, don't update while dragging...
 
-      if ((this.config.user_actions?.drag_action) && (this.config.user_actions?.drag_action.update_interval)) {
+      if (
+        this.config.user_actions?.drag_action &&
+        this.config.user_actions?.drag_action.update_interval
+      ) {
         if (this.config.user_actions.drag_action.update_interval > 0) {
-          this.timeOutId = setTimeout(() => this.callDragService(), this.config.user_actions.drag_action.update_interval);
+          this.timeOutId = setTimeout(
+            () => this.callDragService(),
+            this.config.user_actions.drag_action.update_interval
+          );
         } else {
           this.timeOutId = null;
         }
@@ -537,7 +580,7 @@ export default class CircularSliderTool extends BaseTool {
       FrameArc.call(this);
     };
 
-    const pointerUp = (e) => {
+    const pointerUp = e => {
       e.preventDefault();
       if (this.dev.debug) console.log('pointerUP');
 
@@ -568,7 +611,7 @@ export default class CircularSliderTool extends BaseTool {
       this.callTapService();
     };
 
-    const mouseWheel = (e) => {
+    const mouseWheel = e => {
       e.preventDefault();
 
       clearTimeout(this.wheelTimeOutId);
@@ -581,14 +624,22 @@ export default class CircularSliderTool extends BaseTool {
         this.callTapService();
       }, 500);
 
-      if ((this.config.user_actions?.drag_action) && (this.config.user_actions?.drag_action.update_interval)) {
+      if (
+        this.config.user_actions?.drag_action &&
+        this.config.user_actions?.drag_action.update_interval
+      ) {
         if (this.config.user_actions.drag_action.update_interval > 0) {
-          this.timeOutId = setTimeout(() => this.callDragService(), this.config.user_actions.drag_action.update_interval);
+          this.timeOutId = setTimeout(
+            () => this.callDragService(),
+            this.config.user_actions.drag_action.update_interval
+          );
         } else {
           this.timeOutId = null;
         }
       }
-      const newValue = +this.labelValue + +((e.altKey ? 10 * this.svg.scale.step : this.svg.scale.step) * Math.sign(e.deltaY));
+      const newValue =
+        +this.labelValue +
+        +((e.altKey ? 10 * this.svg.scale.step : this.svg.scale.step) * Math.sign(e.deltaY));
 
       this.labelValue = clamp(this.svg.scale.min, newValue, this.svg.scale.max);
       this.m = this.sliderValueToPoint(this.labelValue);
@@ -604,13 +655,13 @@ export default class CircularSliderTool extends BaseTool {
     this.elements.svg.addEventListener('wheel', mouseWheel, false);
   }
   /** *****************************************************************************
-  * CircularSliderTool::value()
-  *
-  * Summary.
-  * Sets the value of the CircularSliderTool. Value updated via set hass.
-  * Calculate CircularSliderTool settings & colors depending on config and new value.
-  *
-  */
+   * CircularSliderTool::value()
+   *
+   * Summary.
+   * Sets the value of the CircularSliderTool. Value updated via set hass.
+   * Calculate CircularSliderTool settings & colors depending on config and new value.
+   *
+   */
 
   set value(state) {
     super.value = state;
@@ -641,7 +692,8 @@ export default class CircularSliderTool extends BaseTool {
 
   set values(states) {
     super.values = states;
-    if (!this.dragging) this.labelValue = this._stateValues[this.getIndexInEntityIndexes(this.defaultEntityIndex())];
+    if (!this.dragging)
+      this.labelValue = this._stateValues[this.getIndexInEntityIndexes(this.defaultEntityIndex())];
 
     // Calculate the size of the arc to fill the dasharray with this
     // value. It will fill the CircularSliderTool relative to the state and min/max
@@ -650,14 +702,23 @@ export default class CircularSliderTool extends BaseTool {
     if (!this.dragging) {
       const min = this.config.scale.min || 0;
       const max = this.config.scale.max || 100;
-      let val = Math.min(Utils.calculateValueBetween(min, max, this._stateValues[this.getIndexInEntityIndexes(this.defaultEntityIndex())]), 1);
+      let val = Math.min(
+        Utils.calculateValueBetween(
+          min,
+          max,
+          this._stateValues[this.getIndexInEntityIndexes(this.defaultEntityIndex())]
+        ),
+        1
+      );
 
       // Don't display anything, that is NO track, thumb to start...
       if (isNaN(val)) val = 0;
       const score = val * this.svg.pathLength;
       this.dashArray = `${score} ${this.svg.circleLength}`;
 
-      const thumbPos = this.sliderValueToPoint(this._stateValues[this.getIndexInEntityIndexes(this.defaultEntityIndex())]);
+      const thumbPos = this.sliderValueToPoint(
+        this._stateValues[this.getIndexInEntityIndexes(this.defaultEntityIndex())]
+      );
       this.svg.thumb.x1 = thumbPos.x - this.svg.thumb.width / 2;
       this.svg.thumb.y1 = thumbPos.y - this.svg.thumb.height / 2;
 
@@ -687,7 +748,11 @@ export default class CircularSliderTool extends BaseTool {
 
       this.styles.uom = Merge.mergeDeep(this.config.styles.uom, fsuomStr);
 
-      const uom = this._card._buildUom(this.derivedEntity, this._card.entities[this.defaultEntityIndex()], this._card.config.entities[this.defaultEntityIndex()]);
+      const uom = this._card._buildUom(
+        this.derivedEntity,
+        this._card.entities[this.defaultEntityIndex()],
+        this._card.config.entities[this.defaultEntityIndex()]
+      );
 
       // Check for location of uom. end = next to state, bottom = below state ;-), etc.
       if (this.config.show.uom === 'end') {
@@ -719,18 +784,18 @@ export default class CircularSliderTool extends BaseTool {
   }
 
   /** *****************************************************************************
-  * CircularSliderTool::_renderCircSlider()
-  *
-  * Summary.
-  * Renders the CircularSliderTool
-  *
-  * Description.
-  * The horseshoes are rendered in a viewbox of 200x200 (SVG_VIEW_BOX).
-  * Both are centered with a radius of 45%, ie 200*0.45 = 90.
-  *
-  * The horseshoes are rotated 220 degrees and are 2 * 26/36 * Math.PI * r in size
-  * There you get your value of 408.4070449,180 ;-)
-  */
+   * CircularSliderTool::_renderCircSlider()
+   *
+   * Summary.
+   * Renders the CircularSliderTool
+   *
+   * Description.
+   * The horseshoes are rendered in a viewbox of 200x200 (SVG_VIEW_BOX).
+   * Both are centered with a radius of 45%, ie 200*0.45 = 90.
+   *
+   * The horseshoes are rotated 220 degrees and are 2 * 26/36 * Math.PI * r in size
+   * There you get your value of 408.4070449,180 ;-)
+   */
 
   _renderCircSlider() {
     this.MergeAnimationClassIfChanged();
@@ -742,10 +807,11 @@ export default class CircularSliderTool extends BaseTool {
     // if (this.renderValue === undefined) this.renderValue = 'undefined';
     if (this.dragging) {
       this.renderValue = this.labelValue2;
-    } else if (this.elements?.label) this.elements.label.textContent = (this.renderValue === 'undefined') ? '' : this.renderValue;
+    } else if (this.elements?.label)
+      this.elements.label.textContent = this.renderValue === 'undefined' ? '' : this.renderValue;
 
     function renderLabel(argGroup) {
-      if ((this.config.position.label.placement === 'thumb') && argGroup) {
+      if (this.config.position.label.placement === 'thumb' && argGroup) {
         return svg`
       <text id="label">
         <tspan class="${classMap(this.classes.label)}" x="${this.svg.label.cx}" y="${this.svg.label.cy}" style="${styleMap(this.styles.label)}">
@@ -755,7 +821,7 @@ export default class CircularSliderTool extends BaseTool {
         `;
       }
 
-      if ((this.config.position.label.placement === 'position') && !argGroup) {
+      if (this.config.position.label.placement === 'position' && !argGroup) {
         return svg`
           <text id="label" style="transform-origin:center;transform-box: fill-box;">
             <tspan class="${classMap(this.classes.label)}" data-placement="position" x="${this.svg.label.cx}" y="${this.svg.label.cy}"
@@ -995,12 +1061,12 @@ export default class CircularSliderTool extends BaseTool {
   }
 
   /** *****************************************************************************
-  * CircularSliderTool::render()
-  *
-  * Summary.
-  * The render() function for this object.
-  *
-  */
+   * CircularSliderTool::render()
+   *
+   * Summary.
+   * The render() function for this object.
+   *
+   */
   render() {
     return svg`
       <svg xmlns="http://www.w3.org/2000/svg" id="circslider-${this.toolId}" class="circslider__group-outer" overflow="visible"

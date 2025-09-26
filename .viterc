@@ -1,0 +1,26 @@
+# Vite Configuration
+# Modern build optimizations and settings
+
+# Build performance
+build.cache = true
+build.parallel = true
+build.minify = "terser"
+
+# Development server
+server.hmr = true
+server.cors = true
+
+# Dependencies optimization
+optimizeDeps.include = [
+  "lit",
+  "lit/decorators.js",
+  "home-assistant-js-websocket",
+  "@mdi/js",
+  "@formatjs/intl-utils",
+  "@tanem/svg-injector",
+  "memoize-one"
+]
+
+# TypeScript
+typescript.strict = false
+typescript.skipLibCheck = true

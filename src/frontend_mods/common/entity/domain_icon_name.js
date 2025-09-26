@@ -18,7 +18,7 @@ export const domainIconName = (domain, stateObj, state) => {
     return icon;
   }
   // eslint-disable-next-line
-  console.warn(`Unable to find icon for domain ${domain}`)
+  console.warn(`Unable to find icon for domain ${domain}`);
   return DEFAULT_DOMAIN_ICON_NAME;
 };
 
@@ -56,9 +56,7 @@ export const domainIconWithoutDefaultName = (domain, stateObj, state) => {
       if (stateObj?.attributes.source_type === 'router') {
         return compareState === 'home' ? 'mdi:lan-connect' : 'mdi:lan-cisconnect';
       }
-      if (
-        ['bluetooth', 'bluetooth_le'].includes(stateObj?.attributes.source_type)
-      ) {
+      if (['bluetooth', 'bluetooth_le'].includes(stateObj?.attributes.source_type)) {
         return compareState === 'home' ? 'mdi:bluetooth-connect' : 'mdi:bluetooth';
       }
       return compareState === 'not_home' ? 'mdi:account-arrow-right' : 'mdi:account';
@@ -70,9 +68,7 @@ export const domainIconWithoutDefaultName = (domain, stateObj, state) => {
       return compareState === 'off' ? 'mdi:air-humidifier-off' : 'mdi:air-humidifier';
 
     case 'input_boolean':
-      return compareState === 'on'
-        ? 'mdi:check-circle-outline'
-        : 'mdi:close-circle-outline';
+      return compareState === 'on' ? 'mdi:check-circle-outline' : 'mdi:close-circle-outline';
 
     case 'input_datetime':
       if (!stateObj?.attributes.has_date) {
@@ -173,9 +169,7 @@ export const domainIconWithoutDefaultName = (domain, stateObj, state) => {
     }
 
     case 'sun':
-      return stateObj?.state === 'above_horizon'
-        ? 'mdi:white-balance-sunny'
-        : 'mdi:weather-night';
+      return stateObj?.state === 'above_horizon' ? 'mdi:white-balance-sunny' : 'mdi:weather-night';
 
     case 'switch_as_x':
       return 'mdi:swap-horizontal';

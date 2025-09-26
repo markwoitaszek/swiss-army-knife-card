@@ -34,8 +34,8 @@ import {
   formatDateWeekday,
   formatDateWeekdayDay,
   formatDateWeekdayShort,
- } from './frontend_mods/datetime/format_date';
- import {
+} from './frontend_mods/datetime/format_date';
+import {
   formatTime,
   formatTime24h,
   formatTimeWeekday,
@@ -51,11 +51,11 @@ import {
 import { formatDuration } from './frontend_mods/datetime/duration';
 import { computeDomain } from './frontend_mods/common/entity/compute_domain';
 /** ****************************************************************************
-  * EntityStateTool class
-  *
-  * Summary.
-  *
-  */
+ * EntityStateTool class
+ *
+ * Summary.
+ *
+ */
 
 export default class EntityStateTool extends BaseTool {
   constructor(argToolset, argConfig, argPos) {
@@ -74,12 +74,9 @@ export default class EntityStateTool extends BaseTool {
         },
       },
       styles: {
-        tool: {
-        },
-        state: {
-        },
-        uom: {
-        },
+        tool: {},
+        state: {},
+        uom: {},
       },
     };
     super(argToolset, Merge.mergeDeep(DEFAULT_STATE_CONFIG, argConfig), argPos);
@@ -91,7 +88,14 @@ export default class EntityStateTool extends BaseTool {
     this.styles.tool = {};
     this.styles.state = {};
     this.styles.uom = {};
-    if (this.dev.debug) console.log('EntityStateTool constructor coords, dimensions', this.coords, this.dimensions, this.svg, this.config);
+    if (this.dev.debug)
+      console.log(
+        'EntityStateTool constructor coords, dimensions',
+        this.coords,
+        this.dimensions,
+        this.svg,
+        this.config
+      );
   }
 
   static testTimeDate = false;
@@ -106,10 +110,30 @@ export default class EntityStateTool extends BaseTool {
     let locale = {};
     locale.language = lang;
 
-    if (['relative', 'total',
-         'datetime', 'datetime-short', 'datetime-short_with-year', 'datetime_seconds', 'datetime-numeric',
-         'date', 'date_month', 'date_month_year', 'date-short', 'date-numeric', 'date_weekday', 'date_weekday_day', 'date_weekday-short',
-         'time', 'time-24h', 'time-24h_date-short', 'time_weekday', 'time_seconds'].includes(entityConfig.format)) {
+    if (
+      [
+        'relative',
+        'total',
+        'datetime',
+        'datetime-short',
+        'datetime-short_with-year',
+        'datetime_seconds',
+        'datetime-numeric',
+        'date',
+        'date_month',
+        'date_month_year',
+        'date-short',
+        'date-numeric',
+        'date_weekday',
+        'date_weekday_day',
+        'date_weekday-short',
+        'time',
+        'time-24h',
+        'time-24h_date-short',
+        'time_weekday',
+        'time_seconds',
+      ].includes(entityConfig.format)
+    ) {
       const timestamp = new Date(inState);
       if (!(timestamp instanceof Date) || isNaN(timestamp.getTime())) {
         return inState;
@@ -139,7 +163,10 @@ export default class EntityStateTool extends BaseTool {
         case 'relative':
           // eslint-disable-next-line no-case-declarations
           const diff = selectUnit(timestamp, new Date());
-          retValue = new Intl.RelativeTimeFormat(lang, { numeric: 'auto' }).format(diff.value, diff.unit);
+          retValue = new Intl.RelativeTimeFormat(lang, { numeric: 'auto' }).format(
+            diff.value,
+            diff.unit
+          );
           break;
         case 'total':
         case 'precision':
@@ -201,7 +228,7 @@ export default class EntityStateTool extends BaseTool {
             retValue = formatDateShort(timestamp, locale);
           }
           break;
-          case 'time_weekday':
+        case 'time_weekday':
           retValue = formatTimeWeekday(timestamp, locale);
           break;
         case 'time_seconds':
@@ -232,7 +259,9 @@ export default class EntityStateTool extends BaseTool {
 
     const stateObj = this._card.entities[this.defaultEntityIndex()];
     if (stateObj === undefined) return svg``;
-    if ([undefined, 'undefined'].includes(inState)) { return svg``; }
+    if ([undefined, 'undefined'].includes(inState)) {
+      return svg``;
+    }
     if (inState === undefined) return svg``;
 
     // Need entities, not states to get platform, translation_key, etc.!!!!!
@@ -242,31 +271,35 @@ export default class EntityStateTool extends BaseTool {
     const entityConfig = this._card.config.entities[this.defaultEntityIndex()];
     const domain = computeDomain(this._card.entities[this.defaultEntityIndex()].entity_id);
 
-    const localeTag = this.config.locale_tag ? this.config.locale_tag + inState.toLowerCase() : undefined;
+    const localeTag = this.config.locale_tag
+      ? this.config.locale_tag + inState.toLowerCase()
+      : undefined;
 
     // HACK
-    if ((entityConfig.format !== undefined) && (typeof inState !== 'undefined')) {
-        inState = this.formatStateString(inState, entityConfig);
+    if (entityConfig.format !== undefined && typeof inState !== 'undefined') {
+      inState = this.formatStateString(inState, entityConfig);
     }
 
-    if ((inState) && isNaN(inState)
-     && !entityConfig.secondary_info
+    if (
+      (inState && isNaN(inState) && !entityConfig.secondary_info) ||
       // && !this._card.config.entities[this.defaultEntityIndex()].attribute) {
-      || entityConfig.attribute) {
-      inState = (localeTag && this._card._hass.localize(localeTag))
-        || (entity?.translation_key
-            && this._card._hass.localize(
-            `component.${entity.platform}.entity.${domain}.${entity.translation_key}.state.${inState}`,
-          ))
+      entityConfig.attribute
+    ) {
+      inState =
+        (localeTag && this._card._hass.localize(localeTag)) ||
+        (entity?.translation_key &&
+          this._card._hass.localize(
+            `component.${entity.platform}.entity.${domain}.${entity.translation_key}.state.${inState}`
+          )) ||
         // Return device class translation
-        || (entity2?.attributes?.device_class
-            && this._card._hass.localize(
-            `component.${domain}.entity_component.${entity2.attributes.device_class}.state.${inState}`,
-          ))
+        (entity2?.attributes?.device_class &&
+          this._card._hass.localize(
+            `component.${domain}.entity_component.${entity2.attributes.device_class}.state.${inState}`
+          )) ||
         // Return default translation
-        || this._card._hass.localize(`component.${domain}.entity_component._.state.${inState}`)
+        this._card._hass.localize(`component.${domain}.entity_component._.state.${inState}`) ||
         // We don't know! Return the raw state.
-        || inState;
+        inState;
       inState = this.textEllipsis(inState, this.config?.show?.ellipsis);
     }
     if (['undefined', 'unknown', 'unavailable', '-ua-'].includes(inState)) {
@@ -277,7 +310,8 @@ export default class EntityStateTool extends BaseTool {
       let options = {};
       options = getDefaultFormatOptions(inState, options);
       if (this._card.config.entities[this.defaultEntityIndex()].decimals !== undefined) {
-        options.maximumFractionDigits = this._card.config.entities[this.defaultEntityIndex()].decimals;
+        options.maximumFractionDigits =
+          this._card.config.entities[this.defaultEntityIndex()].decimals;
         options.minimumFractionDigits = options.maximumFractionDigits;
       }
       let renderNumber = formatNumber(inState, this._card._hass.locale, options);
@@ -291,7 +325,7 @@ export default class EntityStateTool extends BaseTool {
   }
 
   _renderUom() {
-    if ((this.config.show.uom === 'none') || (typeof this._stateValue === 'undefined')) {
+    if (this.config.show.uom === 'none' || typeof this._stateValue === 'undefined') {
       return svg``;
     } else {
       this.MergeAnimationClassIfChanged();
@@ -312,7 +346,11 @@ export default class EntityStateTool extends BaseTool {
 
       this.styles.uom = Merge.mergeDeep(this.config.styles.uom, this.styles.uom, fsuomStr);
 
-      const uom = this._card._buildUom(this.derivedEntity, this._card.entities[this.defaultEntityIndex()], this._card.config.entities[this.defaultEntityIndex()]);
+      const uom = this._card._buildUom(
+        this.derivedEntity,
+        this._card.entities[this.defaultEntityIndex()],
+        this._card.config.entities[this.defaultEntityIndex()]
+      );
 
       // Check for location of uom. end = next to state, bottom = below state ;-), etc.
       if (this.config.show.uom === 'end') {
@@ -340,20 +378,21 @@ export default class EntityStateTool extends BaseTool {
   }
 
   // eslint-disable-next-line no-unused-vars
-  firstUpdated(changedProperties) {
-  }
+  firstUpdated(changedProperties) {}
 
   // eslint-disable-next-line no-unused-vars
-  updated(changedProperties) {
-  }
+  updated(changedProperties) {}
 
   render() {
     // eslint-disable-next-line no-constant-condition
-    if (true || (computeDomain(this._card.entities[this.defaultEntityIndex()].entity_id) === 'sensor')) {
+    if (
+      true ||
+      computeDomain(this._card.entities[this.defaultEntityIndex()].entity_id) === 'sensor'
+    ) {
       return svg`
     <svg overflow="visible" id="state-${this.toolId}"
       class="${classMap(this.classes.tool)}" style="${styleMap(this.styles.tool)}">
-        <text @click=${(e) => this.handleTapEvent(e, this.config)}>
+        <text @click=${e => this.handleTapEvent(e, this.config)}>
           ${this._renderState()}
           ${this._renderUom()}
         </text>

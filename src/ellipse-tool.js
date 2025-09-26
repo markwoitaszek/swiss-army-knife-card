@@ -25,11 +25,11 @@ import Utils from './utils';
 import BaseTool from './base-tool';
 
 /** ****************************************************************************
-  * EllipseTool class
-  *
-  * Summary.
-  *
-  */
+ * EllipseTool class
+ *
+ * Summary.
+ *
+ */
 
 export default class EllipseTool extends BaseTool {
   constructor(argToolset, argConfig, argPos) {
@@ -50,10 +50,8 @@ export default class EllipseTool extends BaseTool {
         },
       },
       styles: {
-        tool: {
-        },
-        ellipse: {
-        },
+        tool: {},
+        ellipse: {},
       },
     };
 
@@ -68,24 +66,38 @@ export default class EllipseTool extends BaseTool {
     this.styles.tool = {};
     this.styles.ellipse = {};
 
-    if (this.dev.debug) console.log('EllipseTool constructor coords, dimensions', this.coords, this.dimensions, this.svg, this.config);
+    if (this.dev.debug)
+      console.log(
+        'EllipseTool constructor coords, dimensions',
+        this.coords,
+        this.dimensions,
+        this.svg,
+        this.config
+      );
   }
 
   /** *****************************************************************************
-  * EllipseTool::_renderEllipse()
-  *
-  * Summary.
-  * Renders the ellipse using precalculated coordinates and dimensions.
-  * Only the runtime style is calculated before rendering the ellipse
-  *
-  */
+   * EllipseTool::_renderEllipse()
+   *
+   * Summary.
+   * Renders the ellipse using precalculated coordinates and dimensions.
+   * Only the runtime style is calculated before rendering the ellipse
+   *
+   */
 
   _renderEllipse() {
     this.MergeAnimationClassIfChanged();
     this.MergeAnimationStyleIfChanged();
     this.MergeColorFromState(this.styles.ellipse);
 
-    if (this.dev.debug) console.log('EllipseTool - renderEllipse', this.svg.cx, this.svg.cy, this.svg.radiusx, this.svg.radiusy);
+    if (this.dev.debug)
+      console.log(
+        'EllipseTool - renderEllipse',
+        this.svg.cx,
+        this.svg.cy,
+        this.svg.radiusx,
+        this.svg.radiusy
+      );
 
     return svg`
       <ellipse class="${classMap(this.classes.ellipse)}"
@@ -96,17 +108,17 @@ export default class EllipseTool extends BaseTool {
   }
 
   /** *****************************************************************************
-  * EllipseTool::render()
-  *
-  * Summary.
-  * The render() function for this object.
-  *
-  */
+   * EllipseTool::render()
+   *
+   * Summary.
+   * The render() function for this object.
+   *
+   */
   render() {
     return svg`
       <g id="ellipse-${this.toolId}"
         class="${classMap(this.classes.tool)}" style="${styleMap(this.styles.tool)}"
-        @click=${(e) => this.handleTapEvent(e, this.config)}>
+        @click=${e => this.handleTapEvent(e, this.config)}>
         ${this._renderEllipse()}
       </g>
     `;

@@ -1,0 +1,92 @@
+name: Custom Card Validation
+
+on:
+  push:
+  pull_request:
+  schedule:
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  validate-card:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build card
+        run: npm run build
+
+      - name: Validate build output
+        run: |
+          echo "Checking build output..."
+          if [ ! -f "dist/swiss-army-knife-card.js" ]; then
+            echo "❌ Main card file not found: dist/swiss-army-knife-card.js"
+            exit 1
+          fi
+
+          if [ ! -f "dist/swiss-army-knife-card.umd.js" ]; then
+            echo "❌ UMD build file not found: dist/swiss-army-knife-card.umd.js"
+            exit 1
+          fi
+
+          echo "✅ Build output files found"
+
+      - name: Validate JavaScript syntax
+        run: |
+          echo "Validating JavaScript syntax..."
+          node -c dist/swiss-army-knife-card.js
+          node -c dist/swiss-army-knife-card.umd.js
+          echo "✅ JavaScript syntax is valid"
+
+      - name: Check file sizes
+        run: |
+          echo "Checking file sizes..."
+          echo "ES Module size: $(du -h dist/swiss-army-knife-card.js | cut -f1)"
+          echo "UMD Module size: $(du -h dist/swiss-army-knife-card.umd.js | cut -f1)"
+
+          # Check if files are too large (warn if > 1MB)
+          ES_SIZE=$(stat -c%s dist/swiss-army-knife-card.js)
+          UMD_SIZE=$(stat -c%s dist/swiss-army-knife-card.umd.js)
+
+          if [ $ES_SIZE -gt 1048576 ]; then
+            echo "⚠️  Warning: ES module is larger than 1MB"
+          fi
+
+          if [ $UMD_SIZE -gt 1048576 ]; then
+            echo "⚠️  Warning: UMD module is larger than 1MB"
+          fi
+
+      - name: Validate hacs.json
+        run: |
+          echo "Validating hacs.json..."
+          if [ ! -f "hacs.json" ]; then
+            echo "❌ hacs.json not found"
+            exit 1
+          fi
+
+          # Check if hacs.json is valid JSON
+          python3 -m json.tool hacs.json > /dev/null
+          echo "✅ hacs.json is valid JSON"
+
+      - name: Run tests
+        run: npm test
+
+      - name: Summary
+        run: |
+          echo "🎉 Custom card validation completed successfully!"
+          echo "✅ Build output generated"
+          echo "✅ JavaScript syntax valid"
+          echo "✅ hacs.json valid"
+          echo "✅ Tests passed"

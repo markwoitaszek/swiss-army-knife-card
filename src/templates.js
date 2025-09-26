@@ -1,22 +1,22 @@
 /** ****************************************************************************
-  * Templates class
-  *
-  * Summary.
-  *
-  */
+ * Templates class
+ *
+ * Summary.
+ *
+ */
 
 export default class Templates {
   /** ****************************************************************************
-  * Templates::replaceVariables()
-  *
-  * Summary.
-  * A toolset defines a template. This template is found and passed as argToolsetTemplate.
-  * This is actually a set of tools, nothing else...
-  * Also passed is the list of variables that should be replaced:
-  * - The list defined in the toolset
-  * - The defaults defined in the template itself, which are defined in the argToolsetTemplate
-  *
-  */
+   * Templates::replaceVariables()
+   *
+   * Summary.
+   * A toolset defines a template. This template is found and passed as argToolsetTemplate.
+   * This is actually a set of tools, nothing else...
+   * Also passed is the list of variables that should be replaced:
+   * - The list defined in the toolset
+   * - The defaults defined in the template itself, which are defined in the argToolsetTemplate
+   *
+   */
 
   static replaceVariables3(argVariables, argTemplate) {
     // If no variables specified, return template contents, not the first object, but the contents!
@@ -35,7 +35,7 @@ export default class Templates {
     }
 
     let jsonConfig = JSON.stringify(argTemplate[argTemplate.template.type]);
-    variableArray.forEach((variable) => {
+    variableArray.forEach(variable => {
       const key = Object.keys(variable)[0];
       const value = Object.values(variable)[0];
       if (typeof value === 'number' || typeof value === 'boolean') {
@@ -52,7 +52,7 @@ export default class Templates {
       }
     });
 
-    return (JSON.parse(jsonConfig));
+    return JSON.parse(jsonConfig);
   }
 
   static getJsTemplateOrValueConfig(argTool, argEntities, argValue) {
@@ -66,7 +66,7 @@ export default class Templates {
     // Beware of the fact that this recursive function overwrites the argValue object,
     // so clone argValue if this is the tool configuration...
     if (typeof argValue === 'object') {
-      Object.keys(argValue).forEach((key) => {
+      Object.keys(argValue).forEach(key => {
         argValue[key] = Templates.getJsTemplateOrValueConfig(argTool, argEntities, argValue[key]);
       });
       return argValue;
@@ -89,7 +89,7 @@ export default class Templates {
       return new Function('tool_config', 'entities_config', `'use strict'; ${jsTemplate}`).call(
         this,
         argTool,
-        argEntities,
+        argEntities
       );
     } catch (e) {
       e.name = 'Sak-evaluateJsTemplateConfig-Error';
@@ -97,36 +97,49 @@ export default class Templates {
     }
   }
   /** *****************************************************************************
-  * Templates::evaluateJsTemplate()
-  *
-  * Summary.
-  * Runs the JavaScript template.
-  *
-  * The arguments passed to the function are:
-  * - state, state of the current entity
-  * - states, the full array of states provided by hass
-  * - entity, the current entity and its configuration
-  * - user, the currently logged in user
-  * - hass, the hass object...
-  * - tool_config, the YAML configuration of the current tool
-  * - entity_config, the YAML configuration of configured entity in this tool
-  *
-  */
+   * Templates::evaluateJsTemplate()
+   *
+   * Summary.
+   * Runs the JavaScript template.
+   *
+   * The arguments passed to the function are:
+   * - state, state of the current entity
+   * - states, the full array of states provided by hass
+   * - entity, the current entity and its configuration
+   * - user, the currently logged in user
+   * - hass, the hass object...
+   * - tool_config, the YAML configuration of the current tool
+   * - entity_config, the YAML configuration of configured entity in this tool
+   *
+   */
 
   static evaluateJsTemplate(argTool, state, jsTemplate) {
     try {
       // eslint-disable-next-line no-new-func
-      return new Function('state', 'states', 'entity', 'user', 'hass', 'tool_config', 'entity_config', `'use strict'; ${jsTemplate}`).call(
-      // return new Function('state', 'states', 'entity', 'user', 'hass',
-      //                    'tool_config', 'entity_config', 'states_str', 'attributes_str', `'use strict'; ${jsTemplate}`).call(
+      return new Function(
+        'state',
+        'states',
+        'entity',
+        'user',
+        'hass',
+        'tool_config',
+        'entity_config',
+        `'use strict'; ${jsTemplate}`
+      ).call(
+        // return new Function('state', 'states', 'entity', 'user', 'hass',
+        //                    'tool_config', 'entity_config', 'states_str', 'attributes_str', `'use strict'; ${jsTemplate}`).call(
         this,
         state,
         argTool._card._hass.states,
-        argTool.config.hasOwnProperty('entity_index') ? argTool._card.entities[argTool.config.entity_index] : undefined,
+        argTool.config.hasOwnProperty('entity_index')
+          ? argTool._card.entities[argTool.config.entity_index]
+          : undefined,
         argTool._card._hass.user,
         argTool._card._hass,
         argTool.config,
-        argTool.config.hasOwnProperty('entity_index') ? argTool._card.config.entities[argTool.config.entity_index] : undefined,
+        argTool.config.hasOwnProperty('entity_index')
+          ? argTool._card.config.entities[argTool.config.entity_index]
+          : undefined
         // argTool._card.entitiesStr,
         // argTool._card.attributesStr,
       );
@@ -137,15 +150,15 @@ export default class Templates {
   }
 
   /** *****************************************************************************
-  * Templates::getJsTemplateOrValue()
-  *
-  * Summary.
-  *
-  * References:
-  * - https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures
-  * - https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/typeof
-  *
-  */
+   * Templates::getJsTemplateOrValue()
+   *
+   * Summary.
+   *
+   * References:
+   * - https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures
+   * - https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/typeof
+   *
+   */
 
   static getJsTemplateOrValue(argTool, argState, argValue) {
     // Check for 'undefined' or 'null'
@@ -158,7 +171,7 @@ export default class Templates {
     // Beware of the fact that this recursive function overwrites the argValue object,
     // so clone argValue if this is the tool configuration...
     if (typeof argValue === 'object') {
-      Object.keys(argValue).forEach((key) => {
+      Object.keys(argValue).forEach(key => {
         argValue[key] = Templates.getJsTemplateOrValue(argTool, argState, argValue[key]);
       });
       return argValue;

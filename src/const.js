@@ -11,10 +11,10 @@ const FONT_SIZE = SVG_DEFAULT_DIMENSIONS / 100;
 const clamp = (min, num, max) => Math.min(Math.max(num, min), max);
 
 // Round to nearest value
-const round = (min, num, max) => ((Math.abs(num - min) > Math.abs(max - num)) ? max : min);
+const round = (min, num, max) => (Math.abs(num - min) > Math.abs(max - num) ? max : min);
 
 // Force angle between 0 and 360, or even more for angle comparisons!
-const angle360 = (start, angle, end) => ((start < 0 || end < 0) ? angle + 360 : angle);
+const angle360 = (start, angle, end) => (start < 0 || end < 0 ? angle + 360 : angle);
 
 // Size or range given by two values
 const range = (value1, value2) => Math.abs(value1 - value2);

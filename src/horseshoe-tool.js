@@ -24,11 +24,11 @@ import BaseTool from './base-tool';
 import Colors from './colors';
 
 /** ****************************************************************************
-  * HorseshoeTool class
-  *
-  * Summary.
-  *
-  */
+ * HorseshoeTool class
+ *
+ * Summary.
+ *
+ */
 
 export default class HorseshoeTool extends BaseTool {
   // Donut starts at -220 degrees and is 260 degrees in size.
@@ -64,7 +64,7 @@ export default class HorseshoeTool extends BaseTool {
     // Next consts are now variable. Should be calculated!!!!!!
     this.HORSESHOE_RADIUS_SIZE = 0.45 * SVG_VIEW_BOX;
     this.TICKMARKS_RADIUS_SIZE = 0.43 * SVG_VIEW_BOX;
-    this.HORSESHOE_PATH_LENGTH = 2 * 260 / 360 * Math.PI * this.HORSESHOE_RADIUS_SIZE;
+    this.HORSESHOE_PATH_LENGTH = ((2 * 260) / 360) * Math.PI * this.HORSESHOE_RADIUS_SIZE;
 
     // this.config = {...DEFAULT_HORSESHOE_CONFIG};
     // this.config = {...this.config, ...argConfig};
@@ -90,7 +90,7 @@ export default class HorseshoeTool extends BaseTool {
     this.svg.horseshoe_scale.width = Utils.calculateSvgDimension(this.config.horseshoe_scale.width);
     this.svg.horseshoe_state = {};
     this.svg.horseshoe_state.width = Utils.calculateSvgDimension(this.config.horseshoe_state.width);
-    this.svg.horseshoe_scale.dasharray = 2 * 26 / 36 * Math.PI * this.svg.radius;
+    this.svg.horseshoe_scale.dasharray = ((2 * 26) / 36) * Math.PI * this.svg.radius;
 
     // The horseshoe is rotated around its svg base point. This is NOT the center of the circle!
     // Adjust x and y positions within the svg viewport to re-center the circle after rotating
@@ -102,25 +102,31 @@ export default class HorseshoeTool extends BaseTool {
     // Get colorstops and make a key/value store...
     this.colorStops = {};
     if (this.config.color_stops) {
-      Object.keys(this.config.color_stops).forEach((key) => {
+      Object.keys(this.config.color_stops).forEach(key => {
         this.colorStops[key] = this.config.color_stops[key];
       });
     }
 
-    this.sortedStops = Object.keys(this.colorStops).map((n) => Number(n)).sort((a, b) => a - b);
+    this.sortedStops = Object.keys(this.colorStops)
+      .map(n => Number(n))
+      .sort((a, b) => a - b);
 
     // Create a colorStopsMinMax list for autominmax color determination
     this.colorStopsMinMax = {};
     this.colorStopsMinMax[this.config.horseshoe_scale.min] = this.colorStops[this.sortedStops[0]];
-    this.colorStopsMinMax[this.config.horseshoe_scale.max] = this.colorStops[this.sortedStops[(this.sortedStops.length) - 1]];
+    this.colorStopsMinMax[this.config.horseshoe_scale.max] =
+      this.colorStops[this.sortedStops[this.sortedStops.length - 1]];
 
     // Now set the color0 and color1 for the gradient used in the horseshoe to the colors
     // Use default for now!!
     this.color0 = this.colorStops[this.sortedStops[0]];
-    this.color1 = this.colorStops[this.sortedStops[(this.sortedStops.length) - 1]];
+    this.color1 = this.colorStops[this.sortedStops[this.sortedStops.length - 1]];
 
     this.angleCoords = {
-      x1: '0%', y1: '0%', x2: '100%', y2: '0%',
+      x1: '0%',
+      y1: '0%',
+      x2: '100%',
+      y2: '0%',
     };
     // this.angleCoords = angleCoords;
     this.color1_offset = '0%';
@@ -128,17 +134,24 @@ export default class HorseshoeTool extends BaseTool {
     //= ===================
     // End setConfig part.
 
-    if (this.dev.debug) console.log('HorseshoeTool constructor coords, dimensions', this.coords, this.dimensions, this.svg, this.config);
+    if (this.dev.debug)
+      console.log(
+        'HorseshoeTool constructor coords, dimensions',
+        this.coords,
+        this.dimensions,
+        this.svg,
+        this.config
+      );
   }
 
   /** *****************************************************************************
-  * HorseshoeTool::value()
-  *
-  * Summary.
-  * Sets the value of the horseshoe. Value updated via set hass.
-  * Calculate horseshoe settings & colors depening on config and new value.
-  *
-  */
+   * HorseshoeTool::value()
+   *
+   * Summary.
+   * Sets the value of the horseshoe. Value updated via set hass.
+   * Calculate horseshoe settings & colors depening on config and new value.
+   *
+   */
 
   set value(state) {
     if (this._stateValue === state) return;
@@ -180,7 +193,11 @@ export default class HorseshoeTool extends BaseTool {
       this.color1 = stroke;
       this.color1_offset = '0%';
     } else if (strokeStyle === 'colorstop' || strokeStyle === 'colorstopgradient') {
-      const stroke = Colors.calculateColor(state, this.colorStops, strokeStyle === 'colorstopgradient');
+      const stroke = Colors.calculateColor(
+        state,
+        this.colorStops,
+        strokeStyle === 'colorstopgradient'
+      );
 
       // We now use a gradient for the horseshoe, using two colors
       // Set these colors to the colorstop color...
@@ -196,7 +213,10 @@ export default class HorseshoeTool extends BaseTool {
       // According to stackoverflow, these calculations / adjustments would be needed, but it isn't ;-)
       // Added from https://stackoverflow.com/questions/9025678/how-to-get-a-rotated-linear-gradient-svg-for-use-as-a-background-image
       const angleCoords = {
-        x1: '0%', y1: '0%', x2: '100%', y2: '0%',
+        x1: '0%',
+        y1: '0%',
+        x2: '100%',
+        y2: '0%',
       };
       this.color1_offset = `${Math.round((1 - val) * 100)}%`;
 
@@ -208,12 +228,12 @@ export default class HorseshoeTool extends BaseTool {
   }
 
   /** *****************************************************************************
-  * HorseshoeTool::_renderTickMarks()
-  *
-  * Summary.
-  * Renders the tick marks on the scale.
-  *
-  */
+   * HorseshoeTool::_renderTickMarks()
+   *
+   * Summary.
+   * Renders the tick marks on the scale.
+   *
+   */
 
   _renderTickMarks() {
     const { config } = this;
@@ -221,24 +241,32 @@ export default class HorseshoeTool extends BaseTool {
     // if (!config.show) return;
     if (!config.show.scale_tickmarks) return;
 
-    const stroke = config.horseshoe_scale.color ? config.horseshoe_scale.color : 'var(--primary-background-color)';
-    const tickSize = config.horseshoe_scale.ticksize ? config.horseshoe_scale.ticksize
+    const stroke = config.horseshoe_scale.color
+      ? config.horseshoe_scale.color
+      : 'var(--primary-background-color)';
+    const tickSize = config.horseshoe_scale.ticksize
+      ? config.horseshoe_scale.ticksize
       : (config.horseshoe_scale.max - config.horseshoe_scale.min) / 10;
 
     // fullScale is 260 degrees. Hard coded for now...
     const fullScale = 260;
     const remainder = config.horseshoe_scale.min % tickSize;
-    const startTickValue = config.horseshoe_scale.min + (remainder === 0 ? 0 : (tickSize - remainder));
-    const startAngle = ((startTickValue - config.horseshoe_scale.min)
-                        / (config.horseshoe_scale.max - config.horseshoe_scale.min)) * fullScale;
-    const tickSteps = ((config.horseshoe_scale.max - startTickValue) / tickSize);
+    const startTickValue =
+      config.horseshoe_scale.min + (remainder === 0 ? 0 : tickSize - remainder);
+    const startAngle =
+      ((startTickValue - config.horseshoe_scale.min) /
+        (config.horseshoe_scale.max - config.horseshoe_scale.min)) *
+      fullScale;
+    const tickSteps = (config.horseshoe_scale.max - startTickValue) / tickSize;
 
     // new
     let steps = Math.floor(tickSteps);
     const angleStepSize = (fullScale - startAngle) / tickSteps;
 
     // If steps exactly match the max. value/range, add extra step for that max value.
-    if ((Math.floor(((steps) * tickSize) + startTickValue)) <= (config.horseshoe_scale.max)) { steps += 1; }
+    if (Math.floor(steps * tickSize + startTickValue) <= config.horseshoe_scale.max) {
+      steps += 1;
+    }
 
     const radius = this.svg.horseshoe_scale.width ? this.svg.horseshoe_scale.width / 2 : 6 / 2;
     let angle;
@@ -248,7 +276,7 @@ export default class HorseshoeTool extends BaseTool {
     // Value of -230 is weird. Should be -220. Can't find why...
     let i;
     for (i = 0; i < steps; i++) {
-      angle = startAngle + ((-230 + (360 - i * angleStepSize)) * Math.PI / 180);
+      angle = startAngle + ((-230 + (360 - i * angleStepSize)) * Math.PI) / 180;
       scaleItems[i] = svg`
         <circle cx="${this.svg.cx - Math.sin(angle) * this.svg.radius_ticks}"
                 cy="${this.svg.cy - Math.cos(angle) * this.svg.radius_ticks}" r="${radius}"
@@ -259,20 +287,20 @@ export default class HorseshoeTool extends BaseTool {
   }
 
   /** *****************************************************************************
-  * HorseshoeTool::_renderHorseShoe()
-  *
-  * Summary.
-  * Renders the horseshoe group.
-  *
-  * Description.
-  * The horseshoes are rendered in a viewbox of 200x200 (SVG_VIEW_BOX).
-  * Both are centered with a radius of 45%, ie 200*0.45 = 90.
-  *
-  * The foreground horseshoe is always rendered as a gradient with two colors.
-  *
-  * The horseshoes are rotated 220 degrees and are 2 * 26/36 * Math.PI * r in size
-  * There you get your value of 408.4070449,180 ;-)
-  */
+   * HorseshoeTool::_renderHorseShoe()
+   *
+   * Summary.
+   * Renders the horseshoe group.
+   *
+   * Description.
+   * The horseshoes are rendered in a viewbox of 200x200 (SVG_VIEW_BOX).
+   * Both are centered with a radius of 45%, ie 200*0.45 = 90.
+   *
+   * The foreground horseshoe is always rendered as a gradient with two colors.
+   *
+   * The horseshoes are rotated 220 degrees and are 2 * 26/36 * Math.PI * r in size
+   * There you get your value of 408.4070449,180 ;-)
+   */
 
   _renderHorseShoe() {
     if (!this.config.show.horseshoe) return;
@@ -301,16 +329,16 @@ export default class HorseshoeTool extends BaseTool {
   }
 
   /** *****************************************************************************
-  * HorseshoeTool::render()
-  *
-  * Summary.
-  * The render() function for this object.
-  *
-  */
+   * HorseshoeTool::render()
+   *
+   * Summary.
+   * The render() function for this object.
+   *
+   */
   render() {
     return svg`
       <g "" id="horseshoe-${this.toolId}" class="horseshoe__group-outer"
-        @click=${(e) => this.handleTapEvent(e, this.config)}>
+        @click=${e => this.handleTapEvent(e, this.config)}>
         ${this._renderHorseShoe()}
       </g>
 

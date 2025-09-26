@@ -17,9 +17,7 @@ export const ONE_HOUR = 1000 * 3600;
 // export const clockWidth = 20;
 
 export default class SparklineGraph {
-  constructor(width, height, margin, config,
-              gradeValues = [], gradeRanks = [], stateMap = {},
-              ) {
+  constructor(width, height, margin, config, gradeValues = [], gradeRanks = [], stateMap = {}) {
     this.aggregateFuncMap = {
       avg: this._average,
       median: this._median,
@@ -47,8 +45,8 @@ export default class SparklineGraph {
     this.graphArea = {};
     this.graphArea.x = 0;
     this.graphArea.y = 0;
-    this.graphArea.width = width - (2 * this.graphArea.x);
-    this.graphArea.height = height - (2 * this.graphArea.y);
+    this.graphArea.width = width - 2 * this.graphArea.x;
+    this.graphArea.height = height - 2 * this.graphArea.y;
 
     this.drawArea = {};
     this.drawArea.x = margin.l;
@@ -66,12 +64,14 @@ export default class SparklineGraph {
     // Testing
     this._max = 0;
     this._min = 0;
-    this.points = this.config.period?.calendar?.bins?.per_hour
-                  || this.config.period?.rolling_window?.bins?.per_hour
-                  || 1;
-    this.hours = this.config.period?.calendar?.duration?.hour
-                  || this.config.period?.rolling_window?.duration?.hour
-                  || 24;
+    this.points =
+      this.config.period?.calendar?.bins?.per_hour ||
+      this.config.period?.rolling_window?.bins?.per_hour ||
+      1;
+    this.hours =
+      this.config.period?.calendar?.duration?.hour ||
+      this.config.period?.rolling_window?.duration?.hour ||
+      24;
     this.aggregateFuncName = this.config.sparkline.state_values.aggregate_func;
     this._calcPoint = this.aggregateFuncMap[this.aggregateFuncName] || this._average;
     this._smoothing = this.config.sparkline.state_values?.smoothing;
@@ -83,18 +83,30 @@ export default class SparklineGraph {
     this.gradeValues = gradeValues;
     this.gradeRanks = gradeRanks;
     this.stateMap = { ...stateMap };
-    this.radialBarcodeSize = Utils.calculateSvgDimension(this.config.sparkline?.radial_barcode?.size || 5);
+    this.radialBarcodeSize = Utils.calculateSvgDimension(
+      this.config.sparkline?.radial_barcode?.size || 5
+    );
   }
 
-  get max() { return this._max; }
+  get max() {
+    return this._max;
+  }
 
-  set max(max) { this._max = max; }
+  set max(max) {
+    this._max = max;
+  }
 
-  get min() { return this._min; }
+  get min() {
+    return this._min;
+  }
 
-  set min(min) { this._min = min; }
+  set min(min) {
+    this._min = min;
+  }
 
-  set history(data) { this._history = data; }
+  set history(data) {
+    this._history = data;
+  }
 
   update(history = undefined) {
     if (history) {
@@ -127,9 +139,9 @@ export default class SparklineGraph {
     this.offsetHours = 0;
     switch (this.config.period.type) {
       case 'real_time':
-            requiredNumOfPoints = 1;
-            this.hours = 1;
-          break;
+        requiredNumOfPoints = 1;
+        this.hours = 1;
+        break;
       case 'calendar':
         if (this.config.period?.calendar?.period === 'day') {
           let hours = this.hours;
@@ -155,16 +167,21 @@ export default class SparklineGraph {
     } catch (error) {
       console.log('error in calcpoints');
     }
-    this.min = Math.min(...this.coords.map((item) => Number(item[V])));
-    this.max = Math.max(...this.coords.map((item) => Number(item[V])));
+    this.min = Math.min(...this.coords.map(item => Number(item[V])));
+    this.max = Math.max(...this.coords.map(item => Number(item[V])));
 
     // Check for line and area for minmax calculations
-    if (['line', 'area'].includes(this.config.sparkline.show.chart_type)
-      && (this.config.sparkline.line?.show_minmax === true
-          || this.config.sparkline.area?.show_minmax === true)) {
+    if (
+      ['line', 'area'].includes(this.config.sparkline.show.chart_type) &&
+      (this.config.sparkline.line?.show_minmax === true ||
+        this.config.sparkline.area?.show_minmax === true)
+    ) {
       // Just testing...
       // https://stackoverflow.com/questions/43576241/using-reduce-to-find-min-and-max-values
-      const histGroupsMinMax = this._history.reduce((res, item) => this._reducerMinMax(res, item), []);
+      const histGroupsMinMax = this._history.reduce(
+        (res, item) => this._reducerMinMax(res, item),
+        []
+      );
 
       // drop potential out of bound entry's except one
       if (histGroupsMinMax[0][0] && histGroupsMinMax[0][0].length) {
@@ -192,8 +209,8 @@ export default class SparklineGraph {
       this._calcPoint = prevFunction;
 
       // Adjust scale in this case...
-      this.min = Math.min(...this.coordsMin.map((item) => Number(item[V])));
-      this.max = Math.max(...this.coordsMax.map((item) => Number(item[V])));
+      this.min = Math.min(...this.coordsMin.map(item => Number(item[V])));
+      this.max = Math.max(...this.coordsMax.map(item => Number(item[V])));
     }
   }
 
@@ -212,18 +229,33 @@ export default class SparklineGraph {
 
   _reducerMinMax(res, item) {
     const age = this._endTime - new Date(item.last_changed).getTime();
-    const interval = (age / ONE_HOUR * this.points) - this.hours * this.points;
+    const interval = (age / ONE_HOUR) * this.points - this.hours * this.points;
     const key = interval < 0 ? Math.floor(Math.abs(interval)) : 0;
     if (!res[0]) res[0] = [];
     if (!res[1]) res[1] = [];
-    if (!res[0][key]) { res[0][key] = {}; res[1][key] = {}; }
+    if (!res[0][key]) {
+      res[0][key] = {};
+      res[1][key] = {};
+    }
     // Min value is always 0. So something goes wrong with Number I guess??
     // If item.state invalid, then returns 0 ???
-    res[0][key].state = Math.min(res[0][key].state ? res[0][key].state : Number.POSITIVE_INFINITY, item.state);
-    res[0][key].haState = Math.min(res[0][key].haState ? res[0][key].haState : Number.POSITIVE_INFINITY, item.haState);
+    res[0][key].state = Math.min(
+      res[0][key].state ? res[0][key].state : Number.POSITIVE_INFINITY,
+      item.state
+    );
+    res[0][key].haState = Math.min(
+      res[0][key].haState ? res[0][key].haState : Number.POSITIVE_INFINITY,
+      item.haState
+    );
     // Max seems to be OK!
-    res[1][key].state = Math.max(res[1][key].state ? res[0][key].state : Number.NEGATIVE_INFINITY, item.state);
-    res[1][key].haState = Math.max(res[1][key].haState ? res[0][key].haState : Number.NEGATIVE_INFINITY, item.haState);
+    res[1][key].state = Math.max(
+      res[1][key].state ? res[0][key].state : Number.NEGATIVE_INFINITY,
+      item.state
+    );
+    res[1][key].haState = Math.max(
+      res[1][key].haState ? res[0][key].haState : Number.NEGATIVE_INFINITY,
+      item.haState
+    );
     return res;
   }
 
@@ -231,13 +263,14 @@ export default class SparklineGraph {
   // The reducer should not have to check for hours. This wasn't required some changes ago
   // Must be looked in to...
   _reducer(res, item) {
-    const hours = (this.config.period?.calendar?.period === 'day')
-                  ? (this.config.period.calendar.offset === 0)
-                    ? new Date().getHours() + new Date().getMinutes() / 60
-                    : 24
-                  : this.hours;
+    const hours =
+      this.config.period?.calendar?.period === 'day'
+        ? this.config.period.calendar.offset === 0
+          ? new Date().getHours() + new Date().getMinutes() / 60
+          : 24
+        : this.hours;
     const age = this._endTime - new Date(item.last_changed).getTime();
-    const interval = (age / ONE_HOUR * this.points) - (hours) * this.points; // was this.hours!!
+    const interval = (age / ONE_HOUR) * this.points - hours * this.points; // was this.hours!!
     const key = interval < 0 ? Math.floor(Math.abs(interval)) : 0;
     if (!res[key]) res[key] = [];
     res[key].push(item);
@@ -252,14 +285,12 @@ export default class SparklineGraph {
     const first = history.filter(Boolean)[0];
     let last = [this._calcPoint(first), this._lastValue(first)];
     const getCoords = (item, i) => {
-      const x = (xRatio * i) + this.drawArea.x;
-      if (item)
-        last = [this._calcPoint(item), this._lastValue(item)];
+      const x = xRatio * i + this.drawArea.x;
+      if (item) last = [this._calcPoint(item), this._lastValue(item)];
       return coords.push([x, 0, item ? last[0] : last[1]]);
     };
 
-    for (let i = 0; i < history.length; i += 1)
-      getCoords(history[i], i);
+    for (let i = 0; i < history.length; i += 1) getCoords(history[i], i);
 
     return coords;
   }
@@ -269,21 +300,23 @@ export default class SparklineGraph {
     const max = this._logarithmic ? Math.log10(Math.max(1, this.max)) : this.max;
     const min = this._logarithmic ? Math.log10(Math.max(1, this.min)) : this.min;
 
-    const yRatio = ((max - min) / (this.drawArea.height)) || 1;
-    const coords2 = coords.map((coord) => {
+    const yRatio = (max - min) / this.drawArea.height || 1;
+    const coords2 = coords.map(coord => {
       const val = this._logarithmic ? Math.log10(Math.max(1, coord[V])) : coord[V];
 
-      const offset = (min < 0) ? Math.abs(min) : 0;
-      const val0 = (val > 0)
-        ? (val - Math.max(0, min))
-        : 0;
+      const offset = min < 0 ? Math.abs(min) : 0;
+      const val0 = val > 0 ? val - Math.max(0, min) : 0;
 
       const coord0 = this.drawArea.height + this.drawArea.y - val0 / yRatio;
 
-      const coordY2 = (val > 0)
-        ? this.drawArea.height + this.drawArea.top * 1 - (offset / yRatio) - ((val - Math.max(0, min)) / yRatio) // - this.margin.y * 2
-        : this.drawArea.height + this.drawArea.top * 1 - ((0 - min) / yRatio);// - this.margin.y * 4;
-      const coordY = this.drawArea.height + this.drawArea.y * 1 - ((val - (min)) / yRatio); // - this.margin.y * 2;
+      const coordY2 =
+        val > 0
+          ? this.drawArea.height +
+            this.drawArea.top * 1 -
+            offset / yRatio -
+            (val - Math.max(0, min)) / yRatio // - this.margin.y * 2
+          : this.drawArea.height + this.drawArea.top * 1 - (0 - min) / yRatio; // - this.margin.y * 4;
+      const coordY = this.drawArea.height + this.drawArea.y * 1 - (val - min) / yRatio; // - this.margin.y * 2;
 
       return [coord[X], coordY, coord[V], coordY2];
     });
@@ -297,14 +330,18 @@ export default class SparklineGraph {
     const max = this._logarithmic ? Math.log10(Math.max(1, this.max)) : this.max;
     const min = this._logarithmic ? Math.log10(Math.max(1, this.min)) : this.min;
 
-    const yRatio = ((max - min) / (this.drawArea.height)) || 1;
-    const offset = (min < 0) ? Math.abs(min) : 0;
+    const yRatio = (max - min) / this.drawArea.height || 1;
+    const offset = min < 0 ? Math.abs(min) : 0;
     let yStack = [];
     // should be reduce or something... to return an array...
     const coordYs = coord[V].forEach((val, index) => {
-      const coordY = (val >= 0)
-        ? this.drawArea.height + this.drawArea.top * 1 - (1 * offset / yRatio) - ((val - Math.max(0, min)) / yRatio)
-        : this.drawArea.height + this.drawArea.top * 1 - ((0 - val) / yRatio);
+      const coordY =
+        val >= 0
+          ? this.drawArea.height +
+            this.drawArea.top * 1 -
+            (1 * offset) / yRatio -
+            (val - Math.max(0, min)) / yRatio
+          : this.drawArea.height + this.drawArea.top * 1 - (0 - val) / yRatio;
       yStack.push(coordY);
       return yStack;
     });
@@ -317,7 +354,8 @@ export default class SparklineGraph {
       coords[1] = [this.width + this.margin.x, 0, coords[0][V]];
     }
     coords = this._calcY(this.coords);
-    let next; let Z;
+    let next;
+    let Z;
     let last = coords[0];
     coords.shift();
     const coords2 = coords.map((point, i) => {
@@ -336,12 +374,13 @@ export default class SparklineGraph {
       coords[1] = [this.width + this.margin.x, 0, coords[0][V]];
     }
     coords = this._calcY(this.coords);
-    let next; let Z;
+    let next;
+    let Z;
     let path = '';
     let last = coords[0];
     path += `M${last[X]},${last[Y]}`;
 
-    coords.forEach((point) => {
+    coords.forEach(point => {
       next = point;
       Z = this._smoothing ? this._midPoint(last[X], last[Y], next[X], next[Y]) : next;
       path += ` ${Z[X]},${Z[Y]}`;
@@ -358,12 +397,13 @@ export default class SparklineGraph {
       coordsMin[1] = [this.width + this.margin.x, 0, coordsMin[0][V]];
     }
     coordsMin = this._calcY(this.coordsMin);
-    let next; let Z;
+    let next;
+    let Z;
     let path = '';
     let last = coordsMin[0];
     path += `M${last[X]},${last[Y]}`;
 
-    coordsMin.forEach((point) => {
+    coordsMin.forEach(point => {
       next = point;
       Z = next;
       path += ` ${Z[X]},${Z[Y]}`;
@@ -381,7 +421,8 @@ export default class SparklineGraph {
       coordsMax[1] = [this.width + this.margin.x, 0, coordsMax[0][V]];
     }
     coordsMax = this._calcY(this.coordsMax);
-    let next; let Z;
+    let next;
+    let Z;
     let path = '';
     // let last = coordsMax[0];
     let last = coordsMax[coordsMax.length - 1];
@@ -405,7 +446,8 @@ export default class SparklineGraph {
       : this._max - this._min;
     // Must account for bottom margin. How????
     // Percentage of bottom is
-    const scaleOffset = scale / (this.graphArea.height - this.margin.b) * this.graphArea.height - scale;
+    const scaleOffset =
+      (scale / (this.graphArea.height - this.margin.b)) * this.graphArea.height - scale;
     return thresholds.map((stop, index, arr) => {
       let color;
       if (stop.value > this._max && arr[index + 1]) {
@@ -421,9 +463,9 @@ export default class SparklineGraph {
       if (scale <= 0) {
         offset = 0;
       } else if (logarithmic) {
-        offset = (Math.log10(Math.max(1, this._max))
-          - Math.log10(Math.max(1, stop.value)))
-          * (100 / scale);
+        offset =
+          (Math.log10(Math.max(1, this._max)) - Math.log10(Math.max(1, stop.value))) *
+          (100 / scale);
       } else {
         offset = (this._max - stop.value) * (100 / (scale + scaleOffset));
       }
@@ -446,8 +488,10 @@ export default class SparklineGraph {
   }
 
   getArea(path) {
-    const y_zero = (this._min >= 0) ? this.height
-    : this.height + 0 - ((Math.abs(this._min) / ((this._max - this._min)) * this.height));
+    const y_zero =
+      this._min >= 0
+        ? this.height
+        : this.height + 0 - (Math.abs(this._min) / (this._max - this._min)) * this.height;
     const height = y_zero + this.drawArea.y * 1.5; // Should be this.svg.line_width;
     let fill = path;
     // fill += ` L ${this.drawArea.width + this.drawArea.x}, ${height}`;
@@ -458,15 +502,22 @@ export default class SparklineGraph {
   }
 
   polarToCartesian(centerX, centerY, radiusX, radiusY, angleInDegrees) {
-    const angleInRadians = (angleInDegrees - 90) * Math.PI / 180.0;
+    const angleInRadians = ((angleInDegrees - 90) * Math.PI) / 180.0;
 
     return {
-      x: centerX + (radiusX * Math.cos(angleInRadians)),
-      y: centerY + (radiusY * Math.sin(angleInRadians)),
+      x: centerX + radiusX * Math.cos(angleInRadians),
+      y: centerY + radiusY * Math.sin(angleInRadians),
     };
   }
 
-  _calcRadialBarcodeCoords(argStartAngle, argEndAngle, argClockwise, argRadiusX, argRadiusY, argWidth) {
+  _calcRadialBarcodeCoords(
+    argStartAngle,
+    argEndAngle,
+    argClockwise,
+    argRadiusX,
+    argRadiusY,
+    argWidth
+  ) {
     const cx = this.drawArea.x + this.drawArea.width / 2;
     const cy = this.drawArea.y + this.drawArea.height / 2;
     const start = this.polarToCartesian(cx, cy, argRadiusX, argRadiusY, argEndAngle);
@@ -480,7 +531,12 @@ export default class SparklineGraph {
     const start2 = this.polarToCartesian(cx, cy, cutoutRadiusX, cutoutRadiusY, argEndAngle);
     const end2 = this.polarToCartesian(cx, cy, cutoutRadiusX, cutoutRadiusY, argStartAngle);
     return {
-      start, end, start2, end2, largeArcFlag, sweepFlag,
+      start,
+      end,
+      start2,
+      end2,
+      largeArcFlag,
+      sweepFlag,
     };
   }
 
@@ -492,9 +548,9 @@ export default class SparklineGraph {
     const startAngle = 0;
     let runningAngle = startAngle;
     const clockWise = true;
-    const wRatio = ((max - min) / this.radialBarcodeSize);
+    const wRatio = (max - min) / this.radialBarcodeSize;
 
-    const coords2 = coords.map((coord) => {
+    const coords2 = coords.map(coord => {
       const value = !isBackground ? coord[V] : this.max;
       let ringWidth;
       let radius;
@@ -505,13 +561,13 @@ export default class SparklineGraph {
           radius = (this.drawArea.width - this.radialBarcodeSize + ringWidth) / 2;
           break;
         case 'sunburst_outward':
-            ringWidth = ((this._logarithmic ? Math.log10(Math.max(1, value)) : value) - min) / wRatio;
-            radius = this.drawArea.width / 2 - this.radialBarcodeSize + ringWidth;
-            break;
+          ringWidth = ((this._logarithmic ? Math.log10(Math.max(1, value)) : value) - min) / wRatio;
+          radius = this.drawArea.width / 2 - this.radialBarcodeSize + ringWidth;
+          break;
         case 'sunburst_inward':
           ringWidth = ((this._logarithmic ? Math.log10(Math.max(1, value)) : value) - min) / wRatio;
           radius = this.drawArea.width / 2;
-        break;
+          break;
         default:
           ringWidth = this.radialBarcodeSize;
           radius = this.drawArea.width / 2;
@@ -521,11 +577,14 @@ export default class SparklineGraph {
       let newY = [];
       let radiusX = [];
       let radiusY = [];
-      const {
-        start, end, start2, end2, largeArcFlag, sweepFlag,
-      } = this._calcRadialBarcodeCoords(
-        runningAngle + columnSpacing, runningAngle + angleSize - columnSpacing, clockWise,
-        radius, radius, ringWidth);
+      const { start, end, start2, end2, largeArcFlag, sweepFlag } = this._calcRadialBarcodeCoords(
+        runningAngle + columnSpacing,
+        runningAngle + angleSize - columnSpacing,
+        clockWise,
+        radius,
+        radius,
+        ringWidth
+      );
       runningAngle += angleSize;
       newX.push(start.x, end.x, start2.x, end2.x);
       newY.push(start.y, end.y, start2.y, end2.y);
@@ -542,17 +601,20 @@ export default class SparklineGraph {
         switch (this.config.sparkline.show?.chart_variant) {
           case 'sunburst':
           case 'sunburst_centered':
-            ringWidth = ((this._logarithmic ? Math.log10(Math.max(1, value)) : value) - min) / wRatio;
+            ringWidth =
+              ((this._logarithmic ? Math.log10(Math.max(1, value)) : value) - min) / wRatio;
             radius = (this.drawArea.width - this.radialBarcodeSize + ringWidth) / 2;
             break;
           case 'sunburst_outward':
-              ringWidth = ((this._logarithmic ? Math.log10(Math.max(1, value)) : value) - min) / wRatio;
-              radius = this.drawArea.width / 2 - this.radialBarcodeSize + ringWidth;
-              break;
+            ringWidth =
+              ((this._logarithmic ? Math.log10(Math.max(1, value)) : value) - min) / wRatio;
+            radius = this.drawArea.width / 2 - this.radialBarcodeSize + ringWidth;
+            break;
           case 'sunburst_inward':
-            ringWidth = ((this._logarithmic ? Math.log10(Math.max(1, value)) : value) - min) / wRatio;
+            ringWidth =
+              ((this._logarithmic ? Math.log10(Math.max(1, value)) : value) - min) / wRatio;
             radius = this.drawArea.width / 2;
-          break;
+            break;
           default:
             ringWidth = this.radialBarcodeSize;
             radius = this.drawArea.width / 2;
@@ -568,11 +630,15 @@ export default class SparklineGraph {
           let newY = [];
           let radiusX = [];
           let radiusY = [];
-          const {
-            start, end, start2, end2, largeArcFlag, sweepFlag,
-          } = this._calcRadialBarcodeCoords(
-            runningAngle + columnSpacing, runningAngle + angleSize - columnSpacing, clockWise,
-            radius, radius, ringWidth);
+          const { start, end, start2, end2, largeArcFlag, sweepFlag } =
+            this._calcRadialBarcodeCoords(
+              runningAngle + columnSpacing,
+              runningAngle + angleSize - columnSpacing,
+              clockWise,
+              radius,
+              radius,
+              ringWidth
+            );
           runningAngle += angleSize;
           newX.push(start.x, end.x, start2.x, end2.x);
           newY.push(start.y, end.y, start2.y, end2.y);
@@ -588,7 +654,12 @@ export default class SparklineGraph {
   getRadialBarcodeBackground(position, total, columnSpacing = 4, rowSpacing = 4) {
     this.backgroundCoords = [];
     this.backgroundCoords = [...this.coords];
-    const radialBarcodeCoords = this._calcRadialBarcode(this.backgroundCoords, true, columnSpacing, rowSpacing);
+    const radialBarcodeCoords = this._calcRadialBarcode(
+      this.backgroundCoords,
+      true,
+      columnSpacing,
+      rowSpacing
+    );
 
     return radialBarcodeCoords.map((coord, i) => ({
       start: { x: coord[X][0], y: coord[Y][0] },
@@ -613,8 +684,10 @@ export default class SparklineGraph {
 
       if (['flower2', 'flower', 'rice_grain'].includes(this.config.sparkline.show?.chart_viz)) {
         // Outer part. For flower this depends on the inward/outward setting
-        if ((this.config.sparkline.show.chart_viz === 'flower')
-         && (this.config.sparkline.show.chart_variant === 'sunburst_inward')) {
+        if (
+          this.config.sparkline.show.chart_viz === 'flower' &&
+          this.config.sparkline.show.chart_variant === 'sunburst_inward'
+        ) {
           rOuterX = segment.radius.x;
           rOuterY = segment.radius.y;
         } else {
@@ -623,8 +696,10 @@ export default class SparklineGraph {
           rOuterX = Math.sqrt(difX1 * difX1 + difY1 * difY1) / 2;
           rOuterY = rOuterX;
         }
-        if ((this.config.sparkline.show.chart_viz === 'flower')
-         && (this.config.sparkline.show.chart_variant === 'sunburst_outward')) {
+        if (
+          this.config.sparkline.show.chart_viz === 'flower' &&
+          this.config.sparkline.show.chart_variant === 'sunburst_outward'
+        ) {
           rInnerX = segment.radius2.x;
           rInnerY = segment.radius2.y;
         } else {
@@ -632,7 +707,9 @@ export default class SparklineGraph {
           const difY2 = Math.abs(segment.start2.y - segment.end2.y);
           rInnerX = Math.sqrt(difX2 * difX2 + difY2 * difY2) / 2;
           rInnerY = rInnerX;
-          sweepFlagTest = ['rice_grain', 'flower'].includes(this.config.sparkline.show.chart_viz) ? '1' : '0';
+          sweepFlagTest = ['rice_grain', 'flower'].includes(this.config.sparkline.show.chart_viz)
+            ? '1'
+            : '0';
         }
       } else {
         rOuterX = segment.radius.x;
@@ -641,10 +718,28 @@ export default class SparklineGraph {
         rInnerY = segment.radius2.y;
       }
       const d = [
-        'M', segment.start.x, segment.start.y,
-        'A', rOuterX, rOuterY, 0, segment.largeArcFlag, segment.sweepFlag, segment.end.x, segment.end.y,
-        'L', segment.end2.x, segment.end2.y,
-        'A', rInnerX, rInnerY, 0, segment.largeArcFlag, segment.sweepFlag === sweepFlagTest ? '1' : '0', segment.start2.x, segment.start2.y,
+        'M',
+        segment.start.x,
+        segment.start.y,
+        'A',
+        rOuterX,
+        rOuterY,
+        0,
+        segment.largeArcFlag,
+        segment.sweepFlag,
+        segment.end.x,
+        segment.end.y,
+        'L',
+        segment.end2.x,
+        segment.end2.y,
+        'A',
+        rInnerX,
+        rInnerY,
+        0,
+        segment.largeArcFlag,
+        segment.sweepFlag === sweepFlagTest ? '1' : '0',
+        segment.start2.x,
+        segment.start2.y,
         'Z',
       ].join(' ');
       return d;
@@ -653,7 +748,12 @@ export default class SparklineGraph {
   }
 
   getRadialBarcode(position, total, columnSpacing = 4, rowSpacing = 4) {
-    const radialBarcodeCoords = this._calcRadialBarcode(this.coords, false, columnSpacing, rowSpacing);
+    const radialBarcodeCoords = this._calcRadialBarcode(
+      this.coords,
+      false,
+      columnSpacing,
+      rowSpacing
+    );
 
     return radialBarcodeCoords.map((coord, i) => ({
       start: { x: coord[X][0], y: coord[Y][0] },
@@ -678,8 +778,10 @@ export default class SparklineGraph {
 
       if (['flower2', 'flower', 'rice_grain'].includes(this.config.sparkline.show?.chart_viz)) {
         // Outer part. For flower2 this depends on the inward/outward setting
-        if ((this.config.sparkline.show.chart_viz === 'flower')
-         && (this.config.sparkline.show.chart_variant === 'sunburst_inward')) {
+        if (
+          this.config.sparkline.show.chart_viz === 'flower' &&
+          this.config.sparkline.show.chart_variant === 'sunburst_inward'
+        ) {
           rOuterX = segment.radius.x;
           rOuterY = segment.radius.y;
         } else {
@@ -688,8 +790,10 @@ export default class SparklineGraph {
           rOuterX = Math.sqrt(difX1 * difX1 + difY1 * difY1) / 2;
           rOuterY = rOuterX;
         }
-        if ((this.config.sparkline.show.chart_viz === 'flower')
-         && (this.config.sparkline.show.chart_variant === 'sunburst_outward')) {
+        if (
+          this.config.sparkline.show.chart_viz === 'flower' &&
+          this.config.sparkline.show.chart_variant === 'sunburst_outward'
+        ) {
           rInnerX = segment.radius2.x;
           rInnerY = segment.radius2.y;
         } else {
@@ -697,7 +801,9 @@ export default class SparklineGraph {
           const difY2 = Math.abs(segment.start2.y - segment.end2.y);
           rInnerX = Math.sqrt(difX2 * difX2 + difY2 * difY2) / 2;
           rInnerY = rInnerX;
-          sweepFlagTest = ['rice_grain', 'flower'].includes(this.config.sparkline.show.chart_viz) ? '1' : '0';
+          sweepFlagTest = ['rice_grain', 'flower'].includes(this.config.sparkline.show.chart_viz)
+            ? '1'
+            : '0';
         }
       } else {
         rOuterX = segment.radius.x;
@@ -706,10 +812,28 @@ export default class SparklineGraph {
         rInnerY = segment.radius2.y;
       }
       const d = [
-        'M', segment.start.x, segment.start.y,
-        'A', rOuterX, rOuterY, 0, segment.largeArcFlag, segment.sweepFlag, segment.end.x, segment.end.y,
-        'L', segment.end2.x, segment.end2.y,
-        'A', rInnerX, rInnerY, 0, segment.largeArcFlag, segment.sweepFlag === sweepFlagTest ? '1' : '0', segment.start2.x, segment.start2.y,
+        'M',
+        segment.start.x,
+        segment.start.y,
+        'A',
+        rOuterX,
+        rOuterY,
+        0,
+        segment.largeArcFlag,
+        segment.sweepFlag,
+        segment.end.x,
+        segment.end.y,
+        'L',
+        segment.end2.x,
+        segment.end2.y,
+        'A',
+        rInnerX,
+        rInnerY,
+        0,
+        segment.largeArcFlag,
+        segment.sweepFlag === sweepFlagTest ? '1' : '0',
+        segment.start2.x,
+        segment.start2.y,
         'Z',
       ].join(' ');
       return d;
@@ -722,78 +846,87 @@ export default class SparklineGraph {
     const min = this._logarithmic ? Math.log10(Math.max(1, this.min)) : this.min;
 
     const coords = this.coords;
-    const xRatio = ((this.drawArea.width + columnSpacing) / Math.ceil(this.hours * this.points)) / total;
-    const yRatio = ((max - min) / this.drawArea.height) || 1;
+    const xRatio =
+      (this.drawArea.width + columnSpacing) / Math.ceil(this.hours * this.points) / total;
+    const yRatio = (max - min) / this.drawArea.height || 1;
 
     switch (this.config.sparkline.show.chart_variant) {
       case 'audio':
         return coords.map((coord, i) => ({
-          x: (xRatio * i * total) + (xRatio * position) + this.drawArea.x,
-          y: this.drawArea.height / 2 - (((this._logarithmic ? Math.log10(Math.max(1, coord[V])) : coord[V]) - min) / yRatio / 2),
-          height: ((this._logarithmic ? Math.log10(Math.max(1, coord[V])) : coord[V]) - min) / yRatio,
+          x: xRatio * i * total + xRatio * position + this.drawArea.x,
+          y:
+            this.drawArea.height / 2 -
+            ((this._logarithmic ? Math.log10(Math.max(1, coord[V])) : coord[V]) - min) / yRatio / 2,
+          height:
+            ((this._logarithmic ? Math.log10(Math.max(1, coord[V])) : coord[V]) - min) / yRatio,
           width: xRatio - columnSpacing / 2,
           value: coord[V],
         }));
         break;
       case 'stalactites':
         return coords.map((coord, i) => ({
-          x: (xRatio * i * total) + (xRatio * position) + this.drawArea.x,
+          x: xRatio * i * total + xRatio * position + this.drawArea.x,
           y: 0,
-          height: ((this._logarithmic ? Math.log10(Math.max(1, coord[V])) : coord[V]) - min) / yRatio,
+          height:
+            ((this._logarithmic ? Math.log10(Math.max(1, coord[V])) : coord[V]) - min) / yRatio,
           width: xRatio - columnSpacing / 2,
           value: coord[V],
         }));
         break;
       case 'stalagmites':
         return coords.map((coord, i) => ({
-          x: (xRatio * i * total) + (xRatio * position) + this.drawArea.x,
-          y: this.drawArea.height / 1 - (((this._logarithmic ? Math.log10(Math.max(1, coord[V])) : coord[V]) - min) / yRatio),
-          height: ((this._logarithmic ? Math.log10(Math.max(1, coord[V])) : coord[V]) - min) / yRatio,
+          x: xRatio * i * total + xRatio * position + this.drawArea.x,
+          y:
+            this.drawArea.height / 1 -
+            ((this._logarithmic ? Math.log10(Math.max(1, coord[V])) : coord[V]) - min) / yRatio,
+          height:
+            ((this._logarithmic ? Math.log10(Math.max(1, coord[V])) : coord[V]) - min) / yRatio,
           width: xRatio - columnSpacing / 2,
           value: coord[V],
         }));
         break;
       default:
         return coords.map((coord, i) => ({
-          x: (xRatio * i * total) + (xRatio * position) + this.drawArea.x,
+          x: xRatio * i * total + xRatio * position + this.drawArea.x,
           y: 0,
           height: this.drawArea.height,
           width: xRatio - columnSpacing / 2,
           value: coord[V],
         }));
         break;
-      }
+    }
   }
 
   // Get array of levels. Just levels which draw a little bar at each level once reached
   getEqualizer(position, total, columnSpacing = 4, rowSpacing = 4) {
-    const xRatio = ((this.drawArea.width + columnSpacing) / Math.ceil(this.hours * this.points)) / total;
-    const yRatio = ((this._max - this._min) / this.drawArea.height) || 1;
-    const offset = this._min < 0 ? (Math.abs(this._min)) / yRatio : 0;
+    const xRatio =
+      (this.drawArea.width + columnSpacing) / Math.ceil(this.hours * this.points) / total;
+    const yRatio = (this._max - this._min) / this.drawArea.height || 1;
+    const offset = this._min < 0 ? Math.abs(this._min) / yRatio : 0;
 
     // Calculate height of each level rectangle
     // we have drawarea.height. We have steprange and spacing.
     // height / steprange = max height rectangle. Minus spacing = height??
-    const levelHeight = (this.drawArea.height - (this.levelCount * rowSpacing)) / this.levelCount;
+    const levelHeight = (this.drawArea.height - this.levelCount * rowSpacing) / this.levelCount;
 
     let stepRange;
     let equalizerCoords = this.coords.map((coord, i) => {
       let newCoord = [];
       const stepMax = Math.trunc(coord[V] / this.valuesPerBucket);
       const stepMin = Math.trunc(this._min / this.valuesPerBucket);
-      stepRange = (stepMax - stepMin);
+      stepRange = stepMax - stepMin;
 
       newCoord[X] = coord[X];
       newCoord[Y] = [];
       newCoord[V] = [];
       for (let i = 0; i < stepRange; i++) {
-        newCoord[V][i] = this._min + (i * this.valuesPerBucket);
+        newCoord[V][i] = this._min + i * this.valuesPerBucket;
       }
       newCoord[Y] = this._calcLevelY(newCoord);
       return newCoord;
     });
     return equalizerCoords.map((coord, i) => ({
-      x: (xRatio * i * total) + (xRatio * position) + this.drawArea.x,
+      x: xRatio * i * total + xRatio * position + this.drawArea.x,
       y: coord[Y],
       height: levelHeight,
       width: xRatio - columnSpacing,
@@ -802,15 +935,17 @@ export default class SparklineGraph {
   }
 
   getGrades(position, total, columnSpacing = 4, rowSpacing = 4) {
-    const xRatio = ((this.drawArea.width + columnSpacing) / Math.ceil(this.hours * this.points)) / total;
-    const bucketHeight = (this.drawArea.height - ((this.gradeRanks.length - 1) * rowSpacing)) / this.gradeRanks.length;
+    const xRatio =
+      (this.drawArea.width + columnSpacing) / Math.ceil(this.hours * this.points) / total;
+    const bucketHeight =
+      (this.drawArea.height - (this.gradeRanks.length - 1) * rowSpacing) / this.gradeRanks.length;
 
     let stepRange;
     let levelCoords = this.coords.map((coord, i) => {
       let newCoord = [];
       const stepMax = this.gradeRanks.length;
       const stepMin = 0;
-      stepRange = (stepMax - stepMin);
+      stepRange = stepMax - stepMin;
 
       newCoord[X] = coord[X];
       newCoord[Y] = [];
@@ -829,7 +964,10 @@ export default class SparklineGraph {
         match = false;
         matchBucket = 0;
         for (let j = 0; j < this.gradeRanks[i].rangeMin.length; j++) {
-          if (coord[V] >= this.gradeRanks[i].rangeMin[j] && coord[V] < this.gradeRanks[i].rangeMax[j]) {
+          if (
+            coord[V] >= this.gradeRanks[i].rangeMin[j] &&
+            coord[V] < this.gradeRanks[i].rangeMax[j]
+          ) {
             match = true;
             matchBucket = j;
             matchStep = i;
@@ -838,13 +976,17 @@ export default class SparklineGraph {
       }
 
       for (let i = 0; i <= stepRange; i++) {
-        if (i <= matchStep) newCoord[V][i] = this.gradeRanks[i].length > matchBucket ? this.gradeRanks[i].rangeMin[matchBucket] : this.gradeRanks[i].rangeMin[0];
+        if (i <= matchStep)
+          newCoord[V][i] =
+            this.gradeRanks[i].length > matchBucket
+              ? this.gradeRanks[i].rangeMin[matchBucket]
+              : this.gradeRanks[i].rangeMin[0];
         newCoord[Y][i] = this.drawArea.height + this.margin.t - i * (bucketHeight + rowSpacing);
       }
       return newCoord;
     });
     return levelCoords.map((coord, i) => ({
-      x: (xRatio * i * total) + (xRatio * position) + this.drawArea.x, // Remove start spacing + spacing,
+      x: xRatio * i * total + xRatio * position + this.drawArea.x, // Remove start spacing + spacing,
       y: coord[Y],
       height: bucketHeight,
       width: xRatio - columnSpacing,
@@ -854,15 +996,20 @@ export default class SparklineGraph {
 
   getBars(position, total, columnSpacing = 4, rowSpacing = 4) {
     const coords = this._calcY(this.coords);
-    const xRatio = ((this.drawArea.width + columnSpacing) / Math.ceil(this.hours * this.points)) / total;
-    const yRatio = ((this._max - this._min) / this.drawArea.height) || 1;
-    const offset = this._min < 0 ? (Math.abs(this._min)) / yRatio : 0;
+    const xRatio =
+      (this.drawArea.width + columnSpacing) / Math.ceil(this.hours * this.points) / total;
+    const yRatio = (this._max - this._min) / this.drawArea.height || 1;
+    const offset = this._min < 0 ? Math.abs(this._min) / yRatio : 0;
 
     return coords.map((coord, i) => ({
-      x: (xRatio * i * total) + (xRatio * position) + this.drawArea.x, // Remove start spacing + spacing,
+      x: xRatio * i * total + xRatio * position + this.drawArea.x, // Remove start spacing + spacing,
       y: this._min > 0 ? coord[Y] : coord[Y2],
-      height: coord[V] > 0 ? (this._min < 0 ? coord[V] / yRatio : (coord[V] - this._min) / yRatio)
-                           : coord[Y] - coord[Y2],
+      height:
+        coord[V] > 0
+          ? this._min < 0
+            ? coord[V] / yRatio
+            : (coord[V] - this._min) / yRatio
+          : coord[Y] - coord[Y2],
       width: xRatio - columnSpacing,
       value: coord[V],
     }));
@@ -875,23 +1022,22 @@ export default class SparklineGraph {
   }
 
   _average(items) {
-    return items.reduce((sum, entry) => (sum + parseFloat(entry.state)), 0) / items.length;
+    return items.reduce((sum, entry) => sum + parseFloat(entry.state), 0) / items.length;
   }
 
   _median(items) {
     const itemsDup = [...items].sort((a, b) => parseFloat(a) - parseFloat(b));
     const mid = Math.floor((itemsDup.length - 1) / 2);
-    if (itemsDup.length % 2 === 1)
-      return parseFloat(itemsDup[mid].state);
+    if (itemsDup.length % 2 === 1) return parseFloat(itemsDup[mid].state);
     return (parseFloat(itemsDup[mid].state) + parseFloat(itemsDup[mid + 1].state)) / 2;
   }
 
   _maximum(items) {
-    return Math.max(...items.map((item) => item.state));
+    return Math.max(...items.map(item => item.state));
   }
 
   _minimum(items) {
-    return Math.min(...items.map((item) => item.state));
+    return Math.min(...items.map(item => item.state));
   }
 
   _first(items) {
@@ -925,14 +1071,16 @@ export default class SparklineGraph {
   _updateEndTime() {
     this._endTime = new Date();
     if (this.config.period.type === 'calendar') {
-      if ((this.config.period.calendar.period === 'day')
-        && (this.config.period.calendar.offset !== 0)) {
+      if (
+        this.config.period.calendar.period === 'day' &&
+        this.config.period.calendar.offset !== 0
+      ) {
         // #TODO:
         // Should account for hours_to_show. Maybe user wants to show the past 48 hours.
         // Now I assume it is just yesterday, ie hours_to_show === 24
         this._endTime.setHours(0, 0, 0, 0);
         this.hours = 24;
-       }
+      }
     } else {
       switch (this._groupBy) {
         case 'month':

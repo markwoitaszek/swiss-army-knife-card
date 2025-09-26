@@ -99,7 +99,7 @@ export const coverIconName = (state, stateObj) => {
   }
 };
 
-export const computeOpenIconName = (stateObj) => {
+export const computeOpenIconName = stateObj => {
   switch (stateObj.attributes.device_class) {
     case 'awning':
     case 'door':
@@ -111,7 +111,7 @@ export const computeOpenIconName = (stateObj) => {
   }
 };
 
-export const computeCloseIconName = (stateObj) => {
+export const computeCloseIconName = stateObj => {
   switch (stateObj.attributes.device_class) {
     case 'awning':
     case 'door':

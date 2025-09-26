@@ -24,11 +24,11 @@ function styleMap(styles) {
 import BaseTool from './base-tool';
 
 /** ****************************************************************************
-  * TextTool class
-  *
-  * Summary.
-  *
-  */
+ * TextTool class
+ *
+ * Summary.
+ *
+ */
 
 export default class TextTool extends BaseTool {
   constructor(argToolset, argConfig, argPos) {
@@ -43,10 +43,8 @@ export default class TextTool extends BaseTool {
         },
       },
       styles: {
-        tool: {
-        },
-        text: {
-        },
+        tool: {},
+        text: {},
       },
     };
 
@@ -60,17 +58,24 @@ export default class TextTool extends BaseTool {
 
     this.styles.tool = {};
     this.styles.text = {};
-    if (this.dev.debug) console.log('TextTool constructor coords, dimensions', this.coords, this.dimensions, this.svg, this.config);
+    if (this.dev.debug)
+      console.log(
+        'TextTool constructor coords, dimensions',
+        this.coords,
+        this.dimensions,
+        this.svg,
+        this.config
+      );
   }
 
   /** *****************************************************************************
-  * TextTool::_renderText()
-  *
-  * Summary.
-  * Renders the text using precalculated coordinates and dimensions.
-  * Only the runtime style is calculated before rendering the text
-  *
-  */
+   * TextTool::_renderText()
+   *
+   * Summary.
+   * Renders the text using precalculated coordinates and dimensions.
+   * Only the runtime style is calculated before rendering the text
+   *
+   */
 
   _renderText() {
     this.MergeAnimationClassIfChanged();
@@ -85,17 +90,17 @@ export default class TextTool extends BaseTool {
   }
 
   /** *****************************************************************************
-  * TextTool::render()
-  *
-  * Summary.
-  * The render() function for this object.
-  *
-  */
+   * TextTool::render()
+   *
+   * Summary.
+   * The render() function for this object.
+   *
+   */
   render() {
     return svg`
         <g id="text-${this.toolId}"
           class="${classMap(this.classes.tool)}" style="${styleMap(this.styles.tool)}"
-          @click=${(e) => this.handleTapEvent(e, this.config)}>
+          @click=${e => this.handleTapEvent(e, this.config)}>
           ${this._renderText()}
         </g>
       `;

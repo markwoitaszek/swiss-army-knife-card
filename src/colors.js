@@ -1,37 +1,37 @@
 /** ***************************************************************************
-  * Colors class
-  *
-  * Summary.
-  *
-  */
+ * Colors class
+ *
+ * Summary.
+ *
+ */
 
 export default class Colors {
   /** *****************************************************************************
-  * Colors::static properties()
-  *
-  * @description
-  * Declares the static class properties.
-  * Needs eslint parserOptions ecmaVersion: 2022
-  *
-  */
+   * Colors::static properties()
+   *
+   * @description
+   * Declares the static class properties.
+   * Needs eslint parserOptions ecmaVersion: 2022
+   *
+   */
   static {
     Colors.colorCache = {};
     Colors.element = undefined;
   }
 
   /** *****************************************************************************
-  * Colors::static _prefixKeys()
-  *
-  * @argument argColors - the colors to prefix with '--'
-  *
-  * @description
-  * Prefixes all keys with '--' to make them CSS Variables.
-  *
-  */
+   * Colors::static _prefixKeys()
+   *
+   * @argument argColors - the colors to prefix with '--'
+   *
+   * @description
+   * Prefixes all keys with '--' to make them CSS Variables.
+   *
+   */
   static _prefixKeys(argColors) {
     let prefixedColors = {};
 
-    Object.keys(argColors).forEach((key) => {
+    Object.keys(argColors).forEach(key => {
       const prefixedKey = `--${key}`;
       const value = String(argColors[key]);
       prefixedColors[prefixedKey] = `${value}`;
@@ -40,15 +40,15 @@ export default class Colors {
   }
 
   /** *****************************************************************************
-  * Colors::static processTheme()
-  *
-  * @argument argTheme - the theme configuration to load
-  *
-  * @description
-  * Loads and processes the theme to be used with dark and light modes.
-  *
-  * Theme mode is selected based on theme's darkMode boolean.
-  */
+   * Colors::static processTheme()
+   *
+   * @argument argTheme - the theme configuration to load
+   *
+   * @description
+   * Loads and processes the theme to be used with dark and light modes.
+   *
+   * Theme mode is selected based on theme's darkMode boolean.
+   */
   static processTheme(argTheme) {
     let combinedLight = {};
     let combinedDark = {};
@@ -74,16 +74,16 @@ export default class Colors {
   }
 
   /** *****************************************************************************
-  * Colors::static processPalette()
-  *
-  * @argument argPalette - the palette configuration to load
-  *
-  * @description
-  * Loads the swatches defined for the palette and combines them into a single
-  * palette with light (default) and dark modes.
-  *
-  * Palette mode is selected based on theme's darkMode boolean.
-  */
+   * Colors::static processPalette()
+   *
+   * @argument argPalette - the palette configuration to load
+   *
+   * @description
+   * Loads the swatches defined for the palette and combines them into a single
+   * palette with light (default) and dark modes.
+   *
+   * Palette mode is selected based on theme's darkMode boolean.
+   */
   static processPalette(argPalette) {
     let combinedBase = {};
     let combinedLight = {};
@@ -93,7 +93,7 @@ export default class Colors {
     let paletteDark = {};
 
     // We are not interested in the individual swatches, so iterate directly over the values
-    Object.values(argPalette).forEach((swatch) => {
+    Object.values(argPalette).forEach(swatch => {
       // Apply theme vars that are relevant for all modes (but extract the 'modes' section first)
       // See: https://www.freecodecamp.org/news/javascript-object-destructuring-spread-operator-rest-parameter/
       const { modes, ...swatchBase } = swatch;
@@ -117,32 +117,35 @@ export default class Colors {
   }
 
   /** *****************************************************************************
-  * Colors::setElement()
-  *
-  * Summary.
-  * Sets the HTML element (the custom card) to work with getting colors
-  *
-  */
+   * Colors::setElement()
+   *
+   * Summary.
+   * Sets the HTML element (the custom card) to work with getting colors
+   *
+   */
 
   static setElement(argElement) {
     Colors.element = argElement;
   }
 
   /** *****************************************************************************
-  * card::_calculateColor()
-  *
-  * Summary.
-  *
-  * #TODO:
-  * replace by TinyColor library? Is that possible/feasible??
-  *
-  */
+   * card::_calculateColor()
+   *
+   * Summary.
+   *
+   * #TODO:
+   * replace by TinyColor library? Is that possible/feasible??
+   *
+   */
 
   static calculateColor(argState, argStops, argIsGradient) {
-    const sortedStops = Object.keys(argStops).map((n) => Number(n)).sort((a, b) => a - b);
+    const sortedStops = Object.keys(argStops)
+      .map(n => Number(n))
+      .sort((a, b) => a - b);
 
-    let start; let end; let
-      val;
+    let start;
+    let end;
+    let val;
     const l = sortedStops.length;
 
     if (argState <= sortedStops[0]) {
@@ -167,20 +170,23 @@ export default class Colors {
   }
 
   /** *****************************************************************************
-  * card::_calculateColor2()
-  *
-  * Summary.
-  *
-  * #TODO:
-  * replace by TinyColor library? Is that possible/feasible??
-  *
-  */
+   * card::_calculateColor2()
+   *
+   * Summary.
+   *
+   * #TODO:
+   * replace by TinyColor library? Is that possible/feasible??
+   *
+   */
 
   static calculateColor2(argState, argStops, argPart, argProperty, argIsGradient) {
-    const sortedStops = Object.keys(argStops).map((n) => Number(n)).sort((a, b) => a - b);
+    const sortedStops = Object.keys(argStops)
+      .map(n => Number(n))
+      .sort((a, b) => a - b);
 
-    let start; let end; let
-      val;
+    let start;
+    let end;
+    let val;
     const l = sortedStops.length;
 
     if (argState <= sortedStops[0]) {
@@ -193,7 +199,10 @@ export default class Colors {
         const s2 = sortedStops[i + 1];
         if (argState >= s1 && argState < s2) {
           // console.log('calculateColor2 ', argStops[s1], argStops[s2]);
-          [start, end] = [argStops[s1].styles[argPart][argProperty], argStops[s2].styles[argPart][argProperty]];
+          [start, end] = [
+            argStops[s1].styles[argPart][argProperty],
+            argStops[s2].styles[argPart][argProperty],
+          ];
           if (!argIsGradient) {
             return start;
           }
@@ -206,28 +215,28 @@ export default class Colors {
   }
 
   /** *****************************************************************************
-  * card::_calculateValueBetween()
-  *
-  * Summary.
-  * Clips the argValue value between argStart and argEnd, and returns the between value ;-)
-  *
-  * Returns NaN if argValue is undefined
-  *
-  * NOTE: Rename to valueToPercentage ??
-  */
+   * card::_calculateValueBetween()
+   *
+   * Summary.
+   * Clips the argValue value between argStart and argEnd, and returns the between value ;-)
+   *
+   * Returns NaN if argValue is undefined
+   *
+   * NOTE: Rename to valueToPercentage ??
+   */
 
   static calculateValueBetween(argStart, argEnd, argValue) {
     return (Math.min(Math.max(argValue, argStart), argEnd) - argStart) / (argEnd - argStart);
   }
 
   /** *****************************************************************************
-  * card::_getColorVariable()
-  *
-  * Summary.
-  * Get value of CSS color variable, specified as var(--color-value)
-  * These variables are defined in the Lovelace element so it appears...
-  *
-  */
+   * card::_getColorVariable()
+   *
+   * Summary.
+   * Get value of CSS color variable, specified as var(--color-value)
+   * These variables are defined in the Lovelace element so it appears...
+   *
+   */
 
   static getColorVariable(argColor) {
     const newColor = argColor.substr(4, argColor.length - 5);
@@ -237,20 +246,20 @@ export default class Colors {
   }
 
   /** *****************************************************************************
-  * card::_getGradientValue()
-  *
-  * Summary.
-  * Get gradient value of color as a result of a color_stop.
-  * An RGBA value is calculated, so transparency is possible...
-  *
-  * The colors (colorA and colorB) can be specified as:
-  * - a css variable, var(--color-value)
-  * - a hex value, #fff or #ffffff
-  * - an rgb() or rgba() value
-  * - a hsl() or hsla() value
-  * - a named css color value, such as white.
-  *
-  */
+   * card::_getGradientValue()
+   *
+   * Summary.
+   * Get gradient value of color as a result of a color_stop.
+   * An RGBA value is calculated, so transparency is possible...
+   *
+   * The colors (colorA and colorB) can be specified as:
+   * - a css variable, var(--color-value)
+   * - a hex value, #fff or #ffffff
+   * - an rgb() or rgba() value
+   * - a hsl() or hsla() value
+   * - a named css color value, such as white.
+   *
+   */
 
   static getGradientValue(argColorA, argColorB, argValue) {
     const resultColorA = Colors.colorToRGBA(argColorA);
@@ -262,10 +271,10 @@ export default class Colors {
 
     const v1 = 1 - argValue;
     const v2 = argValue;
-    const rDec = Math.floor((resultColorA[0] * v1) + (resultColorB[0] * v2));
-    const gDec = Math.floor((resultColorA[1] * v1) + (resultColorB[1] * v2));
-    const bDec = Math.floor((resultColorA[2] * v1) + (resultColorB[2] * v2));
-    const aDec = Math.floor((resultColorA[3] * v1) + (resultColorB[3] * v2));
+    const rDec = Math.floor(resultColorA[0] * v1 + resultColorB[0] * v2);
+    const gDec = Math.floor(resultColorA[1] * v1 + resultColorB[1] * v2);
+    const bDec = Math.floor(resultColorA[2] * v1 + resultColorB[2] * v2);
+    const aDec = Math.floor(resultColorA[3] * v1 + resultColorB[3] * v2);
 
     // And convert full RRGGBBAA value to #hex.
     const rHex = Colors.padZero(rDec.toString(16));
@@ -284,19 +293,19 @@ export default class Colors {
   }
 
   /** *****************************************************************************
-  * card::_colorToRGBA()
-  *
-  * Summary.
-  * Get RGBA color value of argColor.
-  *
-  * The argColor can be specified as:
-  * - a css variable, var(--color-value)
-  * - a hex value, #fff or #ffffff
-  * - an rgb() or rgba() value
-  * - a hsl() or hsla() value
-  * - a named css color value, such as white.
-  *
-  */
+   * card::_colorToRGBA()
+   *
+   * Summary.
+   * Get RGBA color value of argColor.
+   *
+   * The argColor can be specified as:
+   * - a css variable, var(--color-value)
+   * - a hex value, #fff or #ffffff
+   * - an rgb() or rgba() value
+   * - a hsl() or hsla() value
+   * - a named css color value, such as white.
+   *
+   */
 
   static colorToRGBA(argColor) {
     // return color if found in colorCache...

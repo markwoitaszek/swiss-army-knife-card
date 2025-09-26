@@ -25,11 +25,11 @@ import Utils from './utils';
 import BaseTool from './base-tool';
 
 /** ****************************************************************************
-  * RectangleToolEx class
-  *
-  * Summary.
-  *
-  */
+ * RectangleToolEx class
+ *
+ * Summary.
+ *
+ */
 
 export default class RectangleToolEx extends BaseTool {
   constructor(argToolset, argConfig, argPos) {
@@ -53,10 +53,8 @@ export default class RectangleToolEx extends BaseTool {
         },
       },
       styles: {
-        tool: {
-        },
-        rectex: {
-        },
+        tool: {},
+        rectex: {},
       },
     };
     super(argToolset, Merge.mergeDeep(DEFAULT_RECTANGLEEX_CONFIG, argConfig), argPos);
@@ -74,43 +72,84 @@ export default class RectangleToolEx extends BaseTool {
     const maxRadius = Math.min(this.svg.height, this.svg.width) / 2;
     let radius = 0;
     radius = Utils.calculateSvgDimension(this.config.position.radius.all);
-    this.svg.radiusTopLeft = +Math.min(maxRadius, Math.max(0, Utils.calculateSvgDimension(
-      this.config.position.radius.top_left || this.config.position.radius.left || this.config.position.radius.top || radius,
-    ))) || 0;
+    this.svg.radiusTopLeft =
+      +Math.min(
+        maxRadius,
+        Math.max(
+          0,
+          Utils.calculateSvgDimension(
+            this.config.position.radius.top_left ||
+              this.config.position.radius.left ||
+              this.config.position.radius.top ||
+              radius
+          )
+        )
+      ) || 0;
 
-    this.svg.radiusTopRight = +Math.min(maxRadius, Math.max(0, Utils.calculateSvgDimension(
-      this.config.position.radius.top_right || this.config.position.radius.right || this.config.position.radius.top || radius,
-    ))) || 0;
+    this.svg.radiusTopRight =
+      +Math.min(
+        maxRadius,
+        Math.max(
+          0,
+          Utils.calculateSvgDimension(
+            this.config.position.radius.top_right ||
+              this.config.position.radius.right ||
+              this.config.position.radius.top ||
+              radius
+          )
+        )
+      ) || 0;
 
-    this.svg.radiusBottomLeft = +Math.min(maxRadius, Math.max(0, Utils.calculateSvgDimension(
-      this.config.position.radius.bottom_left || this.config.position.radius.left || this.config.position.radius.bottom || radius,
-    ))) || 0;
+    this.svg.radiusBottomLeft =
+      +Math.min(
+        maxRadius,
+        Math.max(
+          0,
+          Utils.calculateSvgDimension(
+            this.config.position.radius.bottom_left ||
+              this.config.position.radius.left ||
+              this.config.position.radius.bottom ||
+              radius
+          )
+        )
+      ) || 0;
 
-    this.svg.radiusBottomRight = +Math.min(maxRadius, Math.max(0, Utils.calculateSvgDimension(
-      this.config.position.radius.bottom_right || this.config.position.radius.right || this.config.position.radius.bottom || radius,
-    ))) || 0;
+    this.svg.radiusBottomRight =
+      +Math.min(
+        maxRadius,
+        Math.max(
+          0,
+          Utils.calculateSvgDimension(
+            this.config.position.radius.bottom_right ||
+              this.config.position.radius.right ||
+              this.config.position.radius.bottom ||
+              radius
+          )
+        )
+      ) || 0;
 
-    if (this.dev.debug) console.log('RectangleToolEx constructor config, svg', this.toolId, this.config, this.svg);
+    if (this.dev.debug)
+      console.log('RectangleToolEx constructor config, svg', this.toolId, this.config, this.svg);
   }
 
   /** *****************************************************************************
-  * RectangleToolEx::value()
-  *
-  */
+   * RectangleToolEx::value()
+   *
+   */
   set value(state) {
     super.value = state;
   }
 
   /** *****************************************************************************
-  * RectangleToolEx::_renderRectangleEx()
-  *
-  * Summary.
-  * Renders the rectangle using lines and bezier curves with precalculated coordinates and dimensions.
-  *
-  * Refs for creating the path online:
-  * - https://mavo.io/demos/svgpath/
-  *
-  */
+   * RectangleToolEx::_renderRectangleEx()
+   *
+   * Summary.
+   * Renders the rectangle using lines and bezier curves with precalculated coordinates and dimensions.
+   *
+   * Refs for creating the path online:
+   * - https://mavo.io/demos/svgpath/
+   *
+   */
 
   _renderRectangleEx() {
     this.MergeAnimationClassIfChanged();
@@ -124,7 +163,9 @@ export default class RectangleToolEx extends BaseTool {
       this.MergeColorFromState(this.styles.rectex);
     }
 
-    if (!this.counter) { this.counter = 0; }
+    if (!this.counter) {
+      this.counter = 0;
+    }
     this.counter += 1;
 
     const svgItems = svg`
@@ -148,17 +189,17 @@ export default class RectangleToolEx extends BaseTool {
   }
 
   /** *****************************************************************************
-  * RectangleToolEx::render()
-  *
-  * Summary.
-  * The render() function for this object.
-  *
-  */
+   * RectangleToolEx::render()
+   *
+   * Summary.
+   * The render() function for this object.
+   *
+   */
   render() {
     return svg`
       <g id="rectex-${this.toolId}"
         class="${classMap(this.classes.tool)}" style="${styleMap(this.styles.tool)}"
-        @click=${(e) => this.handleTapEvent(e, this.config)}>
+        @click=${e => this.handleTapEvent(e, this.config)}>
         ${this._renderRectangleEx()}
       </g>
     `;

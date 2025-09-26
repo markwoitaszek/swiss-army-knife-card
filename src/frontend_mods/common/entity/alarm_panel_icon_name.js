@@ -1,7 +1,7 @@
 /** Return an icon representing a alarm panel state. */
 
 // eslint-disable-next-line import/prefer-default-export
-export const alarmPanelIconName = (state) => {
+export const alarmPanelIconName = state => {
   switch (state) {
     case 'armed_away':
       return 'mdi:shield-lock';

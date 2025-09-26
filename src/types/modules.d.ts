@@ -54,7 +54,13 @@ declare module './frontend_mods/color/convert-color' {
 
 declare module './frontend_mods/color/convert-light-color' {
   export function rgbw2rgb(r: number, g: number, b: number, w: number): [number, number, number];
-  export function rgbww2rgb(r: number, g: number, b: number, ww: number, cw: number): [number, number, number];
+  export function rgbww2rgb(
+    r: number,
+    g: number,
+    b: number,
+    ww: number,
+    cw: number
+  ): [number, number, number];
   export function temperature2rgb(temperature: number): [number, number, number];
 }
 
@@ -67,7 +73,7 @@ declare global {
   interface Window {
     MSStream?: any;
   }
-  
+
   interface Console {
     warning?: (message?: any, ...optionalParams: any[]) => void;
   }

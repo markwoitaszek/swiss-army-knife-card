@@ -26,11 +26,11 @@ import Utils from './utils';
 import { stateIconName } from './frontend_mods/common/entity/state_icon_name';
 
 /** ****************************************************************************
-  * EntityIconTool class
-  *
-  * Summary.
-  *
-  */
+ * EntityIconTool class
+ *
+ * Summary.
+ *
+ */
 
 export default class EntityIconTool extends BaseTool {
   constructor(argToolset, argConfig, argPos) {
@@ -45,10 +45,8 @@ export default class EntityIconTool extends BaseTool {
         },
       },
       styles: {
-        tool: {
-        },
-        icon: {
-        },
+        tool: {},
+        icon: {},
       },
     };
     super(argToolset, Merge.mergeDeep(DEFAULT_ICON_CONFIG, argConfig), argPos);
@@ -68,7 +66,7 @@ export default class EntityIconTool extends BaseTool {
     this.svg.iconPixels = this.svg.iconSize * FONT_SIZE;
 
     const align = this.config.position.align ? this.config.position.align : 'center';
-    const adjust = (align === 'center' ? 0.5 : (align === 'start' ? -1 : +1));
+    const adjust = align === 'center' ? 0.5 : align === 'start' ? -1 : +1;
 
     const clientWidth = 400; // testing
     const correction = clientWidth / this._card.viewBox.width;
@@ -76,17 +74,20 @@ export default class EntityIconTool extends BaseTool {
     this.svg.xpx = this.svg.cx;
     this.svg.ypx = this.svg.cy;
 
-    if (((this._card.isSafari) || (this._card.iOS)) && (!this._card.isSafari16)) {
+    if ((this._card.isSafari || this._card.iOS) && !this._card.isSafari16) {
       this.svg.iconSize *= correction;
 
-      this.svg.xpx = (this.svg.xpx * correction) - (this.svg.iconPixels * adjust * correction);
-      this.svg.ypx = (this.svg.ypx * correction) - (this.svg.iconPixels * 0.5 * correction) - (this.svg.iconPixels * 0.25 * correction);// - (iconPixels * 0.25 / 1.86);
+      this.svg.xpx = this.svg.xpx * correction - this.svg.iconPixels * adjust * correction;
+      this.svg.ypx =
+        this.svg.ypx * correction -
+        this.svg.iconPixels * 0.5 * correction -
+        this.svg.iconPixels * 0.25 * correction; // - (iconPixels * 0.25 / 1.86);
     } else {
       // Get x,y in viewbox dimensions and center with half of size of icon.
       // Adjust horizontal for aligning. Can be 1, 0.5 and -1
       // Adjust vertical for half of height... and correct for 0.25em textfont to align.
-      this.svg.xpx -= (this.svg.iconPixels * adjust);
-      this.svg.ypx = this.svg.ypx - (this.svg.iconPixels * 0.5) - (this.svg.iconPixels * 0.25);
+      this.svg.xpx -= this.svg.iconPixels * adjust;
+      this.svg.ypx = this.svg.ypx - this.svg.iconPixels * 0.5 - this.svg.iconPixels * 0.25;
     }
     this.classes.tool = {};
     this.classes.icon = {};
@@ -94,53 +95,59 @@ export default class EntityIconTool extends BaseTool {
     this.styles.tool = {};
     this.styles.icon = {};
 
-    if (this.dev.debug) console.log('EntityIconTool constructor coords, dimensions, config', this.coords, this.dimensions, this.config);
+    if (this.dev.debug)
+      console.log(
+        'EntityIconTool constructor coords, dimensions, config',
+        this.coords,
+        this.dimensions,
+        this.config
+      );
   }
 
   /** *****************************************************************************
-  * EntityIconTool::static properties()
-  *
-  * Summary.
-  * Declares the static class properties.
-  * Needs eslint parserOptions ecmaVersion: 2022
-  *
-  * Replaces older style declarations in the constructor, such as
-  *
-  *  if (!EntityIconTool.sakIconCache) {
-  *    EntityIconTool.sakIconCache = {};
-  *  }
-  *
-  */
+   * EntityIconTool::static properties()
+   *
+   * Summary.
+   * Declares the static class properties.
+   * Needs eslint parserOptions ecmaVersion: 2022
+   *
+   * Replaces older style declarations in the constructor, such as
+   *
+   *  if (!EntityIconTool.sakIconCache) {
+   *    EntityIconTool.sakIconCache = {};
+   *  }
+   *
+   */
   static {
     EntityIconTool.sakIconCache = {};
   }
 
   /** *****************************************************************************
-  * EntityIconTool::_buildIcon()
-  *
-  * Summary.
-  * Builds the Icon specification name.
-  *
-  */
+   * EntityIconTool::_buildIcon()
+   *
+   * Summary.
+   * Builds the Icon specification name.
+   *
+   */
   _buildIcon(entityState, entityConfig, toolIcon) {
     return (
-      this.activeAnimation?.icon // Icon from animation
-      || toolIcon // Defined by tool
-      || entityConfig?.icon // Defined by configuration
-      || entityState?.attributes?.icon // Using entity icon
-      || stateIconName(entityState) // From modified HA files
+      this.activeAnimation?.icon || // Icon from animation
+      toolIcon || // Defined by tool
+      entityConfig?.icon || // Defined by configuration
+      entityState?.attributes?.icon || // Using entity icon
+      stateIconName(entityState) // From modified HA files
     );
   }
 
   /** *****************************************************************************
-  * EntityIconTool::_renderIcon()
-  *
-  * Summary.
-  * Renders the icon using precalculated coordinates and dimensions.
-  * Only the runtime style is calculated before rendering the icon
-  *
-  * THIS IS THE ONE!!!!
-  */
+   * EntityIconTool::_renderIcon()
+   *
+   * Summary.
+   * Renders the icon using precalculated coordinates and dimensions.
+   * Only the runtime style is calculated before rendering the icon
+   *
+   * THIS IS THE ONE!!!!
+   */
 
   _renderIcon() {
     // this.MergeAnimationClassIfChanged();
@@ -149,12 +156,14 @@ export default class EntityIconTool extends BaseTool {
 
     const icon = this._buildIcon(
       this._card.entities[this.defaultEntityIndex()],
-      (this.defaultEntityIndex() !== undefined) ? this._card.config.entities[this.defaultEntityIndex()] : undefined,
-      this.config.icon,
+      this.defaultEntityIndex() !== undefined
+        ? this._card.config.entities[this.defaultEntityIndex()]
+        : undefined,
+      this.config.icon
     );
 
     // eslint-disable-next-line no-constant-condition
-    if (true || (this.svg.xpx === 0)) {
+    if (true || this.svg.xpx === 0) {
       this.svg.iconSize = this.config.position.icon_size ? this.config.position.icon_size : 2;
       this.svg.iconPixels = this.svg.iconSize * FONT_SIZE;
 
@@ -163,39 +172,52 @@ export default class EntityIconTool extends BaseTool {
       this.svg.iconPixels = Utils.calculateSvgDimension(this.svg.iconSize);
 
       const align = this.config.position.align ? this.config.position.align : 'center';
-      const adjust = (align === 'center' ? 0.5 : (align === 'start' ? -1 : +1));
+      const adjust = align === 'center' ? 0.5 : align === 'start' ? -1 : +1;
 
       const clientWidth = 400;
-      const correction = clientWidth / (this._card.viewBox.width);
+      const correction = clientWidth / this._card.viewBox.width;
 
-      this.svg.xpx = this.svg.cx;// (x * this._card.viewBox.width);
-      this.svg.ypx = this.svg.cy;// (y * this._card.viewBox.height);
+      this.svg.xpx = this.svg.cx; // (x * this._card.viewBox.width);
+      this.svg.ypx = this.svg.cy; // (y * this._card.viewBox.height);
 
-      if (((this._card.isSafari) || (this._card.iOS)) && (!this._card.isSafari16)) {
+      if ((this._card.isSafari || this._card.iOS) && !this._card.isSafari16) {
         // correction = 1; //
         this.svg.iconSize *= correction;
         this.svg.iconPixels *= correction;
 
-        this.svg.xpx = (this.svg.xpx * correction) - (this.svg.iconPixels * adjust * correction);
-        this.svg.ypx = (this.svg.ypx * correction) - (this.svg.iconPixels * 0.9 * correction);
+        this.svg.xpx = this.svg.xpx * correction - this.svg.iconPixels * adjust * correction;
+        this.svg.ypx = this.svg.ypx * correction - this.svg.iconPixels * 0.9 * correction;
         // - (this.svg.iconPixels * 0.25 * correction);// - (iconPixels * 0.25 / 1.86);
-        this.svg.xpx = (this.svg.cx * correction) - (this.svg.iconPixels * adjust * correction);
-        this.svg.ypx = (this.svg.cy * correction) - (this.svg.iconPixels * adjust * correction);
+        this.svg.xpx = this.svg.cx * correction - this.svg.iconPixels * adjust * correction;
+        this.svg.ypx = this.svg.cy * correction - this.svg.iconPixels * adjust * correction;
       } else {
         // Get x,y in viewbox dimensions and center with half of size of icon.
         // Adjust horizontal for aligning. Can be 1, 0.5 and -1
 
-        this.svg.xpx = this.svg.cx - (this.svg.iconPixels * adjust);
-        this.svg.ypx = this.svg.cy - (this.svg.iconPixels * adjust);
+        this.svg.xpx = this.svg.cx - this.svg.iconPixels * adjust;
+        this.svg.ypx = this.svg.cy - this.svg.iconPixels * adjust;
 
-        if (this.dev.debug) console.log('EntityIconTool::_renderIcon - svg values =', this.toolId, this.svg, this.config.cx, this.config.cy, align, adjust);
+        if (this.dev.debug)
+          console.log(
+            'EntityIconTool::_renderIcon - svg values =',
+            this.toolId,
+            this.svg,
+            this.config.cx,
+            this.config.cy,
+            align,
+            adjust
+          );
       }
     }
 
-    if (!this.alternateColor) { this.alternateColor = 'rgba(0,0,0,0)'; }
+    if (!this.alternateColor) {
+      this.alternateColor = 'rgba(0,0,0,0)';
+    }
 
     if (!EntityIconTool.sakIconCache[icon]) {
-      const theQuery = this._card.shadowRoot.getElementById('icon-'.concat(this.toolId))?.shadowRoot?.querySelectorAll('*');
+      const theQuery = this._card.shadowRoot
+        .getElementById('icon-'.concat(this.toolId))
+        ?.shadowRoot?.querySelectorAll('*');
       if (theQuery) {
         this.iconSvg = theQuery[0]?.path;
       } else {
@@ -225,8 +247,8 @@ export default class EntityIconTool extends BaseTool {
 
       this.svg.x1 = this.svg.cx - this.svg.iconPixels / 2;
       this.svg.y1 = this.svg.cy - this.svg.iconPixels / 2;
-      this.svg.x1 = this.svg.cx - (this.svg.iconPixels * 0.5);
-      this.svg.y1 = this.svg.cy - (this.svg.iconPixels * 0.5);
+      this.svg.x1 = this.svg.cx - this.svg.iconPixels * 0.5;
+      this.svg.y1 = this.svg.cy - this.svg.iconPixels * 0.5;
 
       scale = this.svg.iconPixels / 24;
       // scale = 1;
@@ -249,8 +271,8 @@ export default class EntityIconTool extends BaseTool {
             <div class="div__icon, hover" xmlns="http://www.w3.org/1999/xhtml"
                 style="line-height:${this.svg.iconPixels}px;position:relative;border-style:solid;border-width:0px;border-color:${this.alternateColor};fill:${this.alternateColor};color:${this.alternateColor};">
                 <ha-icon icon=${icon} id="icon-${this.toolId}"
-                @animationstart=${(e) => this._handleAnimationEvent(e, this)}
-                @animationiteration=${(e) => this._handleAnimationEvent(e, this)}
+                @animationstart=${e => this._handleAnimationEvent(e, this)}
+                @animationiteration=${e => this._handleAnimationEvent(e, this)}
                 style="animation: flash 0.15s 20;"></ha-icon>
             </div>
           </body>
@@ -263,30 +285,30 @@ export default class EntityIconTool extends BaseTool {
     argEvent.stopPropagation();
     argEvent.preventDefault();
 
-    argThis.iconSvg = this._card.shadowRoot.getElementById('icon-'.concat(this.toolId))?.shadowRoot?.querySelectorAll('*')[0]?.path;
+    argThis.iconSvg = this._card.shadowRoot
+      .getElementById('icon-'.concat(this.toolId))
+      ?.shadowRoot?.querySelectorAll('*')[0]?.path;
     if (argThis.iconSvg) {
       argThis._card.requestUpdate();
     }
   }
 
   // eslint-disable-next-line no-unused-vars
-  firstUpdated(changedProperties) {
-
-  }
+  firstUpdated(changedProperties) {}
 
   /** *****************************************************************************
-  * EntityIconTool::render()
-  *
-  * Summary.
-  * The render() function for this object.
-  *
-  * NTS:
-  * Adding        <style> div { overflow: hidden;}</style>
-  * to the <g group, clips the icon against the ha-card, ie the div.
-  * however, on Safari, all icons are clipped, as if they don't fit the room given to be displayed.
-  * a bug in rendering the Icon?? Only first time icon is clipped, then displayed normally if a data update
-  * from hass is coming in.
-  */
+   * EntityIconTool::render()
+   *
+   * Summary.
+   * The render() function for this object.
+   *
+   * NTS:
+   * Adding        <style> div { overflow: hidden;}</style>
+   * to the <g group, clips the icon against the ha-card, ie the div.
+   * however, on Safari, all icons are clipped, as if they don't fit the room given to be displayed.
+   * a bug in rendering the Icon?? Only first time icon is clipped, then displayed normally if a data update
+   * from hass is coming in.
+   */
 
   render() {
     this.MergeAnimationClassIfChanged();
@@ -294,7 +316,7 @@ export default class EntityIconTool extends BaseTool {
     this.MergeColorFromState(this.styles.icon);
     return svg`
       <g "" id="icongrp-${this.toolId}" class="${classMap(this.classes.tool)}" style="${styleMap(this.styles.tool)}"
-        @click=${(e) => this.handleTapEvent(e, this.config)} >
+        @click=${e => this.handleTapEvent(e, this.config)} >
 
         ${this._renderIcon()}
       </g>

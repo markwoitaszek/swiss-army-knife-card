@@ -25,12 +25,7 @@
 // All imports now use the unified 'lit' package
 // Lit 3.x provides better performance and modern web standards support
 
-import {
-  LitElement,
-  css,
-  html,
-  svg, unsafeCSS,
-} from 'lit';
+import { LitElement, css, html, svg, unsafeCSS } from 'lit';
 
 import { ifDefined } from 'lit/directives/if-defined.js';
 // import { styleMap } from 'lit/directives/style-map.js'; // Not available in Lit 3.x
@@ -38,14 +33,14 @@ import { unsafeSVG } from 'lit/directives/unsafe-svg.js';
 import { version } from '../package.json';
 
 // Import TypeScript types
-import type { 
-  SakConfig, 
-  EntityConfig, 
-  LayoutConfig, 
-  ToolsetConfig, 
+import type {
+  SakConfig,
+  EntityConfig,
+  LayoutConfig,
+  ToolsetConfig,
   ToolConfig,
   EntityState,
-  SakError 
+  SakError,
 } from './types/SakTypes.js';
 
 // Module declarations are loaded automatically from types/modules.d.ts
@@ -59,11 +54,7 @@ function styleMap(styles: Record<string, string | number | undefined> | null | u
     .join('; ');
 }
 
-import {
-  FONT_SIZE,
-  SVG_DEFAULT_DIMENSIONS,
-  SVG_VIEW_BOX,
-} from './const.js';
+import { FONT_SIZE, SVG_DEFAULT_DIMENSIONS, SVG_VIEW_BOX } from './const.js';
 
 import Colors from './colors.js';
 import Merge from './merge.js';
@@ -71,24 +62,15 @@ import Templates from './templates.js';
 import Toolset from './toolset.js';
 import Utils from './utils.js';
 
-import {
-  hs2rgb,
-  hsv2rgb,
-  rgb2hex,
-  rgb2hsv,
-} from './frontend_mods/color/convert-color.js';
-import {
-  rgbw2rgb,
-  rgbww2rgb,
-  temperature2rgb,
-} from './frontend_mods/color/convert-light-color.js';
+import { hs2rgb, hsv2rgb, rgb2hex, rgb2hsv } from './frontend_mods/color/convert-color.js';
+import { rgbw2rgb, rgbww2rgb, temperature2rgb } from './frontend_mods/color/convert-light-color.js';
 
 import { computeDomain } from './frontend_mods/common/entity/compute_domain.js';
 
 console.info(
   `%c  SWISS-ARMY-KNIFE-CARD  \n%c      Version ${version}      `,
   'color: yellow; font-weight: bold; background: black',
-  'color: white; font-weight: bold; background: dimgray',
+  'color: white; font-weight: bold; background: dimgray'
 );
 
 // https://github.com/d3/d3-selection/blob/master/src/selection/data.js
@@ -122,8 +104,8 @@ class SwissArmyKnifeCard extends LitElement {
     card: {
       default: {},
       light: {},
-      dark: {}
-    }
+      dark: {},
+    },
   };
   private entityHistory: {
     needed: boolean;
@@ -132,7 +114,7 @@ class SwissArmyKnifeCard extends LitElement {
   } = {
     needed: false,
     updating: false,
-    update_interval: 300
+    update_interval: 300,
   };
   private stateChanged: boolean = true;
   private dev: {
@@ -142,7 +124,7 @@ class SwissArmyKnifeCard extends LitElement {
   } = {
     debug: false,
     performance: false,
-    m3: false
+    m3: false,
   };
   private configIsSet: boolean = false;
   private theme: {
@@ -158,7 +140,7 @@ class SwissArmyKnifeCard extends LitElement {
     modeChanged: false,
     darkMode: false,
     light: {},
-    dark: {}
+    dark: {},
   };
   private isSafari: boolean = false;
   private iOS: boolean = false;
@@ -171,7 +153,7 @@ class SwissArmyKnifeCard extends LitElement {
     dark: Record<string, string>;
   } = {
     light: {},
-    dark: {}
+    dark: {},
   };
   private aspectratio: string = '1/1';
   private counter: number = 0;
@@ -265,9 +247,10 @@ class SwissArmyKnifeCard extends LitElement {
 
     // eslint-disable-next-line no-useless-escape
     this.isSafari = !!window.navigator.userAgent.match(/Version\/[\d\.]+.*Safari/);
-    this.iOS = (/iPad|iPhone|iPod/.test(window.navigator.userAgent)
-      || (window.navigator.platform === 'MacIntel' && window.navigator.maxTouchPoints > 1))
-      && !(window as any).MSStream;
+    this.iOS =
+      (/iPad|iPhone|iPod/.test(window.navigator.userAgent) ||
+        (window.navigator.platform === 'MacIntel' && window.navigator.maxTouchPoints > 1)) &&
+      !(window as any).MSStream;
     this.isSafari14 = this.isSafari && /Version\/14\.[0-9]/.test(window.navigator.userAgent);
     this.isSafari15 = this.isSafari && /Version\/15\.[0-9]/.test(window.navigator.userAgent);
     this.isSafari16 = this.isSafari && /Version\/16\.[0-9]/.test(window.navigator.userAgent);
@@ -277,9 +260,12 @@ class SwissArmyKnifeCard extends LitElement {
     // See: https://github.com/home-assistant/iOS/blob/master/Sources/Shared/API/HAAPI.swift
     // It contains strings like "like Safari" and "OS 14_2", and "iOS 14.2.0"
 
-    this.isSafari14 = this.isSafari14 || /os 15.*like safari/.test(window.navigator.userAgent.toLowerCase());
-    this.isSafari15 = this.isSafari15 || /os 14.*like safari/.test(window.navigator.userAgent.toLowerCase());
-    this.isSafari16 = this.isSafari16 || /os 16.*like safari/.test(window.navigator.userAgent.toLowerCase());
+    this.isSafari14 =
+      this.isSafari14 || /os 15.*like safari/.test(window.navigator.userAgent.toLowerCase());
+    this.isSafari15 =
+      this.isSafari15 || /os 14.*like safari/.test(window.navigator.userAgent.toLowerCase());
+    this.isSafari16 =
+      this.isSafari16 || /os 16.*like safari/.test(window.navigator.userAgent.toLowerCase());
 
     this.lovelace = SwissArmyKnifeCard.lovelace;
 
@@ -295,7 +281,8 @@ class SwissArmyKnifeCard extends LitElement {
     this.palette.light = {};
     this.palette.dark = {};
 
-    if (this.dev.debug) console.log('*****Event - card - constructor', this.cardId, new Date().getTime());
+    if (this.dev.debug)
+      console.log('*****Event - card - constructor', this.cardId, new Date().getTime());
   }
 
   static getSystemStyles() {
@@ -308,19 +295,19 @@ class SwissArmyKnifeCard extends LitElement {
         --sak-ref-palette-gray-taupe-gray: #8e8e93;
         --sak-ref-palette-gray-cool-gray: #919bb4;
 
-        --sak-ref-palette-yellow-sunglow: #F7ce46;
+        --sak-ref-palette-yellow-sunglow: #f7ce46;
         --sak-ref-palette-yellow-jonquil: #ffcc01;
         --sak-ref-palette-yellow-Amber: #f6b90b;
 
-        --sak-ref-palette-orange-xanthous: #F3b530;
+        --sak-ref-palette-orange-xanthous: #f3b530;
         --sak-ref-palette-orange-princeton-orange: #ff9500;
-        --sak-ref-palette-orange-orange : #F46c36;
+        --sak-ref-palette-orange-orange: #f46c36;
 
         --sak-ref-palette-red-indian-red: #ed5254;
         --sak-ref-palette-red-japser: #d85140;
         --sak-ref-palette-red-cinnabar: #ff3b2f;
 
-        --sak-ref-palette-purple-amethyst: #Af52de;
+        --sak-ref-palette-purple-amethyst: #af52de;
         --sak-ref-palette-purple-tropical-indigo: #8d82ef;
         --sak-ref-palette-purple-slate-blue: #5f5dd1;
       }
@@ -357,7 +344,9 @@ class SwissArmyKnifeCard extends LitElement {
       .hidden {
         opacity: 0;
         visibility: hidden;
-        transition: visibility 0s 1s, opacity 0.5s linear;
+        transition:
+          visibility 0s 1s,
+          opacity 0.5s linear;
       }
 
       focus {
@@ -367,7 +356,6 @@ class SwissArmyKnifeCard extends LitElement {
         outline: 3px solid blanchedalmond; /* That'll show 'em */
       }
 
-
       @media (print), (prefers-reduced-motion: reduce) {
         .animated {
           animation-duration: 1ms !important;
@@ -376,23 +364,22 @@ class SwissArmyKnifeCard extends LitElement {
         }
       }
 
-
       /* Set default host font-size to 10 pixels.
        * In that case 1em = 10 pixels = 1% of 100x100 matrix used
        */
       @media screen and (min-width: 467px) {
         :host {
-        font-size: ${FONT_SIZE}px;
+          font-size: ${FONT_SIZE}px;
         }
       }
       @media screen and (max-width: 466px) {
         :host {
-        font-size: ${FONT_SIZE}px;
+          font-size: ${FONT_SIZE}px;
         }
       }
 
       :host ha-card {
-            padding: 0px 0px 0px 0px;
+        padding: 0px 0px 0px 0px;
       }
 
       .container {
@@ -437,7 +424,8 @@ class SwissArmyKnifeCard extends LitElement {
         font-weight: bold;
       }
 
-      #label, #name {
+      #label,
+      #name {
         margin: 3% 0;
       }
 
@@ -448,89 +436,66 @@ class SwissArmyKnifeCard extends LitElement {
       }
 
       .card--dropshadow-5 {
-        filter: drop-shadow(0 1px 0 #ccc)
-               drop-shadow(0 2px 0 #c9c9c9)
-               drop-shadow(0 3px 0 #bbb)
-               drop-shadow(0 4px 0 #b9b9b9)
-               drop-shadow(0 5px 0 #aaa)
-               drop-shadow(0 6px 1px rgba(0,0,0,.1))
-               drop-shadow(0 0 5px rgba(0,0,0,.1))
-               drop-shadow(0 1px 3px rgba(0,0,0,.3))
-               drop-shadow(0 3px 5px rgba(0,0,0,.2))
-               drop-shadow(0 5px 10px rgba(0,0,0,.25))
-               drop-shadow(0 10px 10px rgba(0,0,0,.2))
-               drop-shadow(0 20px 20px rgba(0,0,0,.15));
+        filter: drop-shadow(0 1px 0 #ccc) drop-shadow(0 2px 0 #c9c9c9) drop-shadow(0 3px 0 #bbb)
+          drop-shadow(0 4px 0 #b9b9b9) drop-shadow(0 5px 0 #aaa)
+          drop-shadow(0 6px 1px rgba(0, 0, 0, 0.1)) drop-shadow(0 0 5px rgba(0, 0, 0, 0.1))
+          drop-shadow(0 1px 3px rgba(0, 0, 0, 0.3)) drop-shadow(0 3px 5px rgba(0, 0, 0, 0.2))
+          drop-shadow(0 5px 10px rgba(0, 0, 0, 0.25)) drop-shadow(0 10px 10px rgba(0, 0, 0, 0.2))
+          drop-shadow(0 20px 20px rgba(0, 0, 0, 0.15));
       }
       .card--dropshadow-medium--opaque--sepia90 {
-        filter: drop-shadow(0.0em 0.05em 0px #b2a98f22)
-                drop-shadow(0.0em 0.07em 0px #b2a98f55)
-                drop-shadow(0.0em 0.10em 0px #b2a98f88)
-                drop-shadow(0px 0.6em 0.9em rgba(0,0,0,0.15))
-                drop-shadow(0px 1.2em 0.15em rgba(0,0,0,0.1))
-                drop-shadow(0px 2.4em 2.5em rgba(0,0,0,0.1))
-                sepia(90%);
+        filter: drop-shadow(0em 0.05em 0px #b2a98f22) drop-shadow(0em 0.07em 0px #b2a98f55)
+          drop-shadow(0em 0.1em 0px #b2a98f88) drop-shadow(0px 0.6em 0.9em rgba(0, 0, 0, 0.15))
+          drop-shadow(0px 1.2em 0.15em rgba(0, 0, 0, 0.1))
+          drop-shadow(0px 2.4em 2.5em rgba(0, 0, 0, 0.1)) sepia(90%);
       }
 
       .card--dropshadow-heavy--sepia90 {
-        filter: drop-shadow(0.0em 0.05em 0px #b2a98f22)
-                drop-shadow(0.0em 0.07em 0px #b2a98f55)
-                drop-shadow(0.0em 0.10em 0px #b2a98f88)
-                drop-shadow(0px 0.3em 0.45em rgba(0,0,0,0.5))
-                drop-shadow(0px 0.6em 0.07em rgba(0,0,0,0.3))
-                drop-shadow(0px 1.2em 1.25em rgba(0,0,0,1))
-                drop-shadow(0px 1.8em 1.6em rgba(0,0,0,0.1))
-                drop-shadow(0px 2.4em 2.0em rgba(0,0,0,0.1))
-                drop-shadow(0px 3.0em 2.5em rgba(0,0,0,0.1))
-                sepia(90%);
+        filter: drop-shadow(0em 0.05em 0px #b2a98f22) drop-shadow(0em 0.07em 0px #b2a98f55)
+          drop-shadow(0em 0.1em 0px #b2a98f88) drop-shadow(0px 0.3em 0.45em rgba(0, 0, 0, 0.5))
+          drop-shadow(0px 0.6em 0.07em rgba(0, 0, 0, 0.3))
+          drop-shadow(0px 1.2em 1.25em rgba(0, 0, 0, 1))
+          drop-shadow(0px 1.8em 1.6em rgba(0, 0, 0, 0.1))
+          drop-shadow(0px 2.4em 2em rgba(0, 0, 0, 0.1))
+          drop-shadow(0px 3em 2.5em rgba(0, 0, 0, 0.1)) sepia(90%);
       }
 
       .card--dropshadow-heavy {
-        filter: drop-shadow(0.0em 0.05em 0px #b2a98f22)
-                drop-shadow(0.0em 0.07em 0px #b2a98f55)
-                drop-shadow(0.0em 0.10em 0px #b2a98f88)
-                drop-shadow(0px 0.3em 0.45em rgba(0,0,0,0.5))
-                drop-shadow(0px 0.6em 0.07em rgba(0,0,0,0.3))
-                drop-shadow(0px 1.2em 1.25em rgba(0,0,0,1))
-                drop-shadow(0px 1.8em 1.6em rgba(0,0,0,0.1))
-                drop-shadow(0px 2.4em 2.0em rgba(0,0,0,0.1))
-                drop-shadow(0px 3.0em 2.5em rgba(0,0,0,0.1));
+        filter: drop-shadow(0em 0.05em 0px #b2a98f22) drop-shadow(0em 0.07em 0px #b2a98f55)
+          drop-shadow(0em 0.1em 0px #b2a98f88) drop-shadow(0px 0.3em 0.45em rgba(0, 0, 0, 0.5))
+          drop-shadow(0px 0.6em 0.07em rgba(0, 0, 0, 0.3))
+          drop-shadow(0px 1.2em 1.25em rgba(0, 0, 0, 1))
+          drop-shadow(0px 1.8em 1.6em rgba(0, 0, 0, 0.1))
+          drop-shadow(0px 2.4em 2em rgba(0, 0, 0, 0.1))
+          drop-shadow(0px 3em 2.5em rgba(0, 0, 0, 0.1));
       }
 
       .card--dropshadow-medium--sepia90 {
-        filter: drop-shadow(0.0em 0.05em 0px #b2a98f)
-                drop-shadow(0.0em 0.15em 0px #b2a98f)
-                drop-shadow(0.0em 0.15em 0px #b2a98f)
-                drop-shadow(0px 0.6em 0.9em rgba(0,0,0,0.15))
-                drop-shadow(0px 1.2em 0.15em rgba(0,0,0,0.1))
-                drop-shadow(0px 2.4em 2.5em rgba(0,0,0,0.1))
-                sepia(90%);
+        filter: drop-shadow(0em 0.05em 0px #b2a98f) drop-shadow(0em 0.15em 0px #b2a98f)
+          drop-shadow(0em 0.15em 0px #b2a98f) drop-shadow(0px 0.6em 0.9em rgba(0, 0, 0, 0.15))
+          drop-shadow(0px 1.2em 0.15em rgba(0, 0, 0, 0.1))
+          drop-shadow(0px 2.4em 2.5em rgba(0, 0, 0, 0.1)) sepia(90%);
       }
 
       .card--dropshadow-medium {
-        filter: drop-shadow(0.0em 0.05em 0px #b2a98f)
-                drop-shadow(0.0em 0.15em 0px #b2a98f)
-                drop-shadow(0.0em 0.15em 0px #b2a98f)
-                drop-shadow(0px 0.6em 0.9em rgba(0,0,0,0.15))
-                drop-shadow(0px 1.2em 0.15em rgba(0,0,0,0.1))
-                drop-shadow(0px 2.4em 2.5em rgba(0,0,0,0.1));
+        filter: drop-shadow(0em 0.05em 0px #b2a98f) drop-shadow(0em 0.15em 0px #b2a98f)
+          drop-shadow(0em 0.15em 0px #b2a98f) drop-shadow(0px 0.6em 0.9em rgba(0, 0, 0, 0.15))
+          drop-shadow(0px 1.2em 0.15em rgba(0, 0, 0, 0.1))
+          drop-shadow(0px 2.4em 2.5em rgba(0, 0, 0, 0.1));
       }
 
       .card--dropshadow-light--sepia90 {
-        filter: drop-shadow(0px 0.10em 0px #b2a98f)
-                drop-shadow(0.1em 0.5em 0.2em rgba(0, 0, 0, .5))
-                sepia(90%);
+        filter: drop-shadow(0px 0.1em 0px #b2a98f) drop-shadow(0.1em 0.5em 0.2em rgba(0, 0, 0, 0.5))
+          sepia(90%);
       }
 
       .card--dropshadow-light {
-        filter: drop-shadow(0px 0.10em 0px #b2a98f)
-                drop-shadow(0.1em 0.5em 0.2em rgba(0, 0, 0, .5));
+        filter: drop-shadow(0px 0.1em 0px #b2a98f) drop-shadow(0.1em 0.5em 0.2em rgba(0, 0, 0, 0.5));
       }
 
       .card--dropshadow-down-and-distant {
-        filter: drop-shadow(0px 0.05em 0px #b2a98f)
-                drop-shadow(0px 14px 10px rgba(0,0,0,0.15))
-                drop-shadow(0px 24px 2px rgba(0,0,0,0.1))
-                drop-shadow(0px 34px 30px rgba(0,0,0,0.1));
+        filter: drop-shadow(0px 0.05em 0px #b2a98f) drop-shadow(0px 14px 10px rgba(0, 0, 0, 0.15))
+          drop-shadow(0px 24px 2px rgba(0, 0, 0, 0.1)) drop-shadow(0px 34px 30px rgba(0, 0, 0, 0.1));
       }
 
       .card--filter-none {
@@ -539,48 +504,69 @@ class SwissArmyKnifeCard extends LitElement {
       .horseshoe__svg__group {
         transform: translateY(15%);
       }
-
     `;
   }
 
   /** *****************************************************************************
-  * card::getUserStyles()
-  *
-  * Summary.
-  * Returns the user defined CSS styles for the card in sak_user_templates config
-  * section in lovelace configuration.
-  *
-  */
+   * card::getUserStyles()
+   *
+   * Summary.
+   * Returns the user defined CSS styles for the card in sak_user_templates config
+   * section in lovelace configuration.
+   *
+   */
 
   static getUserStyles() {
     this.userContent = '';
 
-    if ((SwissArmyKnifeCard.lovelace.config.sak_user_templates)
-      && (SwissArmyKnifeCard.lovelace.config.sak_user_templates.definitions.user_css_definitions)) {
-      this.userContent = SwissArmyKnifeCard.lovelace.config.sak_user_templates.definitions.user_css_definitions.reduce((accumulator, currentValue) => accumulator + currentValue.content, '');
+    if (
+      SwissArmyKnifeCard.lovelace.config.sak_user_templates &&
+      SwissArmyKnifeCard.lovelace.config.sak_user_templates.definitions.user_css_definitions
+    ) {
+      this.userContent =
+        SwissArmyKnifeCard.lovelace.config.sak_user_templates.definitions.user_css_definitions.reduce(
+          (accumulator, currentValue) => accumulator + currentValue.content,
+          ''
+        );
     }
 
-    return css`${unsafeCSS(this.userContent)}`;
+    return css`
+      ${unsafeCSS(this.userContent)}
+    `;
   }
 
   static getSakStyles() {
     this.sakContent = '';
 
-    if ((SwissArmyKnifeCard.lovelace.config.sak_sys_templates)
-      && (SwissArmyKnifeCard.lovelace.config.sak_sys_templates.definitions.sak_css_definitions)) {
-      this.sakContent = SwissArmyKnifeCard.lovelace.config.sak_sys_templates.definitions.sak_css_definitions.reduce((accumulator, currentValue) => accumulator + currentValue.content, '');
+    if (
+      SwissArmyKnifeCard.lovelace.config.sak_sys_templates &&
+      SwissArmyKnifeCard.lovelace.config.sak_sys_templates.definitions.sak_css_definitions
+    ) {
+      this.sakContent =
+        SwissArmyKnifeCard.lovelace.config.sak_sys_templates.definitions.sak_css_definitions.reduce(
+          (accumulator, currentValue) => accumulator + currentValue.content,
+          ''
+        );
     }
 
-    return css`${unsafeCSS(this.sakContent)}`;
+    return css`
+      ${unsafeCSS(this.sakContent)}
+    `;
   }
 
   static getSakSvgDefinitions() {
     SwissArmyKnifeCard.lovelace.sakSvgContent = null;
     let sakSvgContent = '';
 
-    if ((SwissArmyKnifeCard.lovelace.config.sak_sys_templates)
-      && (SwissArmyKnifeCard.lovelace.config.sak_sys_templates.definitions.sak_svg_definitions)) {
-      sakSvgContent = SwissArmyKnifeCard.lovelace.config.sak_sys_templates.definitions.sak_svg_definitions.reduce((accumulator, currentValue) => accumulator + currentValue.content, '');
+    if (
+      SwissArmyKnifeCard.lovelace.config.sak_sys_templates &&
+      SwissArmyKnifeCard.lovelace.config.sak_sys_templates.definitions.sak_svg_definitions
+    ) {
+      sakSvgContent =
+        SwissArmyKnifeCard.lovelace.config.sak_sys_templates.definitions.sak_svg_definitions.reduce(
+          (accumulator, currentValue) => accumulator + currentValue.content,
+          ''
+        );
     }
     // Cache result for later use in other cards
     SwissArmyKnifeCard.sakSvgContent = unsafeSVG(sakSvgContent);
@@ -590,28 +576,34 @@ class SwissArmyKnifeCard extends LitElement {
     SwissArmyKnifeCard.lovelace.userSvgContent = null;
     let userSvgContent = '';
 
-    if ((SwissArmyKnifeCard.lovelace.config.sak_user_templates)
-      && (SwissArmyKnifeCard.lovelace.config.sak_user_templates.definitions.user_svg_definitions)) {
-      userSvgContent = SwissArmyKnifeCard.lovelace.config.sak_user_templates.definitions.user_svg_definitions.reduce((accumulator, currentValue) => accumulator + currentValue.content, '');
+    if (
+      SwissArmyKnifeCard.lovelace.config.sak_user_templates &&
+      SwissArmyKnifeCard.lovelace.config.sak_user_templates.definitions.user_svg_definitions
+    ) {
+      userSvgContent =
+        SwissArmyKnifeCard.lovelace.config.sak_user_templates.definitions.user_svg_definitions.reduce(
+          (accumulator, currentValue) => accumulator + currentValue.content,
+          ''
+        );
     }
     // Cache result for later use other cards
     SwissArmyKnifeCard.userSvgContent = unsafeSVG(userSvgContent);
   }
 
   /** *****************************************************************************
-  * card::get styles()
-  *
-  * Summary.
-  * Returns the static CSS styles for the lit-element
-  *
-  * Note:
-  * - The BEM (http://getbem.com/naming/) naming style for CSS is used
-  *   Of course, if no mistakes are made ;-)
-  *
-  * Note2:
-  * - get styles is a static function and is called ONCE at initialization.
-  *   So, we need to get lovelace here...
-  */
+   * card::get styles()
+   *
+   * Summary.
+   * Returns the static CSS styles for the lit-element
+   *
+   * Note:
+   * - The BEM (http://getbem.com/naming/) naming style for CSS is used
+   *   Of course, if no mistakes are made ;-)
+   *
+   * Note2:
+   * - get styles is a static function and is called ONCE at initialization.
+   *   So, we need to get lovelace here...
+   */
   static get styles() {
     // console.log('SAK - get styles');
     if (!SwissArmyKnifeCard.lovelace) SwissArmyKnifeCard.lovelace = Utils.getLovelace();
@@ -622,10 +614,13 @@ class SwissArmyKnifeCard extends LitElement {
     }
     if (!SwissArmyKnifeCard.lovelace.config.sak_sys_templates) {
       console.error(version, ' - SAK - System Templates reference NOT defined.');
-        throw new Error(`${version} - card::get styles - System Templates reference NOT defined!`);
+      throw new Error(`${version} - card::get styles - System Templates reference NOT defined!`);
     }
     if (!SwissArmyKnifeCard.lovelace.config.sak_user_templates) {
-      console.warn(version, ' - SAK - User Templates reference NOT defined. Did you NOT include them?');
+      console.warn(
+        version,
+        ' - SAK - User Templates reference NOT defined. Did you NOT include them?'
+      );
     }
 
     // #TESTING
@@ -656,19 +651,19 @@ class SwissArmyKnifeCard extends LitElement {
   }
 
   /** *****************************************************************************
-  * card::set hass()
-  *
-  * Summary.
-  * Updates hass data for the card
-  *
-  */
+   * card::set hass()
+   *
+   * Summary.
+   * Updates hass data for the card
+   *
+   */
 
   set hass(hass: any) {
     if (!this.counter) this.counter = 0;
     this.counter += 1;
 
     // Check for theme mode and theme mode change...
-    this.theme.modeChanged = (hass.themes.darkMode !== this.theme.darkMode);
+    this.theme.modeChanged = hass.themes.darkMode !== this.theme.darkMode;
     if (this.theme.modeChanged) {
       this.theme.darkMode = hass.themes.darkMode;
       Colors.colorCache = {};
@@ -679,7 +674,9 @@ class SwissArmyKnifeCard extends LitElement {
     if (!this.theme.checked) {
       this.theme.checked = true;
       if (this.config.theme && hass.themes.themes[this.config.theme]) {
-        const { themeLight, themeDark } = Colors.processTheme(hass.themes.themes[this.config.theme]);
+        const { themeLight, themeDark } = Colors.processTheme(
+          hass.themes.themes[this.config.theme]
+        );
         this.theme.light = themeLight;
         this.theme.dark = themeDark;
         this.theme.isLoaded = true;
@@ -688,15 +685,20 @@ class SwissArmyKnifeCard extends LitElement {
       // Independent of theme loaded, adjust full card styles for light and dark mode
       // Load (if present) theme and palette stylings for optimum performance during rendering
       this.styles.card.light = {
-        ...this.styles.card.default, ...this.theme.light, ...this.palette.light,
+        ...this.styles.card.default,
+        ...this.theme.light,
+        ...this.palette.light,
       };
       this.styles.card.dark = {
-        ...this.styles.card.default, ...this.theme.dark, ...this.palette.dark,
+        ...this.styles.card.default,
+        ...this.theme.dark,
+        ...this.palette.dark,
       };
     }
 
     // Set ref to hass, use "_"for the name ;-)
-    if (this.dev.debug) console.log('*****Event - card::set hass', this.cardId, new Date().getTime());
+    if (this.dev.debug)
+      console.log('*****Event - card::set hass', this.cardId, new Date().getTime());
     this._hass = hass;
 
     if (!this.connected) {
@@ -736,7 +738,9 @@ class SwissArmyKnifeCard extends LitElement {
       // Get secondary info state if specified and available
       if (this.config.entities[index].secondary_info) {
         secInfoSet = true;
-        newSecInfoState = entityIsUndefined ? undefined : this.entities[index][this.config.entities[index].secondary_info];
+        newSecInfoState = entityIsUndefined
+          ? undefined
+          : this.entities[index][this.config.entities[index].secondary_info];
         // newSecInfoStateStr = this._buildSecondaryInfo(newSecInfoState, this.config.entities[index]);
         newSecInfoStateStr = this._buildStateString(newSecInfoState, this.config.entities[index]);
 
@@ -749,7 +753,9 @@ class SwissArmyKnifeCard extends LitElement {
       // Check for icon changes. Some icons can change independent of the state (battery) for instance
       // Only monitor this if no fixed icon specified in the configuration
       if (!this.config.entities[index].icon) {
-        newIconStr = entityIsUndefined ? undefined : hass.states[this.config.entities[index].entity].attributes.icon;
+        newIconStr = entityIsUndefined
+          ? undefined
+          : hass.states[this.config.entities[index].entity].attributes.icon;
 
         if (newIconStr !== this.iconStr[index]) {
           this.iconStr[index] = newIconStr;
@@ -796,14 +802,20 @@ class SwissArmyKnifeCard extends LitElement {
           // Fetch state
           attributeState = this.entities[index].attributes[attribute][arrayMap];
 
-          console.log('set hass, attributes with map', this.config.entities[index].attribute, attribute, attrMore);
+          console.log(
+            'set hass, attributes with map',
+            this.config.entities[index].attribute,
+            attribute,
+            attrMore
+          );
         } else {
           // default attribute handling...
           attributeState = this.entities[index].attributes[attribute];
         }
 
         // eslint-disable-next-line no-constant-condition
-        if (true) { // (typeof attributeState != 'undefined') {
+        if (true) {
+          // (typeof attributeState != 'undefined') {
           newStateStr = this._buildStateString(attributeState, this.config.entities[index]);
           if (newStateStr !== this.attributesStr[index]) {
             this.attributesStr[index] = newStateStr;
@@ -816,13 +828,21 @@ class SwissArmyKnifeCard extends LitElement {
         // If bulb is off, NO percentage is given anymore, so is probably 'undefined'.
         // Any tool should still react to a percentage going from a valid value to undefined!
       }
-      if ((!attrSet) && (!secInfoSet)) {
-        newStateStr = entityIsUndefined ? undefined : this._buildStateString(this.entities[index].state, this.config.entities[index]);
+      if (!attrSet && !secInfoSet) {
+        newStateStr = entityIsUndefined
+          ? undefined
+          : this._buildStateString(this.entities[index].state, this.config.entities[index]);
         if (newStateStr !== this.entitiesStr[index]) {
           this.entitiesStr[index] = newStateStr || '';
           entityHasChanged = true;
         }
-        if (this.dev.debug) console.log('set hass - attrSet=false', this.cardId, `${new Date().getSeconds().toString()}.${new Date().getMilliseconds().toString()}`, newStateStr);
+        if (this.dev.debug)
+          console.log(
+            'set hass - attrSet=false',
+            this.cardId,
+            `${new Date().getSeconds().toString()}.${new Date().getMilliseconds().toString()}`,
+            newStateStr
+          );
       }
 
       // Extend a bit for entity changed. Might just help enough...
@@ -833,7 +853,7 @@ class SwissArmyKnifeCard extends LitElement {
       secInfoSet = false;
     }
 
-    if ((!entityHasChanged) && (!this.theme.modeChanged)) {
+    if (!entityHasChanged && !this.theme.modeChanged) {
       // console.timeEnd("--> " + this.cardId + " PERFORMANCE card::hass");
       // I can see 50-60 times this message, without visible updates. So should batch update somehow
       // if no changed detected. Say timer of 200msec?
@@ -846,7 +866,7 @@ class SwissArmyKnifeCard extends LitElement {
 
     // Either one of the entities has changed, or the theme mode. So update all toolsets with new data.
     if (this.toolsets) {
-      this.toolsets.map((item) => {
+      this.toolsets.map(item => {
         item.updateValues();
         return true;
       });
@@ -869,12 +889,12 @@ class SwissArmyKnifeCard extends LitElement {
   }
 
   /** *****************************************************************************
-  * card::setConfig()
-  *
-  * Summary.
-  * Sets/Updates the card configuration. Rarely called if the doc is right
-  *
-  */
+   * card::setConfig()
+   *
+   * Summary.
+   * Sets/Updates the card configuration. Rarely called if the doc is right
+   *
+   */
 
   setConfig(config: SakConfig): void {
     if (this.dev.performance) console.time(`--> ${this.cardId} PERFORMANCE card::setConfig`);
@@ -901,7 +921,9 @@ class SwissArmyKnifeCard extends LitElement {
       if (newdomain !== 'sensor') {
         // If not a sensor, check if attribute is a number. If so, continue, otherwise Error...
         if (config.entities[0].attribute && !isNaN(Number(config.entities[0].attribute))) {
-          throw Error('card::setConfig - First entity or attribute must be a numbered sensorvalue, but is NOT');
+          throw Error(
+            'card::setConfig - First entity or attribute must be a numbered sensorvalue, but is NOT'
+          );
         }
       }
     }
@@ -913,7 +935,7 @@ class SwissArmyKnifeCard extends LitElement {
     this.config = newConfig;
 
     // NEW for ts processing
-        // this.toolset = []; // Removed - using toolsets instead
+    // this.toolset = []; // Removed - using toolsets instead
 
     const thisMe = this;
     function findTemplate(key, value) {
@@ -979,7 +1001,9 @@ class SwissArmyKnifeCard extends LitElement {
               if (tool.id === toolT.id) {
                 if (toolsetCfg.template) {
                   if (this.config.layout.toolsets[toolidx].position)
-                    cfgobj[toolidx].position = Merge.mergeDeep(this.config.layout.toolsets[toolidx].position);
+                    cfgobj[toolidx].position = Merge.mergeDeep(
+                      this.config.layout.toolsets[toolidx].position
+                    );
 
                   toolList[indexT] = Merge.mergeDeep(toolList[indexT], tool);
 
@@ -988,9 +1012,21 @@ class SwissArmyKnifeCard extends LitElement {
 
                   found = true;
                 }
-                if (this.dev.debug) console.log('card::setConfig - got toolsetCfg toolid', tool, index, toolT, indexT, tool);
+                if (this.dev.debug)
+                  console.log(
+                    'card::setConfig - got toolsetCfg toolid',
+                    tool,
+                    index,
+                    toolT,
+                    indexT,
+                    tool
+                  );
               }
-              cfgobj[toolidx].tools[indexT] = Templates.getJsTemplateOrValueConfig(cfgobj[toolidx].tools[indexT], this.config.entities, Merge.mergeDeep(cfgobj[toolidx].tools[indexT]));
+              cfgobj[toolidx].tools[indexT] = Templates.getJsTemplateOrValueConfig(
+                cfgobj[toolidx].tools[indexT],
+                this.config.entities,
+                Merge.mergeDeep(cfgobj[toolidx].tools[indexT])
+              );
               return found;
             });
             if (!found) toolAdd = toolAdd.concat(toolsetCfg.tools[index]);
@@ -1037,8 +1073,12 @@ class SwissArmyKnifeCard extends LitElement {
         const cssNames = {};
         const cssNamesRgb = {};
 
-        m3.entities.map((entity) => {
-          if (['ref.palette', 'sys.color', 'sys.color.light', 'sys.color.dark'].includes(entity.category_id)) {
+        m3.entities.map(entity => {
+          if (
+            ['ref.palette', 'sys.color', 'sys.color.light', 'sys.color.dark'].includes(
+              entity.category_id
+            )
+          ) {
             if (!entity.tags.includes('alias')) {
               colorEntities[entity.id] = { value: entity.value, tags: entity.tags };
             }
@@ -1090,55 +1130,62 @@ class SwissArmyKnifeCard extends LitElement {
           return true;
         });
 
-        ['primary', 'secondary', 'tertiary', 'error', 'neutral', 'neutral-variant'].forEach((paletteName) => {
-          [5, 15, 25, 35, 45, 65, 75, 85].forEach((step) => {
-            colorEntities[`md.ref.palette.${paletteName}${step.toString()}`] = {
+        ['primary', 'secondary', 'tertiary', 'error', 'neutral', 'neutral-variant'].forEach(
+          paletteName => {
+            [5, 15, 25, 35, 45, 65, 75, 85].forEach(step => {
+              colorEntities[`md.ref.palette.${paletteName}${step.toString()}`] = {
+                value: Colors.getGradientValue(
+                  colorEntities[`md.ref.palette.${paletteName}${(step - 5).toString()}`].value,
+                  colorEntities[`md.ref.palette.${paletteName}${(step + 5).toString()}`].value,
+                  0.5
+                ),
+                tags: [
+                  ...colorEntities[`md.ref.palette.${paletteName}${(step - 5).toString()}`].tags,
+                ],
+              };
+              colorEntities[`md.ref.palette.${paletteName}${step.toString()}`].tags[3] =
+                paletteName + step.toString();
+            });
+            colorEntities[`md.ref.palette.${paletteName}7`] = {
               value: Colors.getGradientValue(
-                colorEntities[`md.ref.palette.${paletteName}${(step - 5).toString()}`].value,
-                colorEntities[`md.ref.palette.${paletteName}${(step + 5).toString()}`].value,
-                0.5,
+                colorEntities[`md.ref.palette.${paletteName}5`].value,
+                colorEntities[`md.ref.palette.${paletteName}10`].value,
+                0.5
               ),
-              tags: [...colorEntities[`md.ref.palette.${paletteName}${(step - 5).toString()}`].tags],
+              tags: [...colorEntities[`md.ref.palette.${paletteName}10`].tags],
             };
-            colorEntities[`md.ref.palette.${paletteName}${step.toString()}`].tags[3] = paletteName + step.toString();
-          });
-          colorEntities[`md.ref.palette.${paletteName}7`] = {
-            value: Colors.getGradientValue(
-              colorEntities[`md.ref.palette.${paletteName}5`].value,
-              colorEntities[`md.ref.palette.${paletteName}10`].value,
-              0.5,
-            ),
-            tags: [...colorEntities[`md.ref.palette.${paletteName}10`].tags],
-          };
-          colorEntities[`md.ref.palette.${paletteName}7`].tags[3] = `${paletteName}7`;
+            colorEntities[`md.ref.palette.${paletteName}7`].tags[3] = `${paletteName}7`;
 
-          colorEntities[`md.ref.palette.${paletteName}92`] = {
-            value: Colors.getGradientValue(
-              colorEntities[`md.ref.palette.${paletteName}90`].value,
-              colorEntities[`md.ref.palette.${paletteName}95`].value,
-              0.5,
-            ),
-            tags: [...colorEntities[`md.ref.palette.${paletteName}90`].tags],
-          };
-          colorEntities[`md.ref.palette.${paletteName}92`].tags[3] = `${paletteName}92`;
+            colorEntities[`md.ref.palette.${paletteName}92`] = {
+              value: Colors.getGradientValue(
+                colorEntities[`md.ref.palette.${paletteName}90`].value,
+                colorEntities[`md.ref.palette.${paletteName}95`].value,
+                0.5
+              ),
+              tags: [...colorEntities[`md.ref.palette.${paletteName}90`].tags],
+            };
+            colorEntities[`md.ref.palette.${paletteName}92`].tags[3] = `${paletteName}92`;
 
-          colorEntities[`md.ref.palette.${paletteName}97`] = {
-            value: Colors.getGradientValue(
-              colorEntities[`md.ref.palette.${paletteName}95`].value,
-              colorEntities[`md.ref.palette.${paletteName}99`].value,
-              0.5,
-            ),
-            tags: [...colorEntities[`md.ref.palette.${paletteName}90`].tags],
-          };
-          colorEntities[`md.ref.palette.${paletteName}97`].tags[3] = `${paletteName}97`;
-        });
+            colorEntities[`md.ref.palette.${paletteName}97`] = {
+              value: Colors.getGradientValue(
+                colorEntities[`md.ref.palette.${paletteName}95`].value,
+                colorEntities[`md.ref.palette.${paletteName}99`].value,
+                0.5
+              ),
+              tags: [...colorEntities[`md.ref.palette.${paletteName}90`].tags],
+            };
+            colorEntities[`md.ref.palette.${paletteName}97`].tags[3] = `${paletteName}97`;
+          }
+        );
 
         // eslint-disable-next-line no-restricted-syntax
         for (const [index, entity] of Object.entries(colorEntities)) {
           // eslint-disable-next-line no-use-before-define
-          cssNames[index] = `theme-${(entity as any).tags[1]}-${(entity as any).tags[2]}-${(entity as any).tags[3]}: rgb(${hex2rgb((entity as any).value)})`;
+          cssNames[index] =
+            `theme-${(entity as any).tags[1]}-${(entity as any).tags[2]}-${(entity as any).tags[3]}: rgb(${hex2rgb((entity as any).value)})`;
           // eslint-disable-next-line no-use-before-define
-          cssNamesRgb[index] = `theme-${(entity as any).tags[1]}-${(entity as any).tags[2]}-${(entity as any).tags[3]}-rgb: ${hex2rgb((entity as any).value)}`;
+          cssNamesRgb[index] =
+            `theme-${(entity as any).tags[1]}-${(entity as any).tags[2]}-${(entity as any).tags[3]}-rgb: ${hex2rgb((entity as any).value)}`;
         }
 
         // https://filosophy.org/code/online-tool-to-lighten-color-without-alpha-channel/
@@ -1157,7 +1204,13 @@ class SwissArmyKnifeCard extends LitElement {
         }
 
         // eslint-disable-next-line no-inner-declarations
-        function getSurfaces(surfaceColor: string, paletteColor: string, opacities: number[], cssName: string, mode: string) {
+        function getSurfaces(
+          surfaceColor: string,
+          paletteColor: string,
+          opacities: number[],
+          cssName: string,
+          mode: string
+        ) {
           const bgCol: any = {};
           const fgCol: any = {};
 
@@ -1170,7 +1223,9 @@ class SwissArmyKnifeCard extends LitElement {
           fgCol.b = Math.round(parseInt(paletteColor.substring(5, 7), 16));
 
           let surfaceColors = '';
-          let r; let g; let b;
+          let r;
+          let g;
+          let b;
           opacities.forEach((opacity: number, index: number) => {
             r = Math.round(opacity * fgCol.r + (1 - opacity) * bgCol.r);
             g = Math.round(opacity * fgCol.g + (1 - opacity) * bgCol.g);
@@ -1185,54 +1240,139 @@ class SwissArmyKnifeCard extends LitElement {
 
         // Generate surfaces for dark and light...
         const opacitysurfacelight = [0.03, 0.05, 0.08, 0.11, 0.15, 0.19, 0.24, 0.29, 0.35, 0.4];
-        const opacitysurfacedark = [0.05, 0.08, 0.11, 0.15, 0.19, 0.24, 0.29, 0.35, 0.40, 0.45];
+        const opacitysurfacedark = [0.05, 0.08, 0.11, 0.15, 0.19, 0.24, 0.29, 0.35, 0.4, 0.45];
 
-        const surfacenL = getSurfaces(surfacelight, neutrallight, opacitysurfacelight, '  theme-ref-elevation-surface-neutral', 'light');
+        const surfacenL = getSurfaces(
+          surfacelight,
+          neutrallight,
+          opacitysurfacelight,
+          '  theme-ref-elevation-surface-neutral',
+          'light'
+        );
 
         const neutralvariantlight = colorEntities['md.ref.palette.neutral-variant40'].value;
-        const surfacenvL = getSurfaces(surfacelight, neutralvariantlight, opacitysurfacelight, '  theme-ref-elevation-surface-neutral-variant', 'light');
+        const surfacenvL = getSurfaces(
+          surfacelight,
+          neutralvariantlight,
+          opacitysurfacelight,
+          '  theme-ref-elevation-surface-neutral-variant',
+          'light'
+        );
 
-        const surfacepL = getSurfaces(surfacelight, primarylight, opacitysurfacelight, '  theme-ref-elevation-surface-primary', 'light');
+        const surfacepL = getSurfaces(
+          surfacelight,
+          primarylight,
+          opacitysurfacelight,
+          '  theme-ref-elevation-surface-primary',
+          'light'
+        );
 
         const secondarylight = colorEntities['md.ref.palette.secondary40'].value;
-        const surfacesL = getSurfaces(surfacelight, secondarylight, opacitysurfacelight, '  theme-ref-elevation-surface-secondary', 'light');
+        const surfacesL = getSurfaces(
+          surfacelight,
+          secondarylight,
+          opacitysurfacelight,
+          '  theme-ref-elevation-surface-secondary',
+          'light'
+        );
 
         const tertiarylight = colorEntities['md.ref.palette.tertiary40'].value;
-        const surfacetL = getSurfaces(surfacelight, tertiarylight, opacitysurfacelight, '  theme-ref-elevation-surface-tertiary', 'light');
+        const surfacetL = getSurfaces(
+          surfacelight,
+          tertiarylight,
+          opacitysurfacelight,
+          '  theme-ref-elevation-surface-tertiary',
+          'light'
+        );
 
         const errorlight = colorEntities['md.ref.palette.error40'].value;
-        const surfaceeL = getSurfaces(surfacelight, errorlight, opacitysurfacelight, '  theme-ref-elevation-surface-error', 'light');
+        const surfaceeL = getSurfaces(
+          surfacelight,
+          errorlight,
+          opacitysurfacelight,
+          '  theme-ref-elevation-surface-error',
+          'light'
+        );
 
         // DARK
-        const surfacenD = getSurfaces(surfacedark, neutraldark, opacitysurfacedark, '  theme-ref-elevation-surface-neutral', 'dark');
+        const surfacenD = getSurfaces(
+          surfacedark,
+          neutraldark,
+          opacitysurfacedark,
+          '  theme-ref-elevation-surface-neutral',
+          'dark'
+        );
 
         const neutralvariantdark = colorEntities['md.ref.palette.neutral-variant80'].value;
-        const surfacenvD = getSurfaces(surfacedark, neutralvariantdark, opacitysurfacedark, '  theme-ref-elevation-surface-neutral-variant', 'dark');
+        const surfacenvD = getSurfaces(
+          surfacedark,
+          neutralvariantdark,
+          opacitysurfacedark,
+          '  theme-ref-elevation-surface-neutral-variant',
+          'dark'
+        );
 
-        const surfacepD = getSurfaces(surfacedark, primarydark, opacitysurfacedark, '  theme-ref-elevation-surface-primary', 'dark');
+        const surfacepD = getSurfaces(
+          surfacedark,
+          primarydark,
+          opacitysurfacedark,
+          '  theme-ref-elevation-surface-primary',
+          'dark'
+        );
 
         const secondarydark = colorEntities['md.ref.palette.secondary80'].value;
-        const surfacesD = getSurfaces(surfacedark, secondarydark, opacitysurfacedark, '  theme-ref-elevation-surface-secondary', 'dark');
+        const surfacesD = getSurfaces(
+          surfacedark,
+          secondarydark,
+          opacitysurfacedark,
+          '  theme-ref-elevation-surface-secondary',
+          'dark'
+        );
 
         const tertiarydark = colorEntities['md.ref.palette.tertiary80'].value;
-        const surfacetD = getSurfaces(surfacedark, tertiarydark, opacitysurfacedark, '  theme-ref-elevation-surface-tertiary', 'dark');
+        const surfacetD = getSurfaces(
+          surfacedark,
+          tertiarydark,
+          opacitysurfacedark,
+          '  theme-ref-elevation-surface-tertiary',
+          'dark'
+        );
 
         const errordark = colorEntities['md.ref.palette.error80'].value;
-        const surfaceeD = getSurfaces(surfacedark, errordark, opacitysurfacedark, '  theme-ref-elevation-surface-error', 'dark');
+        const surfaceeD = getSurfaces(
+          surfacedark,
+          errordark,
+          opacitysurfacedark,
+          '  theme-ref-elevation-surface-error',
+          'dark'
+        );
 
         let themeDefs = '';
         // eslint-disable-next-line no-restricted-syntax
-        for (const [index, cssName] of Object.entries(cssNames)) { // lgtm[js/unused-local-variable]
-            if ((cssName as string).substring(0, 9) === 'theme-ref') {
+        for (const [index, cssName] of Object.entries(cssNames)) {
+          // lgtm[js/unused-local-variable]
+          if ((cssName as string).substring(0, 9) === 'theme-ref') {
             themeDefs += `  ${cssName}\n`;
             themeDefs += `  ${cssNamesRgb[index]}\n`;
           }
         }
         // Dump full theme contents to console.
         // User should copy this content into the theme definition YAML file.
-        console.log(surfacenL + surfacenvL + surfacepL + surfacesL + surfacetL + surfaceeL
-          + surfacenD + surfacenvD + surfacepD + surfacesD + surfacetD + surfaceeD
-          + themeDefs);
+        console.log(
+          surfacenL +
+            surfacenvL +
+            surfacepL +
+            surfacesL +
+            surfacetL +
+            surfaceeL +
+            surfacenD +
+            surfacenvD +
+            surfacepD +
+            surfacesD +
+            surfacetD +
+            surfaceeD +
+            themeDefs
+        );
 
         console.log('*** M3 - Material 3 conversion DONE. You should copy the above output...');
       }
@@ -1242,11 +1382,14 @@ class SwissArmyKnifeCard extends LitElement {
     this.aspectratio = (this.config.layout.aspectratio || this.config.aspectratio || '1/1').trim();
 
     const ar = this.aspectratio.split('/');
-        this.viewBox.width = Number(ar[0]) * SVG_DEFAULT_DIMENSIONS;
-        this.viewBox.height = Number(ar[1]) * SVG_DEFAULT_DIMENSIONS;
+    this.viewBox.width = Number(ar[0]) * SVG_DEFAULT_DIMENSIONS;
+    this.viewBox.height = Number(ar[1]) * SVG_DEFAULT_DIMENSIONS;
 
     if (this.config.layout.styles?.card) {
-      this.styles.card.default = this.config.layout.styles.card as unknown as Record<string, string>;
+      this.styles.card.default = this.config.layout.styles.card as unknown as Record<
+        string,
+        string
+      >;
     }
 
     if (this.dev.debug) console.log('Step 5: toolconfig, list of toolsets', this.toolsets);
@@ -1257,15 +1400,17 @@ class SwissArmyKnifeCard extends LitElement {
   }
 
   /** *****************************************************************************
-  * card::connectedCallback()
-  *
-  * Summary.
-  *
-  */
+   * card::connectedCallback()
+   *
+   * Summary.
+   *
+   */
   connectedCallback() {
-    if (this.dev.performance) console.time(`--> ${this.cardId} PERFORMANCE card::connectedCallback`);
+    if (this.dev.performance)
+      console.time(`--> ${this.cardId} PERFORMANCE card::connectedCallback`);
 
-    if (this.dev.debug) console.log('*****Event - connectedCallback', this.cardId, new Date().getTime());
+    if (this.dev.debug)
+      console.log('*****Event - connectedCallback', this.cardId, new Date().getTime());
     this.connected = true;
     super.connectedCallback();
 
@@ -1274,55 +1419,60 @@ class SwissArmyKnifeCard extends LitElement {
       this.updateOnInterval();
       // #TODO, modify to total interval
       // Use fast interval at start, and normal interval after that, if _hass is defined...
-          if (this.interval) {
-            clearInterval(this.interval);
-          }
-          this.interval = setInterval(
-            () => this.updateOnInterval(),
-            this._hass ? this.entityHistory.update_interval * 1000 : 100,
-          );
+      if (this.interval) {
+        clearInterval(this.interval);
+      }
+      this.interval = setInterval(
+        () => this.updateOnInterval(),
+        this._hass ? this.entityHistory.update_interval * 1000 : 100
+      );
     }
     if (this.dev.debug) console.log('ConnectedCallback', this.cardId);
 
     // MUST request updates again, as no card is displayed otherwise as long as there is no data coming in...
     this.requestUpdate();
-    if (this.dev.performance) console.timeEnd(`--> ${this.cardId} PERFORMANCE card::connectedCallback`);
+    if (this.dev.performance)
+      console.timeEnd(`--> ${this.cardId} PERFORMANCE card::connectedCallback`);
   }
 
   /** *****************************************************************************
-  * card::disconnectedCallback()
-  *
-  * Summary.
-  *
-  */
+   * card::disconnectedCallback()
+   *
+   * Summary.
+   *
+   */
   disconnectedCallback() {
-    if (this.dev.performance) console.time(`--> ${this.cardId} PERFORMANCE card::disconnectedCallback`);
+    if (this.dev.performance)
+      console.time(`--> ${this.cardId} PERFORMANCE card::disconnectedCallback`);
 
-    if (this.dev.debug) console.log('*****Event - disconnectedCallback', this.cardId, new Date().getTime());
-        if (this.interval) {
-          clearInterval(this.interval);
-          this.interval = null;
-        }
+    if (this.dev.debug)
+      console.log('*****Event - disconnectedCallback', this.cardId, new Date().getTime());
+    if (this.interval) {
+      clearInterval(this.interval);
+      this.interval = null;
+    }
     super.disconnectedCallback();
     if (this.dev.debug) console.log('disconnectedCallback', this.cardId);
     this.connected = false;
-    if (this.dev.performance) console.timeEnd(`--> ${this.cardId} PERFORMANCE card::disconnectedCallback`);
+    if (this.dev.performance)
+      console.timeEnd(`--> ${this.cardId} PERFORMANCE card::disconnectedCallback`);
   }
 
   /** *****************************************************************************
-  * card::firstUpdated()
-  *
-  * Summary.
-  * firstUpdated fires after the first time the card hs been updated using its render method,
-  * but before the browser has had a chance to paint.
-  *
-  */
+   * card::firstUpdated()
+   *
+   * Summary.
+   * firstUpdated fires after the first time the card hs been updated using its render method,
+   * but before the browser has had a chance to paint.
+   *
+   */
 
   firstUpdated(changedProperties) {
-    if (this.dev.debug) console.log('*****Event - card::firstUpdated', this.cardId, new Date().getTime());
+    if (this.dev.debug)
+      console.log('*****Event - card::firstUpdated', this.cardId, new Date().getTime());
 
     if (this.toolsets) {
-      this.toolsets.map(async (item) => {
+      this.toolsets.map(async item => {
         item.firstUpdated(changedProperties);
         return true;
       });
@@ -1330,16 +1480,16 @@ class SwissArmyKnifeCard extends LitElement {
   }
 
   /** *****************************************************************************
-  * card::updated()
-  *
-  * Summary.
-  *
-  */
+   * card::updated()
+   *
+   * Summary.
+   *
+   */
   updated(changedProperties) {
     if (this.dev.debug) console.log('*****Event - Updated', this.cardId, new Date().getTime());
 
     if (this.toolsets) {
-      this.toolsets.map(async (item) => {
+      this.toolsets.map(async item => {
         item.updated(changedProperties);
         return true;
       });
@@ -1347,22 +1497,23 @@ class SwissArmyKnifeCard extends LitElement {
   }
 
   /** *****************************************************************************
-  * card::render()
-  *
-  * Summary.
-  * Renders the complete SVG based card according to the specified layout.
-  *
-  * render ICON TESTING pathh lzwzmegla undefined undefined
-  * render ICON TESTING pathh lzwzmegla undefined NodeList [ha-svg-icon]
-  * render ICON TESTING pathh lzwzmegla M7,2V13H10V22L17,10H13L17,2H7Z NodeList [ha-svg-icon]
-  */
+   * card::render()
+   *
+   * Summary.
+   * Renders the complete SVG based card according to the specified layout.
+   *
+   * render ICON TESTING pathh lzwzmegla undefined undefined
+   * render ICON TESTING pathh lzwzmegla undefined NodeList [ha-svg-icon]
+   * render ICON TESTING pathh lzwzmegla M7,2V13H10V22L17,10H13L17,2H7Z NodeList [ha-svg-icon]
+   */
 
   render() {
     if (this.dev.performance) console.time(`--> ${this.cardId} PERFORMANCE card::render`);
     if (this.dev.debug) console.log('*****Event - render', this.cardId, new Date().getTime());
 
     if (!this.connected) {
-      if (this.dev.debug) console.log('render but NOT connected', this.cardId, new Date().getTime());
+      if (this.dev.debug)
+        console.log('render but NOT connected', this.cardId, new Date().getTime());
       return;
     }
 
@@ -1370,20 +1521,13 @@ class SwissArmyKnifeCard extends LitElement {
 
     try {
       if (this.config.disable_card) {
-        myHtml = html`
-                  <div class="container" id="container">
-                    ${this._renderSvg()}
-                  </div>
-                  `;
+        myHtml = html` <div class="container" id="container">${this._renderSvg()}</div> `;
       } else {
         myHtml = html`
-                  <ha-card style="${styleMap(this.styles.card.default)}">
-                    <div class="container" id="container"
-                    >
-                      ${this._renderSvg()}
-                    </div>
-                  </ha-card>
-                  `;
+          <ha-card style="${styleMap(this.styles.card.default)}">
+            <div class="container" id="container">${this._renderSvg()}</div>
+          </ha-card>
+        `;
       }
     } catch (error) {
       console.error(error);
@@ -1406,20 +1550,20 @@ class SwissArmyKnifeCard extends LitElement {
   }
 
   themeIsDarkMode() {
-    return (this.theme.darkMode === true);
+    return this.theme.darkMode === true;
   }
 
   themeIsLightMode() {
-    return (this.theme.darkMode === false);
+    return this.theme.darkMode === false;
   }
 
   /** *****************************************************************************
-  * card::_RenderToolsets()
-  *
-  * Summary.
-  * Renders the toolsets
-  *
-  */
+   * card::_RenderToolsets()
+   *
+   * Summary.
+   * Renders the toolsets
+   *
+   */
 
   _RenderToolsets() {
     if (this.dev.debug) console.log('all the tools in renderTools', this.tools);
@@ -1427,7 +1571,7 @@ class SwissArmyKnifeCard extends LitElement {
     return svg`
       <g id="toolsets" class="toolsets__group"
       >
-        ${this.toolsets.map((toolset) => toolset.render())}
+        ${this.toolsets.map(toolset => toolset.render())}
       </g>
 
       <defs>
@@ -1438,25 +1582,25 @@ class SwissArmyKnifeCard extends LitElement {
   }
 
   /** *****************************************************************************
-  * card::_renderSvg()
-  *
-  * Summary.
-  * Renders the SVG
-  *
-  * NTS:
-  * If height and width given for svg it equals the viewbox. The card is not scaled
-  * anymore to the full dimensions of the card given by hass/lovelace.
-  * Card or svg is also placed default at start of viewport (not box), and can be
-  * placed at start, center or end of viewport (Use align-self to center it).
-  *
-  * 1.  If height and width are ommitted, the ha-card/viewport is forced to the x/y
-  *     aspect ratio of the viewbox, ie 1:1. EXACTLY WHAT WE WANT!
-  * 2.  If height and width are set to 100%, the viewport (or ha-card) forces the
-  *     aspect-ratio on the svg. Although GetCardSize is set to 4, it seems the
-  *     height is forced to 150px, so part of the viewbox/svg is not shown or
-  *     out of proportion!
-  *
-  */
+   * card::_renderSvg()
+   *
+   * Summary.
+   * Renders the SVG
+   *
+   * NTS:
+   * If height and width given for svg it equals the viewbox. The card is not scaled
+   * anymore to the full dimensions of the card given by hass/lovelace.
+   * Card or svg is also placed default at start of viewport (not box), and can be
+   * placed at start, center or end of viewport (Use align-self to center it).
+   *
+   * 1.  If height and width are ommitted, the ha-card/viewport is forced to the x/y
+   *     aspect ratio of the viewbox, ie 1:1. EXACTLY WHAT WE WANT!
+   * 2.  If height and width are set to 100%, the viewport (or ha-card) forces the
+   *     aspect-ratio on the svg. Although GetCardSize is set to 4, it seems the
+   *     height is forced to 150px, so part of the viewbox/svg is not shown or
+   *     out of proportion!
+   *
+   */
 
   _renderCardAttributes() {
     let entityValue;
@@ -1501,9 +1645,7 @@ class SwissArmyKnifeCard extends LitElement {
       <!-- SAK Card SVG Render -->
       <svg id="rootsvg" xmlns="http://www/w3.org/2000/svg" xmlns:xlink="http://www/w3.org/1999/xlink"
        class="${cardFilter}"
-       style="${styleMap(this.themeIsDarkMode()
-      ? this.styles.card.dark
-      : this.styles.card.light)}"
+       style="${styleMap(this.themeIsDarkMode() ? this.styles.card.dark : this.styles.card.light)}"
        data-entity-0="${this._attributes[0]}"
        data-entity-1="${ifDefined(this._attributes[1])}"
        data-entity-2="${ifDefined(this._attributes[2])}"
@@ -1525,39 +1667,36 @@ class SwissArmyKnifeCard extends LitElement {
   }
 
   /** *****************************************************************************
-  * card::_buildUom()
-  *
-  * Summary.
-  * Builds the Unit of Measurement string.
-  *
-  */
+   * card::_buildUom()
+   *
+   * Summary.
+   * Builds the Unit of Measurement string.
+   *
+   */
 
   _buildUom(derivedEntity, entityState, entityConfig) {
     return (
-      derivedEntity?.unit
-      || entityConfig?.unit
-      || entityState?.attributes.unit_of_measurement
-      || ''
+      derivedEntity?.unit || entityConfig?.unit || entityState?.attributes.unit_of_measurement || ''
     );
   }
 
   toLocale(string, fallback = 'unknown') {
     const lang = this._hass.selectedLanguage || this._hass.language;
     const resources = this._hass.resources[lang];
-    return (resources && resources[string] ? resources[string] : fallback);
+    return resources && resources[string] ? resources[string] : fallback;
   }
 
   /** *****************************************************************************
-    * card::_buildStateString()
-    *
-    * Summary.
-    * Builds the State string.
-    * If state is not a number, the state is returned AS IS, otherwise the state
-    * is converted if specified before it is returned as a string
-    *
-    * IMPORTANT NOTE:
-    * - do NOT replace isNaN() by Number.isNaN(). They are INCOMPATIBLE !!!!!!!!!
-    */
+   * card::_buildStateString()
+   *
+   * Summary.
+   * Builds the State string.
+   * If state is not a number, the state is returned AS IS, otherwise the state
+   * is converted if specified before it is returned as a string
+   *
+   * IMPORTANT NOTE:
+   * - do NOT replace isNaN() by Number.isNaN(). They are INCOMPATIBLE !!!!!!!!!
+   */
 
   _buildStateString(inState, entityConfig) {
     // Keep undefined as state. Do NOT change this one!!
@@ -1572,7 +1711,8 @@ class SwissArmyKnifeCard extends LitElement {
       // If no parameters found, just the converter
       if (splitted === null) {
         converter = entityConfig.convert;
-      } else if (splitted.length === 3) { // If parameter found, process...
+      } else if (splitted.length === 3) {
+        // If parameter found, process...
         converter = splitted[1];
         parameter = Number(splitted[2]);
       }
@@ -1581,10 +1721,10 @@ class SwissArmyKnifeCard extends LitElement {
           inState = inState === 'undefined' ? 'undefined' : `${Math.round((inState / 255) * 100)}`;
           break;
         case 'multiply':
-          inState = `${Math.round((inState * parameter))}`;
+          inState = `${Math.round(inState * parameter)}`;
           break;
         case 'divide':
-          inState = `${Math.round((inState / parameter))}`;
+          inState = `${Math.round(inState / parameter)}`;
           break;
         case 'rgb_csv':
         case 'rgb_hex':
@@ -1655,71 +1795,83 @@ class SwissArmyKnifeCard extends LitElement {
                   }
                 }
                 break;
-              case 'hs': {
-                let rgb = hs2rgb([entity.attributes.hs_color[0], entity.attributes.hs_color[1] / 100]);
-                rgb[0] = Math.round(rgb[0]);
-                rgb[1] = Math.round(rgb[1]);
-                rgb[2] = Math.round(rgb[2]);
+              case 'hs':
+                {
+                  let rgb = hs2rgb([
+                    entity.attributes.hs_color[0],
+                    entity.attributes.hs_color[1] / 100,
+                  ]);
+                  rgb[0] = Math.round(rgb[0]);
+                  rgb[1] = Math.round(rgb[1]);
+                  rgb[2] = Math.round(rgb[2]);
 
-                if (converter === 'rgb_csv') {
-                  inState = `${rgb[0]},${rgb[1]},${rgb[2]}`;
-                } else {
-                  inState = rgb2hex(rgb);
-                }
-              }
-                break;
-              case 'rgb': {
-                const hsvColor = rgb2hsv(this.stateObj.attributes.rgb_color);
-                // Modify the real rgb color for better contrast
-                if (hsvColor[1] < 0.4) {
-                  // Special case for very light color (e.g: white)
-                  if (hsvColor[1] < 0.1) {
-                    hsvColor[2] = 225;
+                  if (converter === 'rgb_csv') {
+                    inState = `${rgb[0]},${rgb[1]},${rgb[2]}`;
                   } else {
-                    hsvColor[1] = 0.4;
+                    inState = rgb2hex(rgb);
                   }
                 }
-                const rgbColor = hsv2rgb(hsvColor);
-                if (converter === 'rgb_csv') {
-                  inState = rgbColor.toString();
-                } else {
-                  inState = rgb2hex(rgbColor);
-                }
-              }
                 break;
-              case 'rgbw': {
-                let rgb = rgbw2rgb(entity.attributes.rgbw_color);
-                rgb[0] = Math.round(rgb[0]);
-                rgb[1] = Math.round(rgb[1]);
-                rgb[2] = Math.round(rgb[2]);
-
-                if (converter === 'rgb_csv') {
-                  inState = `${rgb[0]},${rgb[1]},${rgb[2]}`;
-                } else {
-                  inState = rgb2hex(rgb);
+              case 'rgb':
+                {
+                  const hsvColor = rgb2hsv(this.stateObj.attributes.rgb_color);
+                  // Modify the real rgb color for better contrast
+                  if (hsvColor[1] < 0.4) {
+                    // Special case for very light color (e.g: white)
+                    if (hsvColor[1] < 0.1) {
+                      hsvColor[2] = 225;
+                    } else {
+                      hsvColor[1] = 0.4;
+                    }
+                  }
+                  const rgbColor = hsv2rgb(hsvColor);
+                  if (converter === 'rgb_csv') {
+                    inState = rgbColor.toString();
+                  } else {
+                    inState = rgb2hex(rgbColor);
+                  }
                 }
-              }
                 break;
-              case 'rgbww': {
-                let rgb = rgbww2rgb(entity.attributes.rgbww_color,
-                  entity.attributes?.min_color_temp_kelvin,
-                  entity.attributes?.max_color_temp_kelvin);
-                rgb[0] = Math.round(rgb[0]);
-                rgb[1] = Math.round(rgb[1]);
-                rgb[2] = Math.round(rgb[2]);
+              case 'rgbw':
+                {
+                  let rgb = rgbw2rgb(entity.attributes.rgbw_color);
+                  rgb[0] = Math.round(rgb[0]);
+                  rgb[1] = Math.round(rgb[1]);
+                  rgb[2] = Math.round(rgb[2]);
 
-                if (converter === 'rgb_csv') {
-                  inState = `${rgb[0]},${rgb[1]},${rgb[2]}`;
-                } else {
-                  inState = rgb2hex(rgb);
+                  if (converter === 'rgb_csv') {
+                    inState = `${rgb[0]},${rgb[1]},${rgb[2]}`;
+                  } else {
+                    inState = rgb2hex(rgb);
+                  }
                 }
-              }
+                break;
+              case 'rgbww':
+                {
+                  let rgb = rgbww2rgb(
+                    entity.attributes.rgbww_color,
+                    entity.attributes?.min_color_temp_kelvin,
+                    entity.attributes?.max_color_temp_kelvin
+                  );
+                  rgb[0] = Math.round(rgb[0]);
+                  rgb[1] = Math.round(rgb[1]);
+                  rgb[2] = Math.round(rgb[2]);
+
+                  if (converter === 'rgb_csv') {
+                    inState = `${rgb[0]},${rgb[1]},${rgb[2]}`;
+                  } else {
+                    inState = rgb2hex(rgb);
+                  }
+                }
                 break;
               case 'white':
                 break;
               case 'xy':
                 if (entity.attributes.hs_color) {
-                  let rgb = hs2rgb([entity.attributes.hs_color[0], entity.attributes.hs_color[1] / 100]);
+                  let rgb = hs2rgb([
+                    entity.attributes.hs_color[0],
+                    entity.attributes.hs_color[1] / 100,
+                  ]);
                   // https://github.com/home-assistant/frontend/blob/8580d3f9bf59ffbcbe4187a0d7a58cc23d9822df/src/dialogs/more-info/components/lights/ha-more-info-light-brightness.ts#L76
                   // background slider has opacity of 0.2. Looks nice also, yes??
                   const hsvColor = rgb2hsv(rgb);
@@ -1768,11 +1920,15 @@ class SwissArmyKnifeCard extends LitElement {
           }
           break;
         default:
-          console.error(`Unknown converter [${converter}] specified for entity [${entityConfig.entity}]!`);
+          console.error(
+            `Unknown converter [${converter}] specified for entity [${entityConfig.entity}]!`
+          );
           break;
       }
     }
-    if (typeof inState === 'undefined') { return undefined; }
+    if (typeof inState === 'undefined') {
+      return undefined;
+    }
     if (Number.isNaN(inState)) {
       return inState;
     }
@@ -1801,7 +1957,8 @@ class SwissArmyKnifeCard extends LitElement {
     }
     // console.log('updateOnInterval', new Date(Date.now()).toString());
     // eslint-disable-next-line no-constant-condition
-    if (true) { // (this.stateChanged && !this.entityHistory.updating) {
+    if (true) {
+      // (this.stateChanged && !this.entityHistory.updating) {
       // 2020.10.24
       // Leave true, as multiple entities can be fetched. fetch every 5 minutes...
       // this.stateChanged = false;
@@ -1823,7 +1980,7 @@ class SwissArmyKnifeCard extends LitElement {
       this.interval = setInterval(
         () => this.updateOnInterval(),
         // 30 * 1000,
-        this.entityHistory.update_interval * 1000,
+        this.entityHistory.update_interval * 1000
       );
       // console.log("*RC* updateOnInterval -> start timer", this.entityHistory, this.interval);
     }
@@ -1856,8 +2013,7 @@ class SwissArmyKnifeCard extends LitElement {
     // add to list...
     this.toolsets.map((toolset, k) => {
       toolset.tools.map((item, i) => {
-        if ((item.type === 'bar')
-          || (item.type === 'sparkline')) {
+        if (item.type === 'bar' || item.type === 'sparkline') {
           if (item.tool.config?.period?.type === 'real_time') return true;
           const end = new Date();
           const start = new Date();
@@ -1867,12 +2023,16 @@ class SwissArmyKnifeCard extends LitElement {
             // For now assume 24 hours always, so if offset != 0, set end...
             if (item.tool.config.period.calendar.offset !== 0) end.setHours(0, 0, 0, 0);
           } else {
-            start.setHours(end.getHours()
-              - (item.tool.config.period?.rolling_window?.duration?.hour || item.tool.config.hours));
+            start.setHours(
+              end.getHours() -
+                (item.tool.config.period?.rolling_window?.duration?.hour || item.tool.config.hours)
+            );
           }
-          const attr = this.config.entities[item.tool.config.entity_index].attribute ? this.config.entities[item.tool.config.entity_index].attribute : null;
+          const attr = this.config.entities[item.tool.config.entity_index].attribute
+            ? this.config.entities[item.tool.config.entity_index].attribute
+            : null;
 
-          entityList[j] = ({
+          entityList[j] = {
             tsidx: k,
             entityIndex: item.tool.config.entity_index,
             entityId: this.entities[item.tool.config.entity_index].entity_id,
@@ -1882,7 +2042,7 @@ class SwissArmyKnifeCard extends LitElement {
             type: item.type,
             idx: i,
             // tsidx: k, entityIndex: item.tool.config.entity_index, entityId: this.entities[item.tool.config.entity_index].entity_id, attrId: attr, start, end, type: 'bar', idx: i,
-          });
+          };
           j += 1;
         }
         return true;
@@ -1890,7 +2050,8 @@ class SwissArmyKnifeCard extends LitElement {
       return true;
     });
 
-    if (this.dev.debug) console.log('card::updateData - LENGTH', this.cardId, entityList.length, entityList);
+    if (this.dev.debug)
+      console.log('card::updateData - LENGTH', this.cardId, entityList.length, entityList);
 
     // #TODO
     // Quick hack to block updates if entrylist is empty
@@ -1930,12 +2091,19 @@ class SwissArmyKnifeCard extends LitElement {
 
     if (newStateHistory[0] && newStateHistory[0].length > 0) {
       if (entity.attrId) {
-        theState = this.entities[entity.entityIndex].attributes[this.config.entities[entity.entityIndex].attribute];
+        theState =
+          this.entities[entity.entityIndex].attributes[
+            this.config.entities[entity.entityIndex].attribute
+          ];
         entity.state = theState;
       }
-      newStateHistory = newStateHistory[0].filter((item) => (entity.attrId ? !isNaN(parseFloat(item.attributes[entity.attrId])) : !isNaN(parseFloat(item.state))));
+      newStateHistory = newStateHistory[0].filter(item =>
+        entity.attrId
+          ? !isNaN(parseFloat(item.attributes[entity.attrId]))
+          : !isNaN(parseFloat(item.state))
+      );
 
-      newStateHistory = newStateHistory.map((item) => ({
+      newStateHistory = newStateHistory.map(item => ({
         last_changed: item.last_changed,
         state: entity.attrId ? Number(item.attributes[entity.attrId]) : Number(item.state),
       }));
@@ -1963,17 +2131,14 @@ class SwissArmyKnifeCard extends LitElement {
     // Number(p[val]) < Number(min[val]) ? p : min
     // ), arr[0]);
 
-    const getAvg = (arr, val) => arr.reduce((sum, p) => (
-      sum + Number(p[val])
-    ), 0) / arr.length;
+    const getAvg = (arr, val) => arr.reduce((sum, p) => sum + Number(p[val]), 0) / arr.length;
 
     const now = new Date().getTime();
 
     let hours = 24;
     let barhours = 2;
 
-    if ((entity.type === 'bar')
-      || (entity.type === 'sparkline')) {
+    if (entity.type === 'bar' || entity.type === 'sparkline') {
       if (this.dev.debug) console.log('entity.type == bar', entity);
 
       hours = this.toolsets[entity.tsidx].tools[entity.idx].tool.config.hours;
@@ -1982,7 +2147,7 @@ class SwissArmyKnifeCard extends LitElement {
 
     const reduce = (res, item) => {
       const age = now - new Date(item.last_changed).getTime();
-      const interval = (age / (1000 * 3600) / barhours) - (hours / barhours);
+      const interval = age / (1000 * 3600) / barhours - hours / barhours;
       const key = Math.floor(Math.abs(interval));
       if (!res[key]) res[key] = [];
       res[key].push(item);
@@ -2009,7 +2174,7 @@ class SwissArmyKnifeCard extends LitElement {
       coords[0].push(coords[firstInterval][0]);
     }
 
-    for (let i = 0; i < (hours / barhours); i++) {
+    for (let i = 0; i < hours / barhours; i++) {
       if (!coords[i]) {
         coords[i] = [];
         coords[i].push(coords[i - 1][coords[i - 1].length - 1]);
@@ -2018,7 +2183,7 @@ class SwissArmyKnifeCard extends LitElement {
     this.coords = coords;
     let theData = [];
     theData = [];
-    theData = coords.map((item) => getAvg(item, 'state'));
+    theData = coords.map(item => getAvg(item, 'state'));
 
     // now push data into object...
     if (['bar'].includes(entity.type)) {
@@ -2031,15 +2196,15 @@ class SwissArmyKnifeCard extends LitElement {
   }
 
   /** *****************************************************************************
-  * card::getCardSize()
-  *
-  * Summary.
-  * Return a fixed value of 4 as the height.
-  *
-  */
+   * card::getCardSize()
+   *
+   * Summary.
+   * Return a fixed value of 4 as the height.
+   *
+   */
 
   getCardSize() {
-    return (4);
+    return 4;
   }
 }
 

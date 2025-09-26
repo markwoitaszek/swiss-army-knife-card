@@ -24,28 +24,25 @@ function styleMap(styles) {
 import BaseTool from './base-tool';
 
 /** ****************************************************************************
-  * EntityAreaTool class
-  *
-  * Summary.
-  *
-  */
+ * EntityAreaTool class
+ *
+ * Summary.
+ *
+ */
 
 export default class EntityAreaTool extends BaseTool {
   constructor(argToolset, argConfig, argPos) {
     const DEFAULT_AREA_CONFIG = {
       classes: {
-        tool: {
-        },
+        tool: {},
         area: {
           'sak-area__area': true,
           hover: true,
         },
       },
       styles: {
-        tool: {
-        },
-        area: {
-        },
+        tool: {},
+        area: {},
       },
     };
 
@@ -57,32 +54,36 @@ export default class EntityAreaTool extends BaseTool {
 
     this.styles.tool = {};
     this.styles.area = {};
-    if (this.dev.debug) console.log('EntityAreaTool constructor coords, dimensions', this.coords, this.dimensions, this.svg, this.config);
+    if (this.dev.debug)
+      console.log(
+        'EntityAreaTool constructor coords, dimensions',
+        this.coords,
+        this.dimensions,
+        this.svg,
+        this.config
+      );
   }
 
   /** *****************************************************************************
-  * EntityAreaTool::_buildArea()
-  *
-  * Summary.
-  * Builds the Area string.
-  *
-  */
+   * EntityAreaTool::_buildArea()
+   *
+   * Summary.
+   * Builds the Area string.
+   *
+   */
 
   _buildArea(entityState, entityConfig) {
-    return (
-      entityConfig.area
-      || '?'
-    );
+    return entityConfig.area || '?';
   }
 
   /** *****************************************************************************
-  * EntityAreaTool::_renderEntityArea()
-  *
-  * Summary.
-  * Renders the entity area using precalculated coordinates and dimensions.
-  * Only the runtime style is calculated before rendering the area
-  *
-  */
+   * EntityAreaTool::_renderEntityArea()
+   *
+   * Summary.
+   * Renders the entity area using precalculated coordinates and dimensions.
+   * Only the runtime style is calculated before rendering the area
+   *
+   */
 
   _renderEntityArea() {
     this.MergeAnimationClassIfChanged();
@@ -92,9 +93,9 @@ export default class EntityAreaTool extends BaseTool {
     const area = this.textEllipsis(
       this._buildArea(
         this._card.entities[this.defaultEntityIndex()],
-        this._card.config.entities[this.defaultEntityIndex()],
+        this._card.config.entities[this.defaultEntityIndex()]
       ),
-      this.config?.show?.ellipsis,
+      this.config?.show?.ellipsis
     );
 
     return svg`
@@ -106,17 +107,17 @@ export default class EntityAreaTool extends BaseTool {
   }
 
   /** *****************************************************************************
-  * EntityAreaTool::render()
-  *
-  * Summary.
-  * The render() function for this object.
-  *
-  */
+   * EntityAreaTool::render()
+   *
+   * Summary.
+   * The render() function for this object.
+   *
+   */
   render() {
     return svg`
       <g id="area-${this.toolId}"
         class="${classMap(this.classes.tool)}" style="${styleMap(this.styles.tool)}"
-        @click=${(e) => this.handleTapEvent(e, this.config)}>
+        @click=${e => this.handleTapEvent(e, this.config)}>
         ${this._renderEntityArea()}
       </g>
     `;
