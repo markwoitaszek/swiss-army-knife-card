@@ -1,10 +1,10 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 
-import type { SakConfig } from '../../types/SakTypes.js';
-import { toolRegistry } from '../../tools/ToolRegistry.js';
-import { ToolsetManager } from '../../toolsets/ToolsetManager.js';
 import { ConfigValidator } from '../../config/ConfigValidator.js';
 import { LayoutManager } from '../../layout/LayoutManager.js';
+import { toolRegistry } from '../../tools/ToolRegistry.js';
+import { ToolsetManager } from '../../toolsets/ToolsetManager.js';
+import type { SakConfig } from '../../types/SakTypes.js';
 
 describe('Phase 2 Integration Tests', () => {
   let mockHass: any;
