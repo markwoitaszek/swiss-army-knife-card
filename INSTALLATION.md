@@ -15,14 +15,16 @@ Before installing the SAK custom card, ensure you have:
 ### Method 1: HACS Installation (Recommended)
 
 #### Step 1: Install via HACS
+
 1. **Open HACS** in your Home Assistant instance
 2. Navigate to **"Frontend"** section
 3. Click **"Explore & Download Repositories"**
 4. Search for **"Swiss Army Knife Custom Card"**
-5. Click **"Download"** 
+5. Click **"Download"**
 6. **Restart Home Assistant** when prompted
 
 #### Step 2: Add to Lovelace Resources
+
 HACS should automatically add the card to your resources. If not, add manually:
 
 1. Go to **Settings** → **Dashboards** → **Resources**
@@ -34,12 +36,14 @@ HACS should automatically add the card to your resources. If not, add manually:
 ### Method 2: Manual Installation
 
 #### Step 1: Download Files
+
 1. Go to the [latest release](https://github.com/AmoebeLabs/swiss-army-knife-card/releases/latest)
 2. Download `swiss-army-knife-card.js`
 3. Create directory: `www/community/swiss-army-knife-card/`
 4. Copy the file to this directory
 
 #### Step 2: Add to Resources
+
 1. Go to **Settings** → **Dashboards** → **Resources**
 2. Click **"Add Resource"**
 3. Add:
@@ -67,7 +71,7 @@ layout:
           fill: lightblue
         - type: text
           position: [50, 50]
-          text: "[[sensor.temperature.state]]°C"
+          text: '[[sensor.temperature.state]]°C'
           font_size: 16
 ```
 
@@ -82,6 +86,7 @@ For advanced usage, consider downloading the example configurations:
 ## 🚀 Quick Start Examples
 
 ### Example 1: Simple Temperature Display
+
 ```yaml
 type: custom:swiss-army-knife-card
 entities:
@@ -99,17 +104,18 @@ layout:
           fill: none
         - type: text
           position: [50, 30]
-          text: "[[sensor.living_room_temperature.state]]°"
+          text: '[[sensor.living_room_temperature.state]]°'
           font_size: 24
           font_weight: bold
         - type: text
           position: [50, 70]
-          text: "Living Room"
+          text: 'Living Room'
           font_size: 12
           fill: var(--secondary-text-color)
 ```
 
 ### Example 2: Multi-Entity Status Card
+
 ```yaml
 type: custom:swiss-army-knife-card
 entities:
@@ -130,27 +136,27 @@ layout:
                 return 'var(--disabled-text-color)'; ]]]
         - type: text
           position: [50, 70]
-          text: "[[light.living_room.state]]"
+          text: '[[light.living_room.state]]'
           font_size: 12
     - position: [50, 50]
       tools:
         - type: text
           position: [50, 30]
-          text: "[[sensor.living_room_temperature.state]]°C"
+          text: '[[sensor.living_room_temperature.state]]°C'
           font_size: 18
         - type: text
           position: [50, 70]
-          text: "Temperature"
+          text: 'Temperature'
           font_size: 10
     - position: [83.33, 50]
       tools:
         - type: text
           position: [50, 30]
-          text: "[[sensor.living_room_humidity.state]]%"
+          text: '[[sensor.living_room_humidity.state]]%'
           font_size: 18
         - type: text
           position: [50, 70]
-          text: "Humidity"
+          text: 'Humidity'
           font_size: 10
 ```
 
@@ -159,14 +165,17 @@ layout:
 If you're upgrading from version 2.x:
 
 ### Automatic Migration
+
 Most configurations will work without changes. The v3.x maintains backward compatibility.
 
 ### Manual Updates (if needed)
+
 1. **Import Statements**: No changes needed for YAML configurations
 2. **Tool Names**: All existing tool names remain the same
 3. **Properties**: Existing properties are supported
 
 ### New Features in v3.x
+
 - **TypeScript Support**: Better development experience
 - **Performance**: Improved rendering and reduced bundle size
 - **Error Handling**: Better error messages and debugging
@@ -177,24 +186,30 @@ Most configurations will work without changes. The v3.x maintains backward compa
 ### Common Issues
 
 #### Card Not Loading
+
 **Symptoms**: Card shows "Custom element doesn't exist" or blank
 **Solutions**:
+
 1. Check if the resource is properly added to Lovelace
 2. Verify the file path is correct
 3. Clear browser cache (Ctrl+Shift+R)
 4. Restart Home Assistant
 
 #### Configuration Errors
+
 **Symptoms**: Card shows error messages
 **Solutions**:
+
 1. Validate your YAML syntax
 2. Check entity names exist in your HA instance
 3. Verify tool properties are correct
 4. Check browser console for detailed errors
 
 #### Performance Issues
+
 **Symptoms**: Slow loading or high memory usage
 **Solutions**:
+
 1. Reduce the number of tools per card
 2. Use simpler animations
 3. Optimize entity update intervals
@@ -215,6 +230,7 @@ dev:
 ### Browser Compatibility
 
 Supported browsers:
+
 - **Chrome**: 88+
 - **Firefox**: 85+
 - **Safari**: 14+

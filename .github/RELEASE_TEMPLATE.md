@@ -7,24 +7,29 @@ This release brings {OVERVIEW_DESCRIPTION}.
 ## ✨ What's New
 
 ### 🚀 New Features
+
 - {NEW_FEATURE_1}
 - {NEW_FEATURE_2}
 
 ### 🔧 Improvements
+
 - {IMPROVEMENT_1}
 - {IMPROVEMENT_2}
 
 ### 🐛 Bug Fixes
+
 - {BUG_FIX_1}
 - {BUG_FIX_2}
 
 ### 🔄 Breaking Changes
+
 - {BREAKING_CHANGE_1}
 - {BREAKING_CHANGE_2}
 
 ## 📦 Installation
 
 ### HACS (Recommended)
+
 1. Open HACS in your Home Assistant instance
 2. Go to "Frontend" section
 3. Search for "Swiss Army Knife Custom Card"
@@ -32,6 +37,7 @@ This release brings {OVERVIEW_DESCRIPTION}.
 5. Add the card to your Lovelace resources (if not auto-added)
 
 ### Manual Installation
+
 1. Download `swiss-army-knife-card.js` from the [latest release](https://github.com/AmoebeLabs/swiss-army-knife-card/releases/latest)
 2. Copy to `www/community/swiss-army-knife-card/`
 3. Add to your Lovelace resources:
@@ -44,16 +50,19 @@ This release brings {OVERVIEW_DESCRIPTION}.
 ## 🔄 Migration Guide
 
 ### From v2.x to v3.x
+
 - {MIGRATION_STEP_1}
 - {MIGRATION_STEP_2}
 
 ### Configuration Changes
+
 - {CONFIG_CHANGE_1}
 - {CONFIG_CHANGE_2}
 
 ## 🧪 Testing
 
 This release has been tested with:
+
 - Home Assistant Core: {HA_VERSION_MIN} - {HA_VERSION_MAX}
 - Frontend: {FRONTEND_VERSION}
 - Browsers: Chrome 100+, Firefox 100+, Safari 15+, Edge 100+
@@ -73,6 +82,7 @@ This release has been tested with:
 ## 🙏 Contributors
 
 Thanks to all contributors who made this release possible:
+
 - {CONTRIBUTOR_1}
 - {CONTRIBUTOR_2}
 

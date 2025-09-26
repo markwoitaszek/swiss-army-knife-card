@@ -7,6 +7,7 @@ The Swiss Army Knife (SAK) custom card is a versatile and powerful custom card f
 ## Key Features
 
 ### 🛠️ 17+ Powerful Tools
+
 - **Basic Tools**: Circle, Rectangle, Line, Text, Icon
 - **Advanced Tools**: Segmented Arc, Horseshoe, Sparkline, Bar Chart
 - **Interactive Tools**: Switch, Range Slider, Circular Slider
@@ -14,6 +15,7 @@ The Swiss Army Knife (SAK) custom card is a versatile and powerful custom card f
 - **Specialized Tools**: User SVG, Badge, Regular Polygon
 
 ### 🎨 Advanced Styling & Animation
+
 - Full CSS3 support with custom properties
 - CSS animations and transitions
 - Theme integration with Home Assistant
@@ -21,12 +23,14 @@ The Swiss Army Knife (SAK) custom card is a versatile and powerful custom card f
 - Dynamic styling based on entity states
 
 ### 📊 Data Visualization
+
 - Real-time entity state updates
 - Historical data with sparklines
 - Multiple data sources per card
 - Custom data processing and formatting
 
 ### 🔧 Highly Configurable
+
 - YAML-based configuration
 - Template system for reusable components
 - Layout templates for common patterns
@@ -46,6 +50,7 @@ The Swiss Army Knife (SAK) custom card is a versatile and powerful custom card f
    - Add the card to your Lovelace resources
 
 2. **Basic Configuration**:
+
    ```yaml
    type: custom:swiss-army-knife-card
    entities:
@@ -60,7 +65,7 @@ The Swiss Army Knife (SAK) custom card is a versatile and powerful custom card f
              radius: 40
            - type: text
              position: [50, 50]
-             text: "[[sensor.temperature.state]]°C"
+             text: '[[sensor.temperature.state]]°C'
    ```
 
 3. **Explore Examples**:
@@ -90,11 +95,13 @@ The Swiss Army Knife (SAK) custom card is a versatile and powerful custom card f
 ## Recent Updates
 
 ### Version 3.0.0 (Modernization)
+
 - ✅ **Phase 1 Complete**: Lit 3.x migration, TypeScript implementation, modern build system
 - 🚧 **Phase 2 In Progress**: Enhanced HACS integration, automatic updates, improved installation
 - 📋 **Coming Soon**: Config Flow, visual configuration tools, accessibility improvements
 
 ### Key Improvements
+
 - Modern TypeScript codebase with full type safety
 - Vite build system for faster development and builds
 - Comprehensive testing framework with Vitest and Playwright
