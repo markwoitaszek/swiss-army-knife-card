@@ -44,6 +44,7 @@ import type {
 function styleMap(styles: Record<string, string | number | undefined> | null | undefined): string {
   if (!styles) return '';
   return Object.entries(styles)
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     .filter(([_, value]) => value != null && value !== '')
     .map(([key, value]) => `${key}: ${value}`)
     .join('; ');
@@ -1792,6 +1793,7 @@ class SwissArmyKnifeCard extends LitElement {
                 break;
               case 'hs':
                 {
+                  // eslint-disable-next-line prefer-const
                   let rgb = hs2rgb([
                     entity.attributes.hs_color[0],
                     entity.attributes.hs_color[1] / 100,
@@ -1829,6 +1831,7 @@ class SwissArmyKnifeCard extends LitElement {
                 break;
               case 'rgbw':
                 {
+                  // eslint-disable-next-line prefer-const
                   let rgb = rgbw2rgb(entity.attributes.rgbw_color);
                   rgb[0] = Math.round(rgb[0]);
                   rgb[1] = Math.round(rgb[1]);
@@ -1843,6 +1846,7 @@ class SwissArmyKnifeCard extends LitElement {
                 break;
               case 'rgbww':
                 {
+                  // eslint-disable-next-line prefer-const
                   let rgb = rgbww2rgb(
                     entity.attributes.rgbww_color,
                     entity.attributes?.min_color_temp_kelvin,
@@ -1863,6 +1867,7 @@ class SwissArmyKnifeCard extends LitElement {
                 break;
               case 'xy':
                 if (entity.attributes.hs_color) {
+                  // eslint-disable-next-line prefer-const
                   let rgb = hs2rgb([
                     entity.attributes.hs_color[0],
                     entity.attributes.hs_color[1] / 100,
@@ -1891,12 +1896,14 @@ class SwissArmyKnifeCard extends LitElement {
                   }
                 } else if (entity.attributes.color) {
                   // We should have h and s, including brightness...
+                  // eslint-disable-next-line prefer-const
                   let hsl: any = {};
                   hsl.l = entity.attributes.brightness;
                   hsl.h = entity.attributes.color.h || entity.attributes.color.hue;
                   hsl.s = entity.attributes.color.s || entity.attributes.color.saturation;
                   // Convert HSL value to RGB
                   // HERE
+                  // eslint-disable-next-line prefer-const
                   let { r, g, b } = Colors.hslToRgb(hsl);
                   if (converter === 'rgb_csv') {
                     inState = `${r},${g},${b}`;
