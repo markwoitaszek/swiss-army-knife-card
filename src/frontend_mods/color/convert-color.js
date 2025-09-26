@@ -1,13 +1,13 @@
 import { expandHex } from './hex';
 
-const rgb_hex = (component) => {
+const rgb_hex = component => {
   const hex = Math.round(Math.min(Math.max(component, 0), 255)).toString(16);
   return hex.length === 1 ? `0${hex}` : hex;
 };
 
 // Conversion between HEX and RGB
 
-export const hex2rgb = (hex) => {
+export const hex2rgb = hex => {
   hex = expandHex(hex);
 
   return [
@@ -17,7 +17,7 @@ export const hex2rgb = (hex) => {
   ];
 };
 
-export const rgb2hex = (rgb) => `#${rgb_hex(rgb[0])}${rgb_hex(rgb[1])}${rgb_hex(rgb[2])}`;
+export const rgb2hex = rgb => `#${rgb_hex(rgb[0])}${rgb_hex(rgb[1])}${rgb_hex(rgb[2])}`;
 
 // Conversion between LAB, XYZ and RGB from https://github.com/gka/chroma.js
 // Copyright (c) 2011-2019, Gregor Aisch
@@ -32,7 +32,7 @@ const t1 = 0.206896552; // 6 / 29
 const t2 = 0.12841855; // 3 * t1 * t1
 const t3 = 0.008856452; // t1 * t1 * t1
 
-const rgb_xyz = (r) => {
+const rgb_xyz = r => {
   r /= 255;
   if (r <= 0.04045) {
     return r / 12.92;
@@ -40,20 +40,20 @@ const rgb_xyz = (r) => {
   return ((r + 0.055) / 1.055) ** 2.4;
 };
 
-const xyz_lab = (t) => {
+const xyz_lab = t => {
   if (t > t3) {
     return t ** (1 / 3);
   }
   return t / t2 + t0;
 };
 
-const xyz_rgb = (r) => 255 * (r <= 0.00304 ? 12.92 * r : 1.055 * r ** (1 / 2.4) - 0.055);
+const xyz_rgb = r => 255 * (r <= 0.00304 ? 12.92 * r : 1.055 * r ** (1 / 2.4) - 0.055);
 
-const lab_xyz = (t) => (t > t1 ? t * t * t : t2 * (t - t0));
+const lab_xyz = t => (t > t1 ? t * t * t : t2 * (t - t0));
 
 // Conversions between RGB and LAB
 
-const rgb2xyz = (rgb) => {
+const rgb2xyz = rgb => {
   let [r, g, b] = rgb;
   r = rgb_xyz(r);
   g = rgb_xyz(g);
@@ -64,13 +64,13 @@ const rgb2xyz = (rgb) => {
   return [x, y, z];
 };
 
-export const rgb2lab = (rgb) => {
+export const rgb2lab = rgb => {
   const [x, y, z] = rgb2xyz(rgb);
   const l = 116 * y - 16;
   return [l < 0 ? 0 : l, 500 * (x - y), 200 * (y - z)];
 };
 
-export const lab2rgb = (lab) => {
+export const lab2rgb = lab => {
   const [l, a, b] = lab;
 
   let y = (l + 16) / 116;
@@ -88,12 +88,12 @@ export const lab2rgb = (lab) => {
   return [r, g, b_];
 };
 
-export const lab2hex = (lab) => {
+export const lab2hex = lab => {
   const rgb = lab2rgb(lab);
   return rgb2hex(rgb);
 };
 
-export const rgb2hsv = (rgb) => {
+export const rgb2hsv = rgb => {
   const [r, g, b] = rgb;
   const v = Math.max(r, g, b);
   const c = v - Math.min(r, g, b);
@@ -101,15 +101,15 @@ export const rgb2hsv = (rgb) => {
   return [60 * (h < 0 ? h + 6 : h), v && c / v, v];
 };
 
-export const hsv2rgb = (hsv) => {
+export const hsv2rgb = hsv => {
   const [h, s, v] = hsv;
-  const f = (n) => {
+  const f = n => {
     const k = (n + h / 60) % 6;
     return v - v * s * Math.max(Math.min(k, 4 - k, 1), 0);
   };
   return [f(5), f(3), f(1)];
 };
 
-export const rgb2hs = (rgb) => rgb2hsv(rgb).slice(0, 2);
+export const rgb2hs = rgb => rgb2hsv(rgb).slice(0, 2);
 
-export const hs2rgb = (hs) => hsv2rgb([hs[0], hs[1], 255]);
+export const hs2rgb = hs => hsv2rgb([hs[0], hs[1], 255]);

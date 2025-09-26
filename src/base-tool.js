@@ -24,11 +24,11 @@ import Templates from './templates';
 import Colors from './colors';
 
 /** ***************************************************************************
-  * BaseTool class
-  *
-  * Summary.
-  *
-  */
+ * BaseTool class
+ *
+ * Summary.
+ *
+ */
 
 export default class BaseTool {
   constructor(argToolset, argConfig, argPos) {
@@ -51,11 +51,15 @@ export default class BaseTool {
     this.svg.cx = Utils.calculateSvgCoordinate(argConfig.position.cx, 0);
     this.svg.cy = Utils.calculateSvgCoordinate(argConfig.position.cy, 0);
 
-    this.svg.height = argConfig.position.height ? Utils.calculateSvgDimension(argConfig.position.height) : 0;
-    this.svg.width = argConfig.position.width ? Utils.calculateSvgDimension(argConfig.position.width) : 0;
+    this.svg.height = argConfig.position.height
+      ? Utils.calculateSvgDimension(argConfig.position.height)
+      : 0;
+    this.svg.width = argConfig.position.width
+      ? Utils.calculateSvgDimension(argConfig.position.width)
+      : 0;
 
-    this.svg.x = (this.svg.cx) - (this.svg.width / 2);
-    this.svg.y = (this.svg.cy) - (this.svg.height / 2);
+    this.svg.x = this.svg.cx - this.svg.width / 2;
+    this.svg.y = this.svg.cy - this.svg.height / 2;
 
     this.classes = {};
     this.classes.card = {};
@@ -81,37 +85,41 @@ export default class BaseTool {
     }
     // Get colorstops and make a key/value store...
     this.colorStops = {};
-    if ((this.config.colorstops) && (this.config.colorstops.colors)) {
-      Object.keys(this.config.colorstops.colors).forEach((key) => {
+    if (this.config.colorstops && this.config.colorstops.colors) {
+      Object.keys(this.config.colorstops.colors).forEach(key => {
         this.colorStops[key] = this.config.colorstops.colors[key];
       });
     }
 
-    if ((this.config.show.style === 'colorstop') && (this.config?.colorstops.colors)) {
-      this.sortedColorStops = Object.keys(this.config.colorstops.colors).map((n) => Number(n)).sort((a, b) => a - b);
+    if (this.config.show.style === 'colorstop' && this.config?.colorstops.colors) {
+      this.sortedColorStops = Object.keys(this.config.colorstops.colors)
+        .map(n => Number(n))
+        .sort((a, b) => a - b);
     }
 
     this.csnew = {};
-    if ((this.config.csnew) && (this.config.csnew.colors)) {
+    if (this.config.csnew && this.config.csnew.colors) {
       this.config.csnew.colors.forEach((item, i) => {
         this.csnew[item.stop] = this.config.csnew.colors[i];
       });
 
-      this.sortedcsnew = Object.keys(this.csnew).map((n) => Number(n)).sort((a, b) => a - b);
+      this.sortedcsnew = Object.keys(this.csnew)
+        .map(n => Number(n))
+        .sort((a, b) => a - b);
     }
   }
 
   /** *****************************************************************************
-  * BaseTool::textEllipsis()
-  *
-  * Summary.
-  * Very simple form of ellipsis, which is not supported by SVG.
-  * Cutoff text at number of characters and add '...'.
-  * This does NOT take into account the actual width of a character!
-  *
-  */
+   * BaseTool::textEllipsis()
+   *
+   * Summary.
+   * Very simple form of ellipsis, which is not supported by SVG.
+   * Cutoff text at number of characters and add '...'.
+   * This does NOT take into account the actual width of a character!
+   *
+   */
   textEllipsis(argText, argEllipsis) {
-    if ((argEllipsis) && (argEllipsis < argText.length)) {
+    if (argEllipsis && argEllipsis < argText.length) {
       return argText.slice(0, argEllipsis - 1).concat('...');
     } else {
       return argText;
@@ -132,19 +140,20 @@ export default class BaseTool {
   }
 
   /** *****************************************************************************
-  * BaseTool::set value()
-  *
-  * Summary.
-  * Receive new state data for the entity this is linked to. Called from set hass;
-  *
-  */
+   * BaseTool::set value()
+   *
+   * Summary.
+   * Receive new state data for the entity this is linked to. Called from set hass;
+   *
+   */
   set value(state) {
     let localState = state;
     if (this.dev.debug) console.log('BaseTool set value(state)', localState);
 
     try {
-      if (localState !== 'undefined'
-        && typeof localState !== 'undefined') if (this._stateValue?.toString().toLowerCase() === localState.toString().toLowerCase()) return;
+      if (localState !== 'undefined' && typeof localState !== 'undefined')
+        if (this._stateValue?.toString().toLowerCase() === localState.toString().toLowerCase())
+          return;
     } catch (e) {
       console.log('catching something', e, state, this.config);
     }
@@ -152,7 +161,11 @@ export default class BaseTool {
     this.derivedEntity = null;
 
     if (this.config.derived_entity) {
-      this.derivedEntity = Templates.getJsTemplateOrValue(this, state, Merge.mergeDeep(this.config.derived_entity));
+      this.derivedEntity = Templates.getJsTemplateOrValue(
+        this,
+        state,
+        Merge.mergeDeep(this.config.derived_entity)
+      );
 
       localState = this.derivedEntity.state?.toString();
     }
@@ -173,92 +186,107 @@ export default class BaseTool {
 
     this.activeAnimation = null;
 
-    if (this.config.animations) Object.keys(this.config.animations).map((animation) => {
-      // NEW!!!
-      // Config more than 1 level deep is overwritten, so never changed after first evaluation. Stuff is overwritten???
-      const tempConfig = JSON.parse(JSON.stringify(this.config.animations[animation]));
+    if (this.config.animations)
+      Object.keys(this.config.animations).map(animation => {
+        // NEW!!!
+        // Config more than 1 level deep is overwritten, so never changed after first evaluation. Stuff is overwritten???
+        const tempConfig = JSON.parse(JSON.stringify(this.config.animations[animation]));
 
-      const item = Templates.getJsTemplateOrValue(this, this._stateValue, Merge.mergeDeep(tempConfig));
-      // var item = Templates.getJsTemplateOrValue(this, this._stateValue, Merge.mergeDeep(this.config.animations[animation]));
+        const item = Templates.getJsTemplateOrValue(
+          this,
+          this._stateValue,
+          Merge.mergeDeep(tempConfig)
+        );
+        // var item = Templates.getJsTemplateOrValue(this, this._stateValue, Merge.mergeDeep(this.config.animations[animation]));
 
-      if (isMatch) return true;
+        if (isMatch) return true;
 
-      // #TODO:
-      // Default is item.state. But can also be item.custom_field[x], so you can compare with custom value
-      // Should index then not with item.state but item[custom_field[x]].toLowerCase() or similar...
-      // Or above, with the mapping of the item using the name?????
+        // #TODO:
+        // Default is item.state. But can also be item.custom_field[x], so you can compare with custom value
+        // Should index then not with item.state but item[custom_field[x]].toLowerCase() or similar...
+        // Or above, with the mapping of the item using the name?????
 
-      // Assume equals operator if not defined...
-      const operator = item.operator ? item.operator : '==';
-      switch (operator) {
-        case '==':
-          if (typeof (this._stateValue) === 'undefined') {
-            isMatch = (typeof item.state === 'undefined') || (item.state.toLowerCase() === 'undefined');
-          } else {
-            isMatch = this._stateValue.toLowerCase() === item.state.toLowerCase();
-          }
-          break;
-        case '!=':
-          if (typeof (this._stateValue) === 'undefined') {
-            isMatch = (item.state.toLowerCase() !== 'undefined');
-          } else {
-            isMatch = this._stateValue.toLowerCase() !== item.state.toLowerCase();
-          }
-          break;
-        case '>':
-          if (typeof (this._stateValue) !== 'undefined')
-            isMatch = Number(this._stateValue.toLowerCase()) > Number(item.state.toLowerCase());
-          break;
-        case '<':
-          if (typeof (this._stateValue) !== 'undefined')
-            isMatch = Number(this._stateValue.toLowerCase()) < Number(item.state.toLowerCase());
-          break;
-        case '>=':
-          if (typeof (this._stateValue) !== 'undefined')
-            isMatch = Number(this._stateValue.toLowerCase()) >= Number(item.state.toLowerCase());
-          break;
-        case '<=':
-          if (typeof (this._stateValue) !== 'undefined') {
-            isMatch = Number(this._stateValue.toLowerCase()) <= Number(item.state.toLowerCase());
-          }
-          break;
-        default:
-          // Unknown operator. Just do nothing and return;
-          isMatch = false;
-      }
+        // Assume equals operator if not defined...
+        const operator = item.operator ? item.operator : '==';
+        switch (operator) {
+          case '==':
+            if (typeof this._stateValue === 'undefined') {
+              isMatch =
+                typeof item.state === 'undefined' || item.state.toLowerCase() === 'undefined';
+            } else {
+              isMatch = this._stateValue.toLowerCase() === item.state.toLowerCase();
+            }
+            break;
+          case '!=':
+            if (typeof this._stateValue === 'undefined') {
+              isMatch = item.state.toLowerCase() !== 'undefined';
+            } else {
+              isMatch = this._stateValue.toLowerCase() !== item.state.toLowerCase();
+            }
+            break;
+          case '>':
+            if (typeof this._stateValue !== 'undefined')
+              isMatch = Number(this._stateValue.toLowerCase()) > Number(item.state.toLowerCase());
+            break;
+          case '<':
+            if (typeof this._stateValue !== 'undefined')
+              isMatch = Number(this._stateValue.toLowerCase()) < Number(item.state.toLowerCase());
+            break;
+          case '>=':
+            if (typeof this._stateValue !== 'undefined')
+              isMatch = Number(this._stateValue.toLowerCase()) >= Number(item.state.toLowerCase());
+            break;
+          case '<=':
+            if (typeof this._stateValue !== 'undefined') {
+              isMatch = Number(this._stateValue.toLowerCase()) <= Number(item.state.toLowerCase());
+            }
+            break;
+          default:
+            // Unknown operator. Just do nothing and return;
+            isMatch = false;
+        }
 
-      if (this.dev.debug) console.log('BaseTool, animation, match, value, config, operator', isMatch, this._stateValue, item.state, item.operator);
-      if (!isMatch) return true;
+        if (this.dev.debug)
+          console.log(
+            'BaseTool, animation, match, value, config, operator',
+            isMatch,
+            this._stateValue,
+            item.state,
+            item.operator
+          );
+        if (!isMatch) return true;
 
-      if (!this.animationClass || !item.reuse) { this.animationClass = {}; }
-      if (item.classes) {
-        this.animationClass = Merge.mergeDeep(this.animationClass, item.classes);
-      }
+        if (!this.animationClass || !item.reuse) {
+          this.animationClass = {};
+        }
+        if (item.classes) {
+          this.animationClass = Merge.mergeDeep(this.animationClass, item.classes);
+        }
 
-      if (!this.animationStyle || !item.reuse) this.animationStyle = {};
-      if (item.styles) {
-        this.animationStyle = Merge.mergeDeep(this.animationStyle, item.styles);
-      }
+        if (!this.animationStyle || !item.reuse) this.animationStyle = {};
+        if (item.styles) {
+          this.animationStyle = Merge.mergeDeep(this.animationStyle, item.styles);
+        }
 
-      this.animationStyleHasChanged = true;
+        this.animationStyleHasChanged = true;
 
-      // #TODO:
-      // Store activeAnimation. Should be renamed, and used for more purposes, as via this method
-      // you can override any value from within an animation, not just the css style settings.
-      this.item = item;
-      this.activeAnimation = item;
+        // #TODO:
+        // Store activeAnimation. Should be renamed, and used for more purposes, as via this method
+        // you can override any value from within an animation, not just the css style settings.
+        this.item = item;
+        this.activeAnimation = item;
 
-      return isMatch;
-    });
+        return isMatch;
+      });
   }
 
   /** *****************************************************************************
-  * BaseTool::set values()
-  *
-  * Summary.
-  * Receive new state data for the entity this is linked to. Called from set hass;
-  *
-  */
+   * BaseTool::set values()
+   *
+   * Summary.
+   * Receive new state data for the entity this is linked to. Called from set hass;
+   *
+   */
 
   getEntityIndexFromAnimation(animation) {
     // Check if animation has entity_index specified
@@ -270,11 +298,11 @@ export default class BaseTool {
 
     // If entity_indexes is defined, take the
     // first entity_index in the list as the default entity_index to use
-    if (this.config.entity_indexes) return (this.config.entity_indexes[0].entity_index);
+    if (this.config.entity_indexes) return this.config.entity_indexes[0].entity_index;
   }
 
   getIndexInEntityIndexes(entityIdx) {
-    return this.config.entity_indexes.findIndex((element) => element.entity_index === entityIdx);
+    return this.config.entity_indexes.findIndex(element => element.entity_index === entityIdx);
   }
 
   stateIsMatch(animation, state) {
@@ -290,33 +318,33 @@ export default class BaseTool {
 
     switch (operator) {
       case '==':
-        if (typeof (state) === 'undefined') {
-          isMatch = (typeof item.state === 'undefined') || (item.state?.toLowerCase() === 'undefined');
+        if (typeof state === 'undefined') {
+          isMatch = typeof item.state === 'undefined' || item.state?.toLowerCase() === 'undefined';
         } else {
           isMatch = state.toLowerCase() === item.state.toLowerCase();
         }
         break;
       case '!=':
-        if (typeof (state) === 'undefined') {
-          isMatch = (typeof item.state !== 'undefined') || (item.state?.toLowerCase() !== 'undefined');
+        if (typeof state === 'undefined') {
+          isMatch = typeof item.state !== 'undefined' || item.state?.toLowerCase() !== 'undefined';
         } else {
           isMatch = state.toLowerCase() !== item.state.toLowerCase();
         }
         break;
       case '>':
-        if (typeof (state) !== 'undefined')
+        if (typeof state !== 'undefined')
           isMatch = Number(state.toLowerCase()) > Number(item.state.toLowerCase());
         break;
       case '<':
-        if (typeof (state) !== 'undefined')
+        if (typeof state !== 'undefined')
           isMatch = Number(state.toLowerCase()) < Number(item.state.toLowerCase());
         break;
       case '>=':
-        if (typeof (state) !== 'undefined')
+        if (typeof state !== 'undefined')
           isMatch = Number(state.toLowerCase()) >= Number(item.state.toLowerCase());
         break;
       case '<=':
-        if (typeof (state) !== 'undefined')
+        if (typeof state !== 'undefined')
           isMatch = Number(state.toLowerCase()) <= Number(item.state.toLowerCase());
         break;
       default:
@@ -361,16 +389,22 @@ export default class BaseTool {
       // state = states[index];
 
       // eslint-disable-next-line no-empty
-      if (typeof (localStates[index]) !== 'undefined') if (this._stateValues[index]?.toLowerCase() === localStates[index].toLowerCase()) {} else {
-        // State has changed, process...
+      if (typeof localStates[index] !== 'undefined')
+        if (this._stateValues[index]?.toLowerCase() === localStates[index].toLowerCase()) {
+        } else {
+          // State has changed, process...
 
-        // eslint-disable-next-line no-lonely-if
-        if (this.config.derived_entities) {
-          this.derivedEntities[index] = Templates.getJsTemplateOrValue(this, states[index], Merge.mergeDeep(this.config.derived_entities[index]));
+          // eslint-disable-next-line no-lonely-if
+          if (this.config.derived_entities) {
+            this.derivedEntities[index] = Templates.getJsTemplateOrValue(
+              this,
+              states[index],
+              Merge.mergeDeep(this.config.derived_entities[index])
+            );
 
-          localStates[index] = this.derivedEntities[index].state?.toString();
+            localStates[index] = this.derivedEntities[index].state?.toString();
+          }
         }
-      }
 
       this._lastStateValues[index] = this._stateValues[index] || localStates[index];
       this._stateValues[index] = localStates[index];
@@ -381,54 +415,72 @@ export default class BaseTool {
       this.activeAnimation = null;
 
       // eslint-disable-next-line no-loop-func, no-unused-vars
-      if (this.config.animations) Object.keys(this.config.animations.map((aniKey, aniValue) => {
-        const statesIndex = this.getIndexInEntityIndexes(this.getEntityIndexFromAnimation(aniKey));
-        // Comment here...
-        // isMatch = this.stateIsMatch(aniKey, states[statesIndex]);
+      if (this.config.animations)
+        Object.keys(
+          this.config.animations.map((aniKey, aniValue) => {
+            const statesIndex = this.getIndexInEntityIndexes(
+              this.getEntityIndexFromAnimation(aniKey)
+            );
+            // Comment here...
+            // isMatch = this.stateIsMatch(aniKey, states[statesIndex]);
 
-        // NOTE @2023.08.07
-        // Running template again seems to fix the issue that these are NOT evaluated once
-        // there are more than one entity used in animations, ie entity_indexes!
-        // With this addition, this seems to work again...
-        //
-        // Nope, not completely...
-        // No idea yet what's going wrong at the end...
-        //
-        // Again, second part (styles) is overwritten, while first test, state is still ok in the
-        // configuration. So somewhere the getJsTemplate does not use a merge to maintain
-        // the configuration...
-        const tempConfig = JSON.parse(JSON.stringify(aniKey));
+            // NOTE @2023.08.07
+            // Running template again seems to fix the issue that these are NOT evaluated once
+            // there are more than one entity used in animations, ie entity_indexes!
+            // With this addition, this seems to work again...
+            //
+            // Nope, not completely...
+            // No idea yet what's going wrong at the end...
+            //
+            // Again, second part (styles) is overwritten, while first test, state is still ok in the
+            // configuration. So somewhere the getJsTemplate does not use a merge to maintain
+            // the configuration...
+            const tempConfig = JSON.parse(JSON.stringify(aniKey));
 
-        // let item = Templates.getJsTemplateOrValue(this, states[index], Merge.mergeDeep(aniKey));
-        let item = Templates.getJsTemplateOrValue(this, states[index], Merge.mergeDeep(tempConfig));
-        isMatch = this.stateIsMatch(item, states[statesIndex]);
-        if (aniKey.debug) console.log('set values, item, aniKey', item, states, isMatch, this.config.animations);
-        //        console.log("set values, animations", aniKey, aniValue, statesIndex, isMatch, states);
+            // let item = Templates.getJsTemplateOrValue(this, states[index], Merge.mergeDeep(aniKey));
+            let item = Templates.getJsTemplateOrValue(
+              this,
+              states[index],
+              Merge.mergeDeep(tempConfig)
+            );
+            isMatch = this.stateIsMatch(item, states[statesIndex]);
+            if (aniKey.debug)
+              console.log(
+                'set values, item, aniKey',
+                item,
+                states,
+                isMatch,
+                this.config.animations
+              );
+            //        console.log("set values, animations", aniKey, aniValue, statesIndex, isMatch, states);
 
-        if (isMatch) {
-          this.mergeAnimationData(item);
-          return true;
-        } else {
-          return false;
-        }
-      }));
+            if (isMatch) {
+              this.mergeAnimationData(item);
+              return true;
+            } else {
+              return false;
+            }
+          })
+        );
     }
     this._stateValue = this._stateValues[this.getIndexInEntityIndexes(this.defaultEntityIndex())];
-    this._stateValuePrev = this._lastStateValues[this.getIndexInEntityIndexes(this.defaultEntityIndex())];
+    this._stateValuePrev =
+      this._lastStateValues[this.getIndexInEntityIndexes(this.defaultEntityIndex())];
   }
 
   EnableHoverForInteraction() {
-    const hover = (this.config.hasOwnProperty('entity_index') || (this.config?.user_actions?.tap_action));
+    const hover =
+      this.config.hasOwnProperty('entity_index') || this.config?.user_actions?.tap_action;
     this.classes.tool.hover = !!hover;
   }
 
   /** *****************************************************************************
-  * BaseTool::MergeAnimationStyleIfChanged()
-  *
-  * Summary.
-  * Merge changed animationStyle with configured static styles.
-  *
-  */
+   * BaseTool::MergeAnimationStyleIfChanged()
+   *
+   * Summary.
+   * Merge changed animationStyle with configured static styles.
+   *
+   */
   MergeAnimationStyleIfChanged(argDefaultStyles) {
     if (this.animationStyleHasChanged) {
       this.animationStyleHasChanged = false;
@@ -448,12 +500,12 @@ export default class BaseTool {
   }
 
   /** *****************************************************************************
-  * BaseTool::MergeAnimationClassIfChanged()
-  *
-  * Summary.
-  * Merge changed animationclass with configured static styles.
-  *
-  */
+   * BaseTool::MergeAnimationClassIfChanged()
+   *
+   * Summary.
+   * Merge changed animationclass with configured static styles.
+   *
+   */
   MergeAnimationClassIfChanged(argDefaultClasses) {
     // Hack
     // @TODO This setting is still required for some reason. So this change is not detected...
@@ -471,12 +523,12 @@ export default class BaseTool {
   }
 
   /** *****************************************************************************
-  * BaseTool::MergeColorFromState()
-  *
-  * Summary.
-  * Merge color depending on state into colorStyle
-  *
-  */
+   * BaseTool::MergeColorFromState()
+   *
+   * Summary.
+   * Merge color depending on state into colorStyle
+   *
+   */
 
   MergeColorFromState(argStyleMap) {
     if (this.config.hasOwnProperty('entity_index')) {
@@ -491,17 +543,21 @@ export default class BaseTool {
   }
 
   /** *****************************************************************************
-  * BaseTool::MergeColorFromState2()
-  *
-  * Summary.
-  * Merge color depending on state into colorStyle
-  *
-  */
+   * BaseTool::MergeColorFromState2()
+   *
+   * Summary.
+   * Merge color depending on state into colorStyle
+   *
+   */
 
   MergeColorFromState2(argStyleMap, argPart) {
     if (this.config.hasOwnProperty('entity_index')) {
-      const fillColor = this.config[this.config.show.style].fill ? this.getColorFromState2(this._stateValue, argPart, 'fill') : '';
-      const strokeColor = this.config[this.config.show.style].stroke ? this.getColorFromState2(this._stateValue, argPart, 'stroke') : '';
+      const fillColor = this.config[this.config.show.style].fill
+        ? this.getColorFromState2(this._stateValue, argPart, 'fill')
+        : '';
+      const strokeColor = this.config[this.config.show.style].stroke
+        ? this.getColorFromState2(this._stateValue, argPart, 'stroke')
+        : '';
       if (fillColor !== '') {
         argStyleMap.fill = fillColor;
       }
@@ -512,12 +568,12 @@ export default class BaseTool {
   }
 
   /** *****************************************************************************
-  * BaseTool::getColorFromState()
-  *
-  * Summary.
-  * Get color from colorstop or gradient depending on state.
-  *
-  */
+   * BaseTool::getColorFromState()
+   *
+   * Summary.
+   * Get color from colorstop or gradient depending on state.
+   *
+   */
   getColorFromState(argValue) {
     let color = '';
     switch (this.config.show.style) {
@@ -529,7 +585,11 @@ export default class BaseTool {
       case 'colorstop':
       case 'colorstops':
       case 'colorstopgradient':
-        color = Colors.calculateColor(argValue, this.colorStops, (this.config.show.style === 'colorstopgradient'));
+        color = Colors.calculateColor(
+          argValue,
+          this.colorStops,
+          this.config.show.style === 'colorstopgradient'
+        );
         break;
       case 'minmaxgradient':
         color = Colors.calculateColor(argValue, this.colorStopsMinMax, true);
@@ -540,19 +600,25 @@ export default class BaseTool {
   }
 
   /** *****************************************************************************
-  * BaseTool::getColorFromState2()
-  *
-  * Summary.
-  * Get color from colorstop or gradient depending on state.
-  *
-  */
+   * BaseTool::getColorFromState2()
+   *
+   * Summary.
+   * Get color from colorstop or gradient depending on state.
+   *
+   */
   getColorFromState2(argValue, argPart, argProperty) {
     let color = '';
     switch (this.config.show.style) {
       case 'colorstop':
       case 'colorstops':
       case 'colorstopgradient':
-        color = Colors.calculateColor2(argValue, this.csnew, argPart, argProperty, (this.config.show.style === 'colorstopgradient'));
+        color = Colors.calculateColor2(
+          argValue,
+          this.csnew,
+          argPart,
+          argProperty,
+          this.config.show.style === 'colorstopgradient'
+        );
         break;
       case 'minmaxgradient':
         color = Colors.calculateColor2(argValue, this.colorStopsMinMax, argPart, argProperty, true);
@@ -563,13 +629,13 @@ export default class BaseTool {
   }
 
   /** *****************************************************************************
-  * BaseTool::_processTapEvent()
-  *
-  * Summary.
-  * Processes the mouse click of the user and dispatches the event to the
-  * configure handler.
-  *
-  */
+   * BaseTool::_processTapEvent()
+   *
+   * Summary.
+   * Processes the mouse click of the user and dispatches the event to the
+   * configure handler.
+   *
+   */
 
   _processTapEvent(node, hass, config, actionConfig, entityId, parameterValue) {
     let e;
@@ -577,7 +643,8 @@ export default class BaseTool {
     if (!actionConfig) return;
     fireEvent(node, 'haptic', actionConfig.haptic || 'medium');
 
-    if (this.dev.debug) console.log('_processTapEvent', config, actionConfig, entityId, parameterValue);
+    if (this.dev.debug)
+      console.log('_processTapEvent', config, actionConfig, entityId, parameterValue);
     for (let i = 0; i < actionConfig.actions.length; i++) {
       switch (actionConfig.actions[i].action) {
         case 'more-info': {
@@ -628,15 +695,15 @@ export default class BaseTool {
   }
 
   /** *****************************************************************************
-  * BaseTool::handleTapEvent()
-  *
-  * Summary.
-  * Handles the first part of mouse click processing.
-  * It stops propagation to the parent and processes the event.
-  *
-  * The action can be configured per tool.
-  *
-  */
+   * BaseTool::handleTapEvent()
+   *
+   * Summary.
+   * Handles the first part of mouse click processing.
+   * It stops propagation to the parent and processes the event.
+   *
+   * The action can be configured per tool.
+   *
+   */
 
   handleTapEvent(argEvent, argToolConfig) {
     argEvent.stopPropagation();
@@ -647,12 +714,14 @@ export default class BaseTool {
 
     // If no user_actions defined, AND there is an entity_index,
     // define a default 'more-info' tap action
-    if ((entityIdx !== undefined) && (!argToolConfig.user_actions)) {
-        tapConfig = {
+    if (entityIdx !== undefined && !argToolConfig.user_actions) {
+      tapConfig = {
         haptic: 'light',
-        actions: [{
-          action: 'more-info',
-        }],
+        actions: [
+          {
+            action: 'more-info',
+          },
+        ],
       };
     } else {
       tapConfig = argToolConfig.user_actions?.tap_action;
@@ -666,9 +735,9 @@ export default class BaseTool {
       this.config,
       tapConfig,
       this._card.config.hasOwnProperty('entities')
-    ? this._card.config.entities[entityIdx]?.entity
+        ? this._card.config.entities[entityIdx]?.entity
         : undefined,
-      undefined,
+      undefined
     );
   }
 } // -- CLASS

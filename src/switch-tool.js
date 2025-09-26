@@ -25,23 +25,23 @@ import Utils from './utils';
 import BaseTool from './base-tool';
 
 /** ****************************************************************************
-  * SwitchTool class
-  *
-  * Summary.
-  *
-  *
-  * NTS:
-  * - .mdc-switch__native-control uses:
-  *     - width: 68px, 17em
-  *     - height: 48px, 12em
-  * - and if checked (.mdc-switch--checked):
-  *     - transform: translateX(-20px)
-  *
-  * .mdc-switch.mdc-switch--checked .mdc-switch__thumb {
-  *  background-color: var(--switch-checked-button-color);
-  *  border-color: var(--switch-checked-button-color);
-  *
-  */
+ * SwitchTool class
+ *
+ * Summary.
+ *
+ *
+ * NTS:
+ * - .mdc-switch__native-control uses:
+ *     - width: 68px, 17em
+ *     - height: 48px, 12em
+ * - and if checked (.mdc-switch--checked):
+ *     - transform: translateX(-20px)
+ *
+ * .mdc-switch.mdc-switch--checked .mdc-switch__thumb {
+ *  background-color: var(--switch-checked-button-color);
+ *  border-color: var(--switch-checked-button-color);
+ *
+ */
 
 export default class SwitchTool extends BaseTool {
   constructor(argToolset, argConfig, argPos) {
@@ -78,10 +78,8 @@ export default class SwitchTool extends BaseTool {
         tool: {
           overflow: 'visible',
         },
-        track: {
-        },
-        thumb: {
-        },
+        track: {},
+        thumb: {},
       },
     };
 
@@ -158,7 +156,10 @@ export default class SwitchTool extends BaseTool {
     super(argToolset, Merge.mergeDeep(DEFAULT_SWITCH_CONFIG, argConfig), argPos);
 
     if (!['horizontal', 'vertical'].includes(this.config.position.orientation))
-      throw Error('SwitchTool::constructor - invalid orientation [vertical, horizontal] = ', this.config.position.orientation);
+      throw Error(
+        'SwitchTool::constructor - invalid orientation [vertical, horizontal] = ',
+        this.config.position.orientation
+      );
 
     this.svg.track = {};
     this.svg.track.radius = Utils.calculateSvgDimension(this.config.position.track.radius);
@@ -206,28 +207,29 @@ export default class SwitchTool extends BaseTool {
 
     this.styles.track = {};
     this.styles.thumb = {};
-    if (this.dev.debug) console.log('SwitchTool constructor config, svg', this.toolId, this.config, this.svg);
+    if (this.dev.debug)
+      console.log('SwitchTool constructor config, svg', this.toolId, this.config, this.svg);
   }
 
   /** *****************************************************************************
-  * SwitchTool::value()
-  *
-  * Summary.
-  * Receive new state data for the entity this switch is linked to. Called from set hass;
-  *
-  */
+   * SwitchTool::value()
+   *
+   * Summary.
+   * Receive new state data for the entity this switch is linked to. Called from set hass;
+   *
+   */
   set value(state) {
     super.value = state;
   }
 
   /**
-  * SwitchTool::_renderSwitch()
-  *
-  * Summary.
-  * Renders the switch using precalculated coordinates and dimensions.
-  * Only the runtime style is calculated before rendering the switch
-  *
-  */
+   * SwitchTool::_renderSwitch()
+   *
+   * Summary.
+   * Renders the switch using precalculated coordinates and dimensions.
+   * Only the runtime style is calculated before rendering the switch
+   *
+   */
 
   _renderSwitch() {
     this.MergeAnimationClassIfChanged();
@@ -250,20 +252,20 @@ export default class SwitchTool extends BaseTool {
   }
 
   /** *****************************************************************************
-  * SwitchTool::render()
-  *
-  * Summary.
-  * The render() function for this object.
-  *
-  * https://codepen.io/joegaffey/pen/vrVZaN
-  *
-  */
+   * SwitchTool::render()
+   *
+   * Summary.
+   * The render() function for this object.
+   *
+   * https://codepen.io/joegaffey/pen/vrVZaN
+   *
+   */
 
   render() {
     return svg`
       <g id="switch-${this.toolId}" transform-origin="${this.svg.cx} ${this.svg.cy}"
         class="${classMap(this.classes.tool)}" style="${styleMap(this.styles.tool)}"
-        @click=${(e) => this.handleTapEvent(e, this.config)}>
+        @click=${e => this.handleTapEvent(e, this.config)}>
         ${this._renderSwitch()}
       </g>
     `;

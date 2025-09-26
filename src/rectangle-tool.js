@@ -25,11 +25,11 @@ import Utils from './utils';
 import BaseTool from './base-tool';
 
 /** ****************************************************************************
-  * RectangleTool class
-  *
-  * Summary.
-  *
-  */
+ * RectangleTool class
+ *
+ * Summary.
+ *
+ */
 
 export default class RectangleTool extends BaseTool {
   constructor(argToolset, argConfig, argPos) {
@@ -51,8 +51,7 @@ export default class RectangleTool extends BaseTool {
         },
       },
       styles: {
-        rectangle: {
-        },
+        rectangle: {},
       },
     };
 
@@ -62,28 +61,29 @@ export default class RectangleTool extends BaseTool {
     this.classes.rectangle = {};
     this.styles.rectangle = {};
 
-    if (this.dev.debug) console.log('RectangleTool constructor config, svg', this.toolId, this.config, this.svg);
+    if (this.dev.debug)
+      console.log('RectangleTool constructor config, svg', this.toolId, this.config, this.svg);
   }
 
   /** *****************************************************************************
-  * RectangleTool::value()
-  *
-  * Summary.
-  * Receive new state data for the entity this rectangle is linked to. Called from set hass;
-  *
-  */
+   * RectangleTool::value()
+   *
+   * Summary.
+   * Receive new state data for the entity this rectangle is linked to. Called from set hass;
+   *
+   */
   set value(state) {
     super.value = state;
   }
 
   /** *****************************************************************************
-  * RectangleTool::_renderRectangle()
-  *
-  * Summary.
-  * Renders the circle using precalculated coordinates and dimensions.
-  * Only the runtime style is calculated before rendering the circle
-  *
-  */
+   * RectangleTool::_renderRectangle()
+   *
+   * Summary.
+   * Renders the circle using precalculated coordinates and dimensions.
+   * Only the runtime style is calculated before rendering the circle
+   *
+   */
 
   _renderRectangle() {
     this.MergeAnimationClassIfChanged();
@@ -98,17 +98,17 @@ export default class RectangleTool extends BaseTool {
   }
 
   /** *****************************************************************************
-  * RectangleTool::render()
-  *
-  * Summary.
-  * The render() function for this object.
-  *
-  */
+   * RectangleTool::render()
+   *
+   * Summary.
+   * The render() function for this object.
+   *
+   */
   render() {
     return svg`
       <g id="rectangle-${this.toolId}" class="${classMap(this.classes.tool)}" transform-origin="${this.svg.cx}px ${this.svg.cy}px"
         style="${styleMap(this.styles.tool)}"
-        @click=${(e) => this.handleTapEvent(e, this.config)}>
+        @click=${e => this.handleTapEvent(e, this.config)}>
         ${this._renderRectangle()}
       </g>
     `;

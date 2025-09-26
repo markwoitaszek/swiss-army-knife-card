@@ -35,12 +35,12 @@ jobs:
             echo "❌ Main card file not found: dist/swiss-army-knife-card.js"
             exit 1
           fi
-          
+
           if [ ! -f "dist/swiss-army-knife-card.umd.js" ]; then
             echo "❌ UMD build file not found: dist/swiss-army-knife-card.umd.js"
             exit 1
           fi
-          
+
           echo "✅ Build output files found"
 
       - name: Validate JavaScript syntax
@@ -55,15 +55,15 @@ jobs:
           echo "Checking file sizes..."
           echo "ES Module size: $(du -h dist/swiss-army-knife-card.js | cut -f1)"
           echo "UMD Module size: $(du -h dist/swiss-army-knife-card.umd.js | cut -f1)"
-          
+
           # Check if files are too large (warn if > 1MB)
           ES_SIZE=$(stat -c%s dist/swiss-army-knife-card.js)
           UMD_SIZE=$(stat -c%s dist/swiss-army-knife-card.umd.js)
-          
+
           if [ $ES_SIZE -gt 1048576 ]; then
             echo "⚠️  Warning: ES module is larger than 1MB"
           fi
-          
+
           if [ $UMD_SIZE -gt 1048576 ]; then
             echo "⚠️  Warning: UMD module is larger than 1MB"
           fi
@@ -75,7 +75,7 @@ jobs:
             echo "❌ hacs.json not found"
             exit 1
           fi
-          
+
           # Check if hacs.json is valid JSON
           python3 -m json.tool hacs.json > /dev/null
           echo "✅ hacs.json is valid JSON"

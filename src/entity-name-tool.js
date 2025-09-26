@@ -24,11 +24,11 @@ function styleMap(styles) {
 import BaseTool from './base-tool';
 
 /** ****************************************************************************
-  * EntityNameTool class
-  *
-  * Summary.
-  *
-  */
+ * EntityNameTool class
+ *
+ * Summary.
+ *
+ */
 
 export default class EntityNameTool extends BaseTool {
   constructor(argToolset, argConfig, argPos) {
@@ -43,10 +43,8 @@ export default class EntityNameTool extends BaseTool {
         },
       },
       styles: {
-        tool: {
-        },
-        name: {
-        },
+        tool: {},
+        name: {},
       },
     };
 
@@ -60,33 +58,40 @@ export default class EntityNameTool extends BaseTool {
     // Init styles
     this.styles.tool = {};
     this.styles.name = {};
-    if (this.dev.debug) console.log('EntityName constructor coords, dimensions', this.coords, this.dimensions, this.svg, this.config);
+    if (this.dev.debug)
+      console.log(
+        'EntityName constructor coords, dimensions',
+        this.coords,
+        this.dimensions,
+        this.svg,
+        this.config
+      );
   }
 
   /** *****************************************************************************
-  * EntityNameTool::_buildName()
-  *
-  * Summary.
-  * Builds the Name string.
-  *
-  */
+   * EntityNameTool::_buildName()
+   *
+   * Summary.
+   * Builds the Name string.
+   *
+   */
 
   _buildName(entityState, entityConfig) {
     return (
-      this.activeAnimation?.name // Name from animation
-      || entityConfig.name
-      || entityState.attributes.friendly_name
+      this.activeAnimation?.name || // Name from animation
+      entityConfig.name ||
+      entityState.attributes.friendly_name
     );
   }
 
   /** *****************************************************************************
-  * EntityNameTool::_renderEntityName()
-  *
-  * Summary.
-  * Renders the entity name using precalculated coordinates and dimensions.
-  * Only the runtime style is calculated before rendering the name
-  *
-  */
+   * EntityNameTool::_renderEntityName()
+   *
+   * Summary.
+   * Renders the entity name using precalculated coordinates and dimensions.
+   * Only the runtime style is calculated before rendering the name
+   *
+   */
 
   _renderEntityName() {
     this.MergeAnimationClassIfChanged();
@@ -96,9 +101,9 @@ export default class EntityNameTool extends BaseTool {
     const name = this.textEllipsis(
       this._buildName(
         this._card.entities[this.defaultEntityIndex()],
-        this._card.config.entities[this.defaultEntityIndex()],
+        this._card.config.entities[this.defaultEntityIndex()]
       ),
-      this.config?.show?.ellipsis,
+      this.config?.show?.ellipsis
     );
 
     return svg`
@@ -109,17 +114,17 @@ export default class EntityNameTool extends BaseTool {
   }
 
   /** *****************************************************************************
-  * EntityNameTool::render()
-  *
-  * Summary.
-  * The render() function for this object.
-  *
-  */
+   * EntityNameTool::render()
+   *
+   * Summary.
+   * The render() function for this object.
+   *
+   */
   render() {
     return svg`
       <g id="name-${this.toolId}"
         class="${classMap(this.classes.tool)}" style="${styleMap(this.styles.tool)}"
-        @click=${(e) => this.handleTapEvent(e, this.config)}>
+        @click=${e => this.handleTapEvent(e, this.config)}>
         ${this._renderEntityName()}
       </g>
     `;

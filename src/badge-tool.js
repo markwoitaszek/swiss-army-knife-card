@@ -24,11 +24,11 @@ import Merge from './merge';
 import Utils from './utils';
 
 /** ****************************************************************************
-  * BadgeTool class
-  *
-  * Summary.
-  *
-  */
+ * BadgeTool class
+ *
+ * Summary.
+ *
+ */
 
 export default class BadgeTool extends BaseTool {
   constructor(argToolset, argConfig, argPos) {
@@ -55,12 +55,9 @@ export default class BadgeTool extends BaseTool {
         },
       },
       styles: {
-        tool: {
-        },
-        left: {
-        },
-        right: {
-        },
+        tool: {},
+        left: {},
+        right: {},
       },
     };
     super(argToolset, Merge.mergeDeep(DEFAULT_BADGE_CONFIG, argConfig), argPos);
@@ -70,8 +67,8 @@ export default class BadgeTool extends BaseTool {
     this.svg.leftXpos = this.svg.x;
     this.svg.leftYpos = this.svg.y;
     this.svg.leftWidth = (this.config.position.ratio / 100) * this.svg.width;
-    this.svg.arrowSize = (this.svg.height * this.config.position.divider / 100) / 2;
-    this.svg.divSize = (this.svg.height * (100 - this.config.position.divider) / 100) / 2;
+    this.svg.arrowSize = (this.svg.height * this.config.position.divider) / 100 / 2;
+    this.svg.divSize = (this.svg.height * (100 - this.config.position.divider)) / 100 / 2;
 
     this.svg.rightXpos = this.svg.x + this.svg.leftWidth;
     this.svg.rightYpos = this.svg.y;
@@ -84,20 +81,21 @@ export default class BadgeTool extends BaseTool {
     this.styles.tool = {};
     this.styles.left = {};
     this.styles.right = {};
-    if (this.dev.debug) console.log('BadgeTool constructor coords, dimensions', this.svg, this.config);
+    if (this.dev.debug)
+      console.log('BadgeTool constructor coords, dimensions', this.svg, this.config);
   }
 
   /** *****************************************************************************
-  * BadgeTool::_renderBadge()
-  *
-  * Summary.
-  * Renders the badge using precalculated coordinates and dimensions.
-  * Only the runtime style is calculated before rendering the badge
-  *
-  * Refs for creating the path online:
-  * - https://mavo.io/demos/svgpath/
-  *
-  */
+   * BadgeTool::_renderBadge()
+   *
+   * Summary.
+   * Renders the badge using precalculated coordinates and dimensions.
+   * Only the runtime style is calculated before rendering the badge
+   *
+   * Refs for creating the path online:
+   * - https://mavo.io/demos/svgpath/
+   *
+   */
 
   _renderBadge() {
     let svgItems = [];
@@ -139,17 +137,17 @@ export default class BadgeTool extends BaseTool {
   }
 
   /** *****************************************************************************
-  * BadgeTool::render()
-  *
-  * Summary.
-  * The render() function for this object.
-  *
-  */
+   * BadgeTool::render()
+   *
+   * Summary.
+   * The render() function for this object.
+   *
+   */
   render() {
     return svg`
       <g id="badge-${this.toolId}"
         class="${classMap(this.classes.tool)}" style="${styleMap(this.styles.tool)}"
-        @click=${(e) => this.handleTapEvent(e, this.config)}>
+        @click=${e => this.handleTapEvent(e, this.config)}>
         ${this._renderBadge()}
       </g>
     `;

@@ -27,18 +27,19 @@ import UserSvgTool from './user-svg-tool';
 import Colors from './colors';
 
 /** ***************************************************************************
-  * Toolset class
-  *
-  * Summary.
-  *
-  */
+ * Toolset class
+ *
+ * Summary.
+ *
+ */
 
 export default class Toolset {
   constructor(argCard, argConfig) {
     this.toolsetId = Math.random().toString(36).substr(2, 9);
     this._card = argCard;
     this.dev = { ...this._card.dev };
-    if (this.dev.performance) console.time(`--> ${this.toolsetId} PERFORMANCE Toolset::constructor`);
+    if (this.dev.performance)
+      console.time(`--> ${this.toolsetId} PERFORMANCE Toolset::constructor`);
 
     this.config = argConfig;
     this.tools = [];
@@ -57,8 +58,8 @@ export default class Toolset {
     this.svg.cx = Utils.calculateSvgCoordinate(argConfig.position.cx, SVG_DEFAULT_DIMENSIONS_HALF);
     this.svg.cy = Utils.calculateSvgCoordinate(argConfig.position.cy, SVG_DEFAULT_DIMENSIONS_HALF);
 
-    this.svg.x = (this.svg.cx) - (SVG_DEFAULT_DIMENSIONS_HALF);
-    this.svg.y = (this.svg.cy) - (SVG_DEFAULT_DIMENSIONS_HALF);
+    this.svg.x = this.svg.cx - SVG_DEFAULT_DIMENSIONS_HALF;
+    this.svg.y = this.svg.cy - SVG_DEFAULT_DIMENSIONS_HALF;
 
     // Group scaling experiment. Calc translate values for SVG using the toolset scale value
     this.transform = {};
@@ -87,7 +88,8 @@ export default class Toolset {
     this.transform.rotate.x = this.config.position.rotate_x || this.config.position.rotate || 0;
     this.transform.rotate.y = this.config.position.rotate_y || this.config.position.rotate || 0;
 
-    if (this.dev.debug) console.log('Toolset::constructor config/svg', this.toolsetId, this.config, this.svg);
+    if (this.dev.debug)
+      console.log('Toolset::constructor config/svg', this.toolsetId, this.config, this.svg);
 
     // Create the tools configured in the toolset list.
     const toolsNew = {
@@ -113,48 +115,51 @@ export default class Toolset {
       usersvg: UserSvgTool,
     };
 
-    this.config.tools.map((toolConfig) => {
+    this.config.tools.map(toolConfig => {
       const newConfig = { ...toolConfig };
 
       const newPos = {
-        cx: 0 / 100 * SVG_DEFAULT_DIMENSIONS,
-        cy: 0 / 100 * SVG_DEFAULT_DIMENSIONS,
+        cx: (0 / 100) * SVG_DEFAULT_DIMENSIONS,
+        cy: (0 / 100) * SVG_DEFAULT_DIMENSIONS,
         scale: this.config.position.scale ? this.config.position.scale : 1,
       };
 
-      if (this.dev.debug) console.log('Toolset::constructor toolConfig', this.toolsetId, newConfig, newPos);
+      if (this.dev.debug)
+        console.log('Toolset::constructor toolConfig', this.toolsetId, newConfig, newPos);
 
       if (!toolConfig.disabled) {
         const newTool = new toolsNew[toolConfig.type](this, newConfig, newPos);
         // eslint-disable-next-line no-bitwise
-        this._card.entityHistory.needed |= (toolConfig.type === 'bar');
+        this._card.entityHistory.needed |= toolConfig.type === 'bar';
         // eslint-disable-next-line no-bitwise
-        this._card.entityHistory.needed |= (toolConfig.type === 'sparkline');
+        this._card.entityHistory.needed |= toolConfig.type === 'sparkline';
         this.tools.push({ type: toolConfig.type, index: toolConfig.id, tool: newTool });
       }
       return true;
     });
 
-    if (this.dev.performance) console.timeEnd(`--> ${this.toolsetId} PERFORMANCE Toolset::constructor`);
+    if (this.dev.performance)
+      console.timeEnd(`--> ${this.toolsetId} PERFORMANCE Toolset::constructor`);
   }
 
   /** *****************************************************************************
-  * Toolset::updateValues()
-  *
-  * Summary.
-  * Called from set hass to update values for tools
-  *
-  */
+   * Toolset::updateValues()
+   *
+   * Summary.
+   * Called from set hass to update values for tools
+   *
+   */
 
   // #TODO:
   // Update only the changed entity_index, not all indexes. Now ALL tools are updated...
   updateValues() {
-    if (this.dev.performance) console.time(`--> ${this.toolsetId} PERFORMANCE Toolset::updateValues`);
+    if (this.dev.performance)
+      console.time(`--> ${this.toolsetId} PERFORMANCE Toolset::updateValues`);
     if (this.tools) {
       this.tools.map((item, index) => {
         // eslint-disable-next-line no-constant-condition
         if (true || item.type === 'segarc') {
-          if ((item.tool.config.hasOwnProperty('entity_index'))) {
+          if (item.tool.config.hasOwnProperty('entity_index')) {
             if (this.dev.debug) console.log('Toolset::updateValues', item, index);
             // if (this.dev.debug) console.log('Toolset::updateValues', typeof item.tool._stateValue);
 
@@ -176,14 +181,16 @@ export default class Toolset {
           }
 
           // Check for multiple entities specified, and pass them to the tool
-          if ((item.tool.config.hasOwnProperty('entity_indexes'))) {
+          if (item.tool.config.hasOwnProperty('entity_indexes')) {
             // Update list of entities in single record and pass that to the tool
             // The first entity is used as the state, additional entities can help with animations,
             // (used for formatting classes/styles) or can be used in a derived entity
 
             const valueList = [];
             for (let i = 0; i < item.tool.config.entity_indexes.length; ++i) {
-              valueList[i] = this._card.attributesStr[item.tool.config.entity_indexes[i].entity_index]
+              valueList[i] = this._card.attributesStr[
+                item.tool.config.entity_indexes[i].entity_index
+              ]
                 ? this._card.attributesStr[item.tool.config.entity_indexes[i].entity_index]
                 : this._card.secondaryInfoStr[item.tool.config.entity_indexes[i].entity_index]
                   ? this._card.secondaryInfoStr[item.tool.config.entity_indexes[i].entity_index]
@@ -196,46 +203,54 @@ export default class Toolset {
         return true;
       });
     }
-    if (this.dev.performance) console.timeEnd(`--> ${this.toolsetId} PERFORMANCE Toolset::updateValues`);
+    if (this.dev.performance)
+      console.timeEnd(`--> ${this.toolsetId} PERFORMANCE Toolset::updateValues`);
   }
 
   /** *****************************************************************************
-  * Toolset::connectedCallback()
-  *
-  * Summary.
-  *
-  */
+   * Toolset::connectedCallback()
+   *
+   * Summary.
+   *
+   */
   connectedCallback() {
-    if (this.dev.performance) console.time(`--> ${this.toolsetId} PERFORMANCE Toolset::connectedCallback`);
+    if (this.dev.performance)
+      console.time(`--> ${this.toolsetId} PERFORMANCE Toolset::connectedCallback`);
 
-    if (this.dev.debug) console.log('*****Event - connectedCallback', this.toolsetId, new Date().getTime());
-    if (this.dev.performance) console.timeEnd(`--> ${this.toolsetId} PERFORMANCE Toolset::connectedCallback`);
+    if (this.dev.debug)
+      console.log('*****Event - connectedCallback', this.toolsetId, new Date().getTime());
+    if (this.dev.performance)
+      console.timeEnd(`--> ${this.toolsetId} PERFORMANCE Toolset::connectedCallback`);
   }
 
   /** *****************************************************************************
-  * Toolset::disconnectedCallback()
-  *
-  * Summary.
-  *
-  */
+   * Toolset::disconnectedCallback()
+   *
+   * Summary.
+   *
+   */
   disconnectedCallback() {
-    if (this.dev.performance) console.time(`--> ${this.cardId} PERFORMANCE Toolset::disconnectedCallback`);
+    if (this.dev.performance)
+      console.time(`--> ${this.cardId} PERFORMANCE Toolset::disconnectedCallback`);
 
-    if (this.dev.debug) console.log('*****Event - disconnectedCallback', this.toolsetId, new Date().getTime());
-    if (this.dev.performance) console.timeEnd(`--> ${this.cardId} PERFORMANCE Toolset::disconnectedCallback`);
+    if (this.dev.debug)
+      console.log('*****Event - disconnectedCallback', this.toolsetId, new Date().getTime());
+    if (this.dev.performance)
+      console.timeEnd(`--> ${this.cardId} PERFORMANCE Toolset::disconnectedCallback`);
   }
 
   /** *****************************************************************************
-  * Toolset::firstUpdated()
-  *
-  * Summary.
-  *
-  */
+   * Toolset::firstUpdated()
+   *
+   * Summary.
+   *
+   */
   firstUpdated(changedProperties) {
-    if (this.dev.debug) console.log('*****Event - Toolset::firstUpdated', this.toolsetId, new Date().getTime());
+    if (this.dev.debug)
+      console.log('*****Event - Toolset::firstUpdated', this.toolsetId, new Date().getTime());
 
     if (this.tools) {
-      this.tools.map((item) => {
+      this.tools.map(item => {
         if (typeof item.tool.firstUpdated === 'function') {
           item.tool.firstUpdated(changedProperties);
           return true;
@@ -246,16 +261,16 @@ export default class Toolset {
   }
 
   /** *****************************************************************************
-  * Toolset::updated()
-  *
-  * Summary.
-  *
-  */
+   * Toolset::updated()
+   *
+   * Summary.
+   *
+   */
   updated(changedProperties) {
     if (this.dev.debug) console.log('*****Event - Updated', this.toolsetId, new Date().getTime());
 
     if (this.tools) {
-      this.tools.map((item) => {
+      this.tools.map(item => {
         if (typeof item.tool.updated === 'function') {
           item.tool.updated(changedProperties);
           return true;
@@ -266,44 +281,47 @@ export default class Toolset {
   }
 
   /** *****************************************************************************
-  * Toolset::renderToolset()
-  *
-  * Summary.
-  *
-  */
+   * Toolset::renderToolset()
+   *
+   * Summary.
+   *
+   */
   renderToolset() {
-    if (this.dev.debug) console.log('*****Event - renderToolset', this.toolsetId, new Date().getTime());
+    if (this.dev.debug)
+      console.log('*****Event - renderToolset', this.toolsetId, new Date().getTime());
 
-    const svgItems = this.tools.map((item) => svg`
+    const svgItems = this.tools.map(
+      item => svg`
         <!-- Toolset Render Tools -->
         ${item.tool.render()}
-      `);
+      `
+    );
     return svg`${svgItems}`;
   }
 
   /** *****************************************************************************
-  * Toolset::render()
-  *
-  * Summary.
-  * The render() function for this toolset renders all the tools within this set.
-  *
-  * Important notes:
-  * - the toolset position is set on the svg. That one accepts x,y
-  * - scaling, rotating and skewing (and translating) is done on the parent group.
-  *
-  * The order of transformations are done from the child's perspective!!
-  * So, the child (tools) gets positioned FIRST, and then scaled/rotated.
-  *
-  * See comments for different render paths for Apple/Safari and any other browser...
-  *
-  */
+   * Toolset::render()
+   *
+   * Summary.
+   * The render() function for this toolset renders all the tools within this set.
+   *
+   * Important notes:
+   * - the toolset position is set on the svg. That one accepts x,y
+   * - scaling, rotating and skewing (and translating) is done on the parent group.
+   *
+   * The order of transformations are done from the child's perspective!!
+   * So, the child (tools) gets positioned FIRST, and then scaled/rotated.
+   *
+   * See comments for different render paths for Apple/Safari and any other browser...
+   *
+   */
 
   render() {
     // Note:
     // Rotating a card can produce different results on several browsers.
     // A 1:1 card / toolset gives the same results, but other aspect ratio's may give different results.
 
-    if (((this._card.isSafari) || (this._card.iOS)) && (!this._card.isSafari16)) {
+    if ((this._card.isSafari || this._card.iOS) && !this._card.isSafari16) {
       //
       // Render path for Safari if not Safari 16:
       //
@@ -333,9 +351,9 @@ export default class Toolset {
           <svg style="overflow:visible;">
             <g data-toolset-name="${this.config.toolset}"
             class="toolset__group" transform="translate(${this.svg.cx / this.transform.scale.x}, ${this.svg.cy / this.transform.scale.y})"
-            style="${styleMap(this._card.themeIsDarkMode()
-              ? this.palette.dark
-              : this.palette.light)}"
+            style="${styleMap(
+              this._card.themeIsDarkMode() ? this.palette.dark : this.palette.light
+            )}"
             >
               ${this.renderToolset()}
             </g>
@@ -362,9 +380,9 @@ export default class Toolset {
             <!-- Toolset Render Inner Group Other -->
             <g data-toolset-name="${this.config.toolset}"
             class="toolset__group" transform="translate(${this.svg.cx}, ${this.svg.cy})"
-            style="${styleMap(this._card.themeIsDarkMode()
-              ? this.palette.dark
-              : this.palette.light)}"
+            style="${styleMap(
+              this._card.themeIsDarkMode() ? this.palette.dark : this.palette.light
+            )}"
             >
               ${this.renderToolset()}
             </g>

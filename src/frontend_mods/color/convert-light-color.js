@@ -3,7 +3,7 @@ import { clamp } from '../number/clamp';
 const DEFAULT_MIN_KELVIN = 2700;
 const DEFAULT_MAX_KELVIN = 6500;
 
-const temperatureRed = (temperature) => {
+const temperatureRed = temperature => {
   if (temperature <= 66) {
     return 255;
   }
@@ -11,7 +11,7 @@ const temperatureRed = (temperature) => {
   return clamp(red, 0, 255);
 };
 
-const temperatureGreen = (temperature) => {
+const temperatureGreen = temperature => {
   let green;
   if (temperature <= 66) {
     green = 99.4708025861 * Math.log(temperature) - 161.1195681661;
@@ -21,7 +21,7 @@ const temperatureGreen = (temperature) => {
   return clamp(green, 0, 255);
 };
 
-const temperatureBlue = (temperature) => {
+const temperatureBlue = temperature => {
   if (temperature >= 66) {
     return 255;
   }
@@ -32,13 +32,9 @@ const temperatureBlue = (temperature) => {
   return clamp(blue, 0, 255);
 };
 
-export const temperature2rgb = (temperature) => {
+export const temperature2rgb = temperature => {
   const value = temperature / 100;
-  return [
-    temperatureRed(value),
-    temperatureGreen(value),
-    temperatureBlue(value),
-  ];
+  return [temperatureRed(value), temperatureGreen(value), temperatureBlue(value)];
 };
 
 const matchMaxScale = (inputColors, outputColors) => {
@@ -50,12 +46,12 @@ const matchMaxScale = (inputColors, outputColors) => {
   } else {
     factor = maxIn / maxOut;
   }
-  return outputColors.map((value) => Math.round(value * factor));
+  return outputColors.map(value => Math.round(value * factor));
 };
 
-const mired2kelvin = (miredTemperature) => Math.floor(1000000 / miredTemperature);
+const mired2kelvin = miredTemperature => Math.floor(1000000 / miredTemperature);
 
-const kelvin2mired = (kelvintTemperature) => Math.floor(1000000 / kelvintTemperature);
+const kelvin2mired = kelvintTemperature => Math.floor(1000000 / kelvintTemperature);
 
 export const rgbww2rgb = (rgbww, minKelvin, maxKelvin) => {
   const [r, g, b, cw, ww] = rgbww;
@@ -82,7 +78,7 @@ export const rgbww2rgb = (rgbww, minKelvin, maxKelvin) => {
   return matchMaxScale([r, g, b, cw, ww], rgb);
 };
 
-export const rgbw2rgb = (rgbw) => {
+export const rgbw2rgb = rgbw => {
   const [r, g, b, w] = rgbw;
   const rgb = [r + w, g + w, b + w];
   return matchMaxScale([r, g, b, w], rgb);

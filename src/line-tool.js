@@ -25,11 +25,11 @@ import Utils from './utils';
 import BaseTool from './base-tool';
 
 /** ****************************************************************************
-  * LineTool class
-  *
-  * Summary.
-  *
-  */
+ * LineTool class
+ *
+ * Summary.
+ *
+ */
 
 export default class LineTool extends BaseTool {
   constructor(argToolset, argConfig, argPos) {
@@ -50,17 +50,18 @@ export default class LineTool extends BaseTool {
         },
       },
       styles: {
-        tool: {
-        },
-        line: {
-        },
+        tool: {},
+        line: {},
       },
     };
 
     super(argToolset, Merge.mergeDeep(DEFAULT_LINE_CONFIG, argConfig), argPos);
 
     if (!['horizontal', 'vertical', 'fromto'].includes(this.config.position.orientation))
-      throw Error('LineTool::constructor - invalid orientation [vertical, horizontal, fromto] = ', this.config.position.orientation);
+      throw Error(
+        'LineTool::constructor - invalid orientation [vertical, horizontal, fromto] = ',
+        this.config.position.orientation
+      );
 
     if (['horizontal', 'vertical'].includes(this.config.position.orientation))
       this.svg.length = Utils.calculateSvgDimension(argConfig.position.length);
@@ -85,26 +86,41 @@ export default class LineTool extends BaseTool {
     this.classes.line = {};
     this.styles.line = {};
 
-    if (this.dev.debug) console.log('LineTool constructor coords, dimensions', this.coords, this.dimensions, this.svg, this.config);
+    if (this.dev.debug)
+      console.log(
+        'LineTool constructor coords, dimensions',
+        this.coords,
+        this.dimensions,
+        this.svg,
+        this.config
+      );
   }
 
   /** *****************************************************************************
-  * LineTool::_renderLine()
-  *
-  * Summary.
-  * Renders the line using precalculated coordinates and dimensions.
-  * Only the runtime style is calculated before rendering the line
-  *
-  * @returns  {svg} Rendered line
-  *
-  */
+   * LineTool::_renderLine()
+   *
+   * Summary.
+   * Renders the line using precalculated coordinates and dimensions.
+   * Only the runtime style is calculated before rendering the line
+   *
+   * @returns  {svg} Rendered line
+   *
+   */
 
   _renderLine() {
     this.MergeAnimationClassIfChanged();
     this.MergeAnimationStyleIfChanged();
     this.MergeColorFromState(this.styles.line);
 
-    if (this.dev.debug) console.log('_renderLine', this.config.position.orientation, this.svg.x1, this.svg.y1, this.svg.x2, this.svg.y2);
+    if (this.dev.debug)
+      console.log(
+        '_renderLine',
+        this.config.position.orientation,
+        this.svg.x1,
+        this.svg.y1,
+        this.svg.x2,
+        this.svg.y2
+      );
     return svg`
       <line class="${classMap(this.classes.line)}"
         x1="${this.svg.x1}"
@@ -116,19 +132,19 @@ export default class LineTool extends BaseTool {
   }
 
   /** *****************************************************************************
-  * LineTool::render()
-  *
-  * Summary.
-  * The render() function for this object.
-  *
-  * @returns  {svg} Rendered line group
-  *
-  */
+   * LineTool::render()
+   *
+   * Summary.
+   * The render() function for this object.
+   *
+   * @returns  {svg} Rendered line group
+   *
+   */
   render() {
     return svg`
       <g id="line-${this.toolId}"
         class="${classMap(this.classes.tool)}" style="${styleMap(this.styles.tool)}"
-        @click=${(e) => this.handleTapEvent(e, this.config)}>
+        @click=${e => this.handleTapEvent(e, this.config)}>
         ${this._renderLine()}
       </g>
     `;

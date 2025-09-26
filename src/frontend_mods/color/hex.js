@@ -1,4 +1,4 @@
-export const expandHex = (hex) => {
+export const expandHex = hex => {
   hex = hex.replace('#', '');
   if (hex.length === 6) return hex;
   let result = '';

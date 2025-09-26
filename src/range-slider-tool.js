@@ -27,11 +27,11 @@ import Utils from './utils';
 import BaseTool from './base-tool';
 
 /** ***************************************************************************
-  * RangeSliderTool::constructor class
-  *
-  * Summary.
-  *
-  */
+ * RangeSliderTool::constructor class
+ *
+ * Summary.
+ *
+ */
 
 export default class RangeSliderTool extends BaseTool {
   constructor(argToolset, argConfig, argPos) {
@@ -90,20 +90,13 @@ export default class RangeSliderTool extends BaseTool {
         },
       },
       styles: {
-        tool: {
-        },
-        capture: {
-        },
-        active: {
-        },
-        track: {
-        },
-        thumb: {
-        },
-        label: {
-        },
-        uom: {
-        },
+        tool: {},
+        capture: {},
+        active: {},
+        track: {},
+        thumb: {},
+        label: {},
+        uom: {},
       },
     };
 
@@ -128,8 +121,12 @@ export default class RangeSliderTool extends BaseTool {
     switch (this.config.position.orientation) {
       case 'horizontal':
       case 'vertical':
-        this.svg.capture.width = Utils.calculateSvgDimension(this.config.position.capture.width || 1.1 * this.config.position.track.width);
-        this.svg.capture.height = Utils.calculateSvgDimension(this.config.position.capture.height || 3 * this.config.position.thumb.height);
+        this.svg.capture.width = Utils.calculateSvgDimension(
+          this.config.position.capture.width || 1.1 * this.config.position.track.width
+        );
+        this.svg.capture.height = Utils.calculateSvgDimension(
+          this.config.position.capture.height || 3 * this.config.position.thumb.height
+        );
 
         this.svg.track.width = Utils.calculateSvgDimension(this.config.position.track.width);
         this.svg.track.height = Utils.calculateSvgDimension(this.config.position.track.height);
@@ -146,7 +143,10 @@ export default class RangeSliderTool extends BaseTool {
         this.svg.track.y1 = this.svg.cy - this.svg.track.height / 2;
 
         // x1, y1 = topleft corner
-        this.svg.activeTrack.x1 = (this.config.position.orientation === 'horizontal') ? this.svg.track.x1 : this.svg.cx - this.svg.activeTrack.width / 2;
+        this.svg.activeTrack.x1 =
+          this.config.position.orientation === 'horizontal'
+            ? this.svg.track.x1
+            : this.svg.cx - this.svg.activeTrack.width / 2;
         this.svg.activeTrack.y1 = this.svg.cy - this.svg.activeTrack.height / 2;
         // this.svg.activeTrack.x1 = this.svg.track.x1;
 
@@ -155,8 +155,14 @@ export default class RangeSliderTool extends BaseTool {
         break;
 
       default:
-        console.error('RangeSliderTool - constructor: invalid orientation [vertical, horizontal] = ', this.config.position.orientation);
-        throw Error('RangeSliderTool::constructor - invalid orientation [vertical, horizontal] = ', this.config.position.orientation);
+        console.error(
+          'RangeSliderTool - constructor: invalid orientation [vertical, horizontal] = ',
+          this.config.position.orientation
+        );
+        throw Error(
+          'RangeSliderTool::constructor - invalid orientation [vertical, horizontal] = ',
+          this.config.position.orientation
+        );
     }
 
     switch (this.config.position.orientation) {
@@ -181,8 +187,14 @@ export default class RangeSliderTool extends BaseTool {
         break;
 
       default:
-        console.error('RangeSliderTool - constructor: invalid label placement [none, position, thumb] = ', this.config.position.label.placement);
-        throw Error('RangeSliderTool::constructor - invalid label placement [none, position, thumb] = ', this.config.position.label.placement);
+        console.error(
+          'RangeSliderTool - constructor: invalid label placement [none, position, thumb] = ',
+          this.config.position.label.placement
+        );
+        throw Error(
+          'RangeSliderTool::constructor - invalid label placement [none, position, thumb] = ',
+          this.config.position.label.placement
+        );
     }
 
     // Init classes
@@ -205,16 +217,23 @@ export default class RangeSliderTool extends BaseTool {
     this.svg.scale.max = this.valueToSvg(this, this.config.scale.max);
     this.svg.scale.step = this.config.scale.step;
 
-    if (this.dev.debug) console.log('RangeSliderTool constructor coords, dimensions', this.coords, this.dimensions, this.svg, this.config);
+    if (this.dev.debug)
+      console.log(
+        'RangeSliderTool constructor coords, dimensions',
+        this.coords,
+        this.dimensions,
+        this.svg,
+        this.config
+      );
   }
 
   /** *****************************************************************************
-  * RangeSliderTool::svgCoordinateToSliderValue()
-  *
-  * Summary.
-  * @returns {slider value} Translated svg coordinate to actual slider value
-  *
-  */
+   * RangeSliderTool::svgCoordinateToSliderValue()
+   *
+   * Summary.
+   * @returns {slider value} Translated svg coordinate to actual slider value
+   *
+   */
 
   svgCoordinateToSliderValue(argThis, m) {
     let state;
@@ -236,7 +255,8 @@ export default class RangeSliderTool extends BaseTool {
 
       default:
     }
-    state = ((argThis.config.scale.max - argThis.config.scale.min) * scalePos) + argThis.config.scale.min;
+    state =
+      (argThis.config.scale.max - argThis.config.scale.min) * scalePos + argThis.config.scale.min;
     state = Math.round(state / this.svg.scale.step) * this.svg.scale.step;
     state = Math.max(Math.min(this.config.scale.max, state), this.config.scale.min);
 
@@ -245,13 +265,21 @@ export default class RangeSliderTool extends BaseTool {
 
   valueToSvg(argThis, argValue) {
     if (argThis.config.position.orientation === 'horizontal') {
-      const state = Utils.calculateValueBetween(argThis.config.scale.min, argThis.config.scale.max, argValue);
+      const state = Utils.calculateValueBetween(
+        argThis.config.scale.min,
+        argThis.config.scale.max,
+        argValue
+      );
 
       const xposp = state * (argThis.svg.track.width - this.svg.thumb.width);
       const xpos = argThis.svg.track.x1 + this.svg.thumb.width / 2 + xposp;
       return xpos;
     } else if (argThis.config.position.orientation === 'vertical') {
-      const state = Utils.calculateValueBetween(argThis.config.scale.min, argThis.config.scale.max, argValue);
+      const state = Utils.calculateValueBetween(
+        argThis.config.scale.min,
+        argThis.config.scale.max,
+        argValue
+      );
 
       const yposp = state * (argThis.svg.track.height - this.svg.thumb.height);
       const ypos = argThis.svg.track.y2 - this.svg.thumb.height / 2 - yposp;
@@ -282,7 +310,7 @@ export default class RangeSliderTool extends BaseTool {
         }
 
         if (this.dragging) {
-          const yUp = (this.config.position.label.placement === 'thumb') ? -50 : 0;
+          const yUp = this.config.position.label.placement === 'thumb' ? -50 : 0;
           const yUpStr = `translate(${m.x - this.svg.cx}px , ${yUp}px)`;
 
           argThis.elements.thumbGroup.style.transform = yUpStr;
@@ -293,7 +321,7 @@ export default class RangeSliderTool extends BaseTool {
 
       case 'vertical':
         if (this.dragging) {
-          const xUp = (this.config.position.label.placement === 'thumb') ? -50 : 0;
+          const xUp = this.config.position.label.placement === 'thumb' ? -50 : 0;
           const xUpStr = `translate(${xUp}px, ${m.y - this.svg.cy}px)`;
           argThis.elements.thumbGroup.style.transform = xUpStr;
         } else {
@@ -313,25 +341,34 @@ export default class RangeSliderTool extends BaseTool {
       default:
       case 'horizontal':
         if (this.dragging) {
-          argThis.elements.activeTrack.setAttribute('width', Math.abs(this.svg.activeTrack.x1 - m.x + this.svg.cx));
+          argThis.elements.activeTrack.setAttribute(
+            'width',
+            Math.abs(this.svg.activeTrack.x1 - m.x + this.svg.cx)
+          );
         }
         break;
 
       case 'vertical':
         if (this.dragging) {
           argThis.elements.activeTrack.setAttribute('y', m.y - this.svg.cy);
-          argThis.elements.activeTrack.setAttribute('height', Math.abs(argThis.svg.activeTrack.y2 - m.y + this.svg.cx));
+          argThis.elements.activeTrack.setAttribute(
+            'height',
+            Math.abs(argThis.svg.activeTrack.y2 - m.y + this.svg.cx)
+          );
         }
         break;
     }
   }
 
   updateLabel(argThis, m) {
-    if (this.dev.debug) console.log('SLIDER - updateLabel start', m, argThis.config.position.orientation);
+    if (this.dev.debug)
+      console.log('SLIDER - updateLabel start', m, argThis.config.position.orientation);
 
-    const dec = (this._card.config.entities[this.defaultEntityIndex()].decimals || 0);
+    const dec = this._card.config.entities[this.defaultEntityIndex()].decimals || 0;
     const x = 10 ** dec;
-    argThis.labelValue2 = (Math.round(argThis.svgCoordinateToSliderValue(argThis, m) * x) / x).toFixed(dec);
+    argThis.labelValue2 = (
+      Math.round(argThis.svgCoordinateToSliderValue(argThis, m) * x) / x
+    ).toFixed(dec);
 
     if (this.config.position.label.placement !== 'none') {
       argThis.elements.label.textContent = argThis.labelValue2;
@@ -339,11 +376,11 @@ export default class RangeSliderTool extends BaseTool {
   }
 
   /*
-  * mouseEventToPoint
-  *
-  * Translate mouse/touch client window coordinates to SVG window coordinates
-  *
-  */
+   * mouseEventToPoint
+   *
+   * Translate mouse/touch client window coordinates to SVG window coordinates
+   *
+   */
   // mouseEventToPoint(e) {
   //   var p = this.elements.svg.createSVGPoint();
   //   p.x = e.touches ? e.touches[0].clientX : e.clientX;
@@ -373,11 +410,14 @@ export default class RangeSliderTool extends BaseTool {
         this.config,
         this.config.user_actions.tap_action,
         this._card.config.entities[this.defaultEntityIndex()]?.entity,
-        this.labelValue2,
+        this.labelValue2
       );
     }
     if (this.dragging)
-      this.timeOutId = setTimeout(() => this.callDragService(), this.config.user_actions.drag_action.update_interval);
+      this.timeOutId = setTimeout(
+        () => this.callDragService(),
+        this.config.user_actions.drag_action.update_interval
+      );
   }
 
   callTapService() {
@@ -392,7 +432,7 @@ export default class RangeSliderTool extends BaseTool {
         this.config,
         this.config.user_actions?.tap_action,
         this._card.config.entities[this.defaultEntityIndex()]?.entity,
-        this.labelValue2,
+        this.labelValue2
       );
     }
   }
@@ -429,13 +469,13 @@ export default class RangeSliderTool extends BaseTool {
             scaleValue = this.svgCoordinateToSliderValue(this, this.m);
             this.m.x = this.valueToSvg(this, scaleValue);
             this.m.x = Math.max(this.svg.scale.min, Math.min(this.m.x, this.svg.scale.max));
-            this.m.x = (Math.round(this.m.x / this.svg.scale.step) * this.svg.scale.step);
+            this.m.x = Math.round(this.m.x / this.svg.scale.step) * this.svg.scale.step;
             break;
 
           case 'vertical':
             scaleValue = this.svgCoordinateToSliderValue(this, this.m);
             this.m.y = this.valueToSvg(this, scaleValue);
-            this.m.y = (Math.round(this.m.y / this.svg.scale.step) * this.svg.scale.step);
+            this.m.y = Math.round(this.m.y / this.svg.scale.step) * this.svg.scale.step;
             break;
 
           default:
@@ -454,7 +494,19 @@ export default class RangeSliderTool extends BaseTool {
     this.elements.thumb = this.elements.svg.querySelector('#rs-thumb');
     this.elements.label = this.elements.svg.querySelector('#rs-label tspan');
 
-    if (this.dev.debug) console.log('slider - firstUpdated svg = ', this.elements.svg, 'path=', this.elements.path, 'thumb=', this.elements.thumb, 'label=', this.elements.label, 'text=', this.elements.text);
+    if (this.dev.debug)
+      console.log(
+        'slider - firstUpdated svg = ',
+        this.elements.svg,
+        'path=',
+        this.elements.path,
+        'thumb=',
+        this.elements.thumb,
+        'label=',
+        this.elements.label,
+        'text=',
+        this.elements.text
+      );
 
     function pointerDown(e) {
       e.preventDefault();
@@ -474,8 +526,8 @@ export default class RangeSliderTool extends BaseTool {
       // window.addEventListener('touchend', pointerUp.bind(this), false);
 
       const mousePos = this.mouseEventToPoint(e);
-      const thumbPos = (this.svg.thumb.x1 + this.svg.thumb.cx);
-      if ((mousePos.x > (thumbPos - 10)) && (mousePos.x < (thumbPos + this.svg.thumb.width + 10))) {
+      const thumbPos = this.svg.thumb.x1 + this.svg.thumb.cx;
+      if (mousePos.x > thumbPos - 10 && mousePos.x < thumbPos + this.svg.thumb.width + 10) {
         fireEvent(window, 'haptic', 'heavy');
       } else {
         fireEvent(window, 'haptic', 'error');
@@ -487,9 +539,15 @@ export default class RangeSliderTool extends BaseTool {
 
       // Check for drag_action. If none specified, or update_interval = 0, don't update while dragging...
 
-      if ((this.config.user_actions?.drag_action) && (this.config.user_actions?.drag_action.update_interval)) {
+      if (
+        this.config.user_actions?.drag_action &&
+        this.config.user_actions?.drag_action.update_interval
+      ) {
         if (this.config.user_actions.drag_action.update_interval > 0) {
-          this.timeOutId = setTimeout(() => this.callDragService(), this.config.user_actions.drag_action.update_interval);
+          this.timeOutId = setTimeout(
+            () => this.callDragService(),
+            this.config.user_actions.drag_action.update_interval
+          );
         } else {
           this.timeOutId = null;
         }
@@ -497,9 +555,9 @@ export default class RangeSliderTool extends BaseTool {
       this.m = this.mouseEventToPoint(e);
 
       if (this.config.position.orientation === 'horizontal') {
-        this.m.x = (Math.round(this.m.x / this.svg.scale.step) * this.svg.scale.step);
+        this.m.x = Math.round(this.m.x / this.svg.scale.step) * this.svg.scale.step;
       } else {
-        this.m.y = (Math.round(this.m.y / this.svg.scale.step) * this.svg.scale.step);
+        this.m.y = Math.round(this.m.y / this.svg.scale.step) * this.svg.scale.step;
       }
       if (this.dev.debug) console.log('pointerDOWN', Math.round(this.m.x * 100) / 100);
       Frame2.call(this);
@@ -540,13 +598,13 @@ export default class RangeSliderTool extends BaseTool {
   }
 
   /** *****************************************************************************
-  * RangeSliderTool::value()
-  *
-  * Summary.
-  * Receive new state data for the entity this rangeslider is linked to. Called from set hass;
-  * Sets the brightness value of the slider. This is a value 0..255. We display %, so translate
-  *
-  */
+   * RangeSliderTool::value()
+   *
+   * Summary.
+   * Receive new state data for the entity this rangeslider is linked to. Called from set hass;
+   * Sets the brightness value of the slider. This is a value 0..255. We display %, so translate
+   *
+   */
   set value(state) {
     super.value = state;
     if (!this.dragging) this.labelValue = this._stateValue;
@@ -573,7 +631,11 @@ export default class RangeSliderTool extends BaseTool {
 
       this.styles.uom = Merge.mergeDeep(this.config.styles.uom, fsuomStr);
 
-      const uom = this._card._buildUom(this.derivedEntity, this._card.entities[this.defaultEntityIndex()], this._card.config.entities[this.defaultEntityIndex()]);
+      const uom = this._card._buildUom(
+        this.derivedEntity,
+        this._card.entities[this.defaultEntityIndex()],
+        this._card.config.entities[this.defaultEntityIndex()]
+      );
 
       // Check for location of uom. end = next to state, bottom = below state ;-), etc.
       if (this.config.show.uom === 'end') {
@@ -605,12 +667,12 @@ export default class RangeSliderTool extends BaseTool {
   }
 
   /** *****************************************************************************
-  * RangeSliderTool::_renderRangeSlider()
-  *
-  * Summary.
-  * Renders the range slider
-  *
-  */
+   * RangeSliderTool::_renderRangeSlider()
+   *
+   * Summary.
+   * Renders the range slider
+   *
+   */
 
   _renderRangeSlider() {
     if (this.dev.debug) console.log('slider - _renderRangeSlider');
@@ -633,35 +695,44 @@ export default class RangeSliderTool extends BaseTool {
     } else if (this.elements?.label) this.elements.label.textContent = this.renderValue;
 
     // Calculate cx and cy: the relative move of the thumb from the center of the track
-    let cx; let
-      cy;
+    let cx;
+    let cy;
     switch (this.config.position.label.placement) {
       case 'none':
         this.styles.label.display = 'none';
         this.styles.uom.display = 'none';
         break;
       case 'position':
-        cx = (this.config.position.orientation === 'horizontal'
-          ? this.valueToSvg(this, Number(this.renderValue)) - this.svg.cx
-          : 0);
-        cy = (this.config.position.orientation === 'vertical'
-          ? this.valueToSvg(this, Number(this.renderValue)) - this.svg.cy
-          : 0);
+        cx =
+          this.config.position.orientation === 'horizontal'
+            ? this.valueToSvg(this, Number(this.renderValue)) - this.svg.cx
+            : 0;
+        cy =
+          this.config.position.orientation === 'vertical'
+            ? this.valueToSvg(this, Number(this.renderValue)) - this.svg.cy
+            : 0;
         break;
 
       case 'thumb':
-        cx = (this.config.position.orientation === 'horizontal'
-          ? -this.svg.label.cx + this.valueToSvg(this, Number(this.renderValue))
-          : 0);
-        cy = (this.config.position.orientation === 'vertical'
-          ? this.valueToSvg(this, Number(this.renderValue))
-          : 0);
+        cx =
+          this.config.position.orientation === 'horizontal'
+            ? -this.svg.label.cx + this.valueToSvg(this, Number(this.renderValue))
+            : 0;
+        cy =
+          this.config.position.orientation === 'vertical'
+            ? this.valueToSvg(this, Number(this.renderValue))
+            : 0;
         // eslint-disable-next-line no-unused-expressions
-        if (this.dragging) { (this.config.position.orientation === 'horizontal') ? cy -= 50 : cx -= 50; }
+        if (this.dragging) {
+          this.config.position.orientation === 'horizontal' ? (cy -= 50) : (cx -= 50);
+        }
         break;
 
       default:
-        console.error('_renderRangeSlider(), invalid label placement', this.config.position.label.placement);
+        console.error(
+          '_renderRangeSlider(), invalid label placement',
+          this.config.position.label.placement
+        );
     }
     this.svg.thumb.cx = cx;
     this.svg.thumb.cy = cy;
@@ -685,7 +756,7 @@ export default class RangeSliderTool extends BaseTool {
     }
 
     function renderLabel(argGroup) {
-      if ((this.config.position.label.placement === 'thumb') && argGroup) {
+      if (this.config.position.label.placement === 'thumb' && argGroup) {
         return svg`
       <text id="rs-label">
         <tspan class="${classMap(this.classes.label)}" x="${this.svg.label.cx}" y="${this.svg.label.cy}" style="${styleMap(this.styles.label)}">
@@ -695,7 +766,7 @@ export default class RangeSliderTool extends BaseTool {
         `;
       }
 
-      if ((this.config.position.label.placement === 'position') && !argGroup) {
+      if (this.config.position.label.placement === 'position' && !argGroup) {
         return svg`
           <text id="rs-label" style="transform-origin:center;transform-box: fill-box;">
             <tspan class="${classMap(this.classes.label)}" data-placement="position" x="${this.svg.label.cx}" y="${this.svg.label.cy}"
@@ -742,39 +813,39 @@ export default class RangeSliderTool extends BaseTool {
   }
 
   /** *****************************************************************************
-  * RangeSliderTool::render()
-  *
-  * Summary.
-  * The render() function for this object. The conversion of pointer events need
-  * an SVG as grouping object!
-  *
-  * NOTE:
-  * It is imperative that the style overflow=visible is set on the svg.
-  * The weird thing is that if using an svg as grouping object, AND a class, the overflow=visible
-  * seems to be ignored by both chrome and safari. If the overflow=visible is directly set as style,
-  * the setting works.
-  *
-  * Works on svg with direct styling:
-  * ---
-  *  return svg`
-  *    <svg xmlns="http://www.w3.org/2000/svg" id="rangeslider-${this.toolId}"
-  *      pointer-events="all" overflow="visible"
-  *    >
-  *      ${this._renderRangeSlider()}
-  *    </svg>
-  *  `;
-  *
-  * Does NOT work on svg with class styling:
-  * ---
-  *  return svg`
-  *    <svg xmlns="http://www.w3.org/2000/svg" id="rangeslider-${this.toolId}" class="${classMap(this.classes.tool)}"
-  *    >
-  *      ${this._renderRangeSlider()}
-  *    </svg>
-  *  `;
-  * where the class has the overflow=visible setting...
-  *
-  */
+   * RangeSliderTool::render()
+   *
+   * Summary.
+   * The render() function for this object. The conversion of pointer events need
+   * an SVG as grouping object!
+   *
+   * NOTE:
+   * It is imperative that the style overflow=visible is set on the svg.
+   * The weird thing is that if using an svg as grouping object, AND a class, the overflow=visible
+   * seems to be ignored by both chrome and safari. If the overflow=visible is directly set as style,
+   * the setting works.
+   *
+   * Works on svg with direct styling:
+   * ---
+   *  return svg`
+   *    <svg xmlns="http://www.w3.org/2000/svg" id="rangeslider-${this.toolId}"
+   *      pointer-events="all" overflow="visible"
+   *    >
+   *      ${this._renderRangeSlider()}
+   *    </svg>
+   *  `;
+   *
+   * Does NOT work on svg with class styling:
+   * ---
+   *  return svg`
+   *    <svg xmlns="http://www.w3.org/2000/svg" id="rangeslider-${this.toolId}" class="${classMap(this.classes.tool)}"
+   *    >
+   *      ${this._renderRangeSlider()}
+   *    </svg>
+   *  `;
+   * where the class has the overflow=visible setting...
+   *
+   */
   render() {
     return svg`
       <svg xmlns="http://www.w3.org/2000/svg" id="rangeslider-${this.toolId}" overflow="visible"

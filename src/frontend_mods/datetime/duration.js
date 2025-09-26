@@ -13,6 +13,5 @@ export const UNIT_TO_MILLISECOND_CONVERT = {
   d: DAY_IN_MILLISECONDS,
 };
 
-export const formatDuration = (duration, units) => millisecondsToDuration(
-    parseFloat(duration) * UNIT_TO_MILLISECOND_CONVERT[units],
-  ) || '0';
+export const formatDuration = (duration, units) =>
+  millisecondsToDuration(parseFloat(duration) * UNIT_TO_MILLISECOND_CONVERT[units]) || '0';

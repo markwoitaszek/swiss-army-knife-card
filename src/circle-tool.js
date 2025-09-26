@@ -25,11 +25,11 @@ import Utils from './utils';
 import BaseTool from './base-tool';
 
 /** ****************************************************************************
-  * CircleTool class
-  *
-  * Summary.
-  *
-  */
+ * CircleTool class
+ *
+ * Summary.
+ *
+ */
 
 export default class CircleTool extends BaseTool {
   constructor(argToolset, argConfig, argPos) {
@@ -49,10 +49,8 @@ export default class CircleTool extends BaseTool {
         },
       },
       styles: {
-        tool: {
-        },
-        circle: {
-        },
+        tool: {},
+        circle: {},
       },
     };
 
@@ -66,28 +64,29 @@ export default class CircleTool extends BaseTool {
 
     this.styles.tool = {};
     this.styles.circle = {};
-    if (this.dev.debug) console.log('CircleTool constructor config, svg', this.toolId, this.config, this.svg);
+    if (this.dev.debug)
+      console.log('CircleTool constructor config, svg', this.toolId, this.config, this.svg);
   }
 
   /** *****************************************************************************
-  * CircleTool::value()
-  *
-  * Summary.
-  * Receive new state data for the entity this circle is linked to. Called from set hass;
-  *
-  */
+   * CircleTool::value()
+   *
+   * Summary.
+   * Receive new state data for the entity this circle is linked to. Called from set hass;
+   *
+   */
   set value(state) {
     super.value = state;
   }
 
   /** *****************************************************************************
-  * CircleTool::_renderCircle()
-  *
-  * Summary.
-  * Renders the circle using precalculated coordinates and dimensions.
-  * Only the runtime style is calculated before rendering the circle
-  *
-  */
+   * CircleTool::_renderCircle()
+   *
+   * Summary.
+   * Renders the circle using precalculated coordinates and dimensions.
+   * Only the runtime style is calculated before rendering the circle
+   *
+   */
 
   _renderCircle() {
     this.MergeAnimationClassIfChanged();
@@ -104,12 +103,12 @@ export default class CircleTool extends BaseTool {
   }
 
   /** *****************************************************************************
-  * CircleTool::render()
-  *
-  * Summary.
-  * The render() function for this object.
-  *
-  */
+   * CircleTool::render()
+   *
+   * Summary.
+   * The render() function for this object.
+   *
+   */
 
   render() {
     this.styles.tool.overflow = 'visible';
@@ -118,7 +117,7 @@ export default class CircleTool extends BaseTool {
     return svg`
       <g "" id="circle-${this.toolId}"
         class="${classMap(this.classes.tool)}" style="${styleMap(this.styles.tool)}"
-        @click=${(e) => this.handleTapEvent(e, this.config)}>
+        @click=${e => this.handleTapEvent(e, this.config)}>
         ${this._renderCircle()}
       </g>
     `;
