@@ -3,7 +3,7 @@
  * Unit tests for the abstract base tool class
  */
 
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { mockHass } from '../../../test/mocks/hassMock.js';
 import type {
   EntityState,
@@ -480,6 +480,8 @@ describe('BaseTool', () => {
       expect(() => {
         tool.dispatchEvent(new MouseEvent('click'));
       }).not.toThrow();
+      
+      expect(callServiceSpy).toHaveBeenCalled();
     });
   });
 });

@@ -1773,6 +1773,7 @@ class SwissArmyKnifeCard extends LitElement {
                       hsvColor[1] = 0.4;
                     }
                   }
+                  // eslint-disable-next-line prefer-const
                   rgb = hsv2rgb(hsvColor);
 
                   rgb[0] = Math.round(rgb[0]);
@@ -1884,6 +1885,7 @@ class SwissArmyKnifeCard extends LitElement {
                       hsvColor[1] = 0.4;
                     }
                   }
+                  // eslint-disable-next-line prefer-const
                   rgb = hsv2rgb(hsvColor);
                   rgb[0] = Math.round(rgb[0]);
                   rgb[1] = Math.round(rgb[1]);
@@ -1914,6 +1916,7 @@ class SwissArmyKnifeCard extends LitElement {
                     inState = `#${rHex}${gHex}${bHex}`;
                   }
                 } else if (entity.attributes.xy_color) {
+                  // TODO: Handle xy_color conversion
                 }
                 break;
               default:
