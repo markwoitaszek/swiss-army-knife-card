@@ -9,6 +9,7 @@ import { version } from '../package.json';
 import './components/SakCard.js';
 
 // Log version info
+// eslint-disable-next-line no-console
 console.info(
   `%c  SWISS-ARMY-KNIFE-CARD  \n%c      Version ${version}      `,
   'color: yellow; font-weight: bold; background: black',

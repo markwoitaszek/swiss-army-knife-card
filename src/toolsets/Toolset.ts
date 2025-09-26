@@ -85,6 +85,7 @@ export class Toolset {
     });
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   private createTool(toolConfig: any): BaseTool | null {
     // This would create the appropriate tool based on type
     // For now, we'll return null as the tool creation logic
@@ -131,6 +132,7 @@ export class Toolset {
 
   private styleMap(styles: Record<string, any>): string {
     return Object.entries(styles)
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       .filter(([_, value]) => value != null && value !== '')
       .map(([key, value]) => `${key}: ${value}`)
       .join('; ');

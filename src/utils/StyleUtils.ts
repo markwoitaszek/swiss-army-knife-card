@@ -9,6 +9,7 @@ export function styleMap(
   if (!styles) return '';
 
   return Object.entries(styles)
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     .filter(([_, value]) => value != null && value !== '')
     .map(([key, value]) => `${key}: ${value}`)
     .join('; ');

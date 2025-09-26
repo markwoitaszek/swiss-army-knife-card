@@ -35,12 +35,7 @@ import { version } from '../package.json';
 // Import TypeScript types
 import type {
   SakConfig,
-  EntityConfig,
-  LayoutConfig,
-  ToolsetConfig,
-  ToolConfig,
   EntityState,
-  SakError,
 } from './types/SakTypes.js';
 
 // Module declarations are loaded automatically from types/modules.d.ts
@@ -49,6 +44,7 @@ import type {
 function styleMap(styles: Record<string, string | number | undefined> | null | undefined): string {
   if (!styles) return '';
   return Object.entries(styles)
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     .filter(([_, value]) => value != null && value !== '')
     .map(([key, value]) => `${key}: ${value}`)
     .join('; ');
@@ -159,7 +155,7 @@ class SwissArmyKnifeCard extends LitElement {
   private counter: number = 0;
   private _hass: any;
   private config: SakConfig | null = null;
-  private interval: NodeJS.Timeout | null = null;
+  private interval: number | null = null;
   private _attributes: any;
   private stateObj: any;
   private coords: any;
@@ -1705,7 +1701,7 @@ class SwissArmyKnifeCard extends LitElement {
     // New in v2.5.1: Check for built-in state converters
     if (entityConfig.convert) {
       // Match converter with parameter between ()
-      let splitted = entityConfig.convert.match(/(^\w+)\((\d+)\)/);
+      const splitted = entityConfig.convert.match(/(^\w+)\((\d+)\)/);
       let converter;
       let parameter;
       // If no parameters found, just the converter
@@ -1755,7 +1751,7 @@ class SwissArmyKnifeCard extends LitElement {
           //   return [255, 255, 255];
           // }
           if (entityConfig.attribute) {
-            let entity = this._hass.states[entityConfig.entity];
+            const entity = this._hass.states[entityConfig.entity];
             switch (entity.attributes.color_mode) {
               case 'unknown':
                 break;
@@ -1765,7 +1761,7 @@ class SwissArmyKnifeCard extends LitElement {
                 break;
               case 'color_temp':
                 if (entity.attributes.color_temp_kelvin) {
-                  let rgb = temperature2rgb(entity.attributes.color_temp_kelvin);
+                  const rgb = temperature2rgb(entity.attributes.color_temp_kelvin);
 
                   const hsvColor = rgb2hsv(rgb);
                   // Modify the real rgb color for better contrast
@@ -1777,6 +1773,7 @@ class SwissArmyKnifeCard extends LitElement {
                       hsvColor[1] = 0.4;
                     }
                   }
+                  // eslint-disable-next-line prefer-const
                   rgb = hsv2rgb(hsvColor);
 
                   rgb[0] = Math.round(rgb[0]);
@@ -1797,6 +1794,7 @@ class SwissArmyKnifeCard extends LitElement {
                 break;
               case 'hs':
                 {
+                  // eslint-disable-next-line prefer-const
                   let rgb = hs2rgb([
                     entity.attributes.hs_color[0],
                     entity.attributes.hs_color[1] / 100,
@@ -1834,6 +1832,7 @@ class SwissArmyKnifeCard extends LitElement {
                 break;
               case 'rgbw':
                 {
+                  // eslint-disable-next-line prefer-const
                   let rgb = rgbw2rgb(entity.attributes.rgbw_color);
                   rgb[0] = Math.round(rgb[0]);
                   rgb[1] = Math.round(rgb[1]);
@@ -1848,6 +1847,7 @@ class SwissArmyKnifeCard extends LitElement {
                 break;
               case 'rgbww':
                 {
+                  // eslint-disable-next-line prefer-const
                   let rgb = rgbww2rgb(
                     entity.attributes.rgbww_color,
                     entity.attributes?.min_color_temp_kelvin,
@@ -1868,6 +1868,7 @@ class SwissArmyKnifeCard extends LitElement {
                 break;
               case 'xy':
                 if (entity.attributes.hs_color) {
+                  // eslint-disable-next-line prefer-const
                   let rgb = hs2rgb([
                     entity.attributes.hs_color[0],
                     entity.attributes.hs_color[1] / 100,
@@ -1884,6 +1885,7 @@ class SwissArmyKnifeCard extends LitElement {
                       hsvColor[1] = 0.4;
                     }
                   }
+                  // eslint-disable-next-line prefer-const
                   rgb = hsv2rgb(hsvColor);
                   rgb[0] = Math.round(rgb[0]);
                   rgb[1] = Math.round(rgb[1]);
@@ -1896,12 +1898,14 @@ class SwissArmyKnifeCard extends LitElement {
                   }
                 } else if (entity.attributes.color) {
                   // We should have h and s, including brightness...
+                  // eslint-disable-next-line prefer-const
                   let hsl: any = {};
                   hsl.l = entity.attributes.brightness;
                   hsl.h = entity.attributes.color.h || entity.attributes.color.hue;
                   hsl.s = entity.attributes.color.s || entity.attributes.color.saturation;
                   // Convert HSL value to RGB
                   // HERE
+                  // eslint-disable-next-line prefer-const
                   let { r, g, b } = Colors.hslToRgb(hsl);
                   if (converter === 'rgb_csv') {
                     inState = `${r},${g},${b}`;
@@ -1912,6 +1916,7 @@ class SwissArmyKnifeCard extends LitElement {
                     inState = `#${rHex}${gHex}${bHex}`;
                   }
                 } else if (entity.attributes.xy_color) {
+                  // TODO: Handle xy_color conversion
                 }
                 break;
               default:
