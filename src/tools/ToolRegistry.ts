@@ -6,10 +6,10 @@
 import type { BaseTool } from './base/BaseTool.js';
 
 // Import modern TypeScript tools
+import { EntityStateTool } from './entity/EntityStateTool.js';
 import { CircleTool } from './shapes/CircleTool.js';
 import { RectangleTool } from './shapes/RectangleTool.js';
 import { TextTool } from './text/TextTool.js';
-import { EntityStateTool } from './entity/EntityStateTool.js';
 
 // Import legacy JavaScript tools (temporarily for compatibility)
 import BadgeTool from '../badge-tool.js';
