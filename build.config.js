@@ -3,8 +3,6 @@
  * Advanced build optimizations and configurations
  */
 
-import { defineConfig } from 'vite';
-import { resolve } from 'path';
 
 // Build performance monitoring
 const buildStartTime = Date.now();
@@ -40,7 +38,7 @@ export const buildConfig = {
       propertyReadSideEffects: false,
       tryCatchDeoptimization: false,
     },
-    
+
     // Minification
     minify: {
       enabled: true,
@@ -97,18 +95,18 @@ export const buildMonitor = {
     console.log('🚀 Build started at:', new Date().toISOString());
     return Date.now();
   },
-  
+
   end: (startTime) => {
     const endTime = Date.now();
     const duration = endTime - startTime;
     console.log(`✅ Build completed in ${duration}ms`);
-    
+
     if (buildConfig.monitoring.enabled) {
       console.log('📊 Build Metrics:');
       console.log(`   Duration: ${duration}ms`);
       console.log(`   Memory: ${process.memoryUsage().heapUsed / 1024 / 1024}MB`);
     }
-    
+
     return duration;
   },
 };

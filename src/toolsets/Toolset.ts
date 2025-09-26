@@ -3,8 +3,8 @@
  * Handles toolset positioning, scaling, and tool coordination
  */
 
-import { html } from 'lit';
 import type { TemplateResult } from 'lit';
+import { html } from 'lit';
 import { BaseTool } from '../tools/base/BaseTool.js';
 import type { EntityState, ThemeState, ToolsetConfig } from '../types/SakTypes.js';
 

@@ -1,7 +1,7 @@
 import { resolve } from 'path';
+import { visualizer } from 'rollup-plugin-visualizer';
 import { defineConfig } from 'vite';
 import dts from 'vite-plugin-dts';
-import { visualizer } from 'rollup-plugin-visualizer';
 
 export default defineConfig(({ mode, command }) => {
   const isDev = command === 'serve';
@@ -17,19 +17,20 @@ export default defineConfig(({ mode, command }) => {
         copyDtsFiles: true,
       }),
       // Bundle analyzer for production builds
-      isProd && visualizer({
-        filename: 'dist/bundle-analysis.html',
-        open: false,
-        gzipSize: true,
-        brotliSize: true,
-      }),
+      isProd &&
+        visualizer({
+          filename: 'dist/bundle-analysis.html',
+          open: false,
+          gzipSize: true,
+          brotliSize: true,
+        }),
     ].filter(Boolean),
 
     build: {
       lib: {
         entry: resolve(__dirname, 'src/main.ts'),
         name: 'SwissArmyKnifeCard',
-        fileName: (format) => `swiss-army-knife-card.${format}.js`,
+        fileName: format => `swiss-army-knife-card.${format}.js`,
         formats: ['es', 'umd'],
       },
 
@@ -65,28 +66,30 @@ export default defineConfig(({ mode, command }) => {
 
       // Advanced performance optimizations
       minify: isProd ? 'terser' : false,
-      terserOptions: isProd ? {
-        compress: {
-          drop_console: true,
-          drop_debugger: true,
-          pure_funcs: ['console.log', 'console.info', 'console.debug'],
-          passes: 2,
-        },
-        mangle: {
-          safari10: true,
-          properties: {
-            regex: /^_/,
-          },
-        },
-        format: {
-          comments: false,
-        },
-      } : undefined,
+      terserOptions: isProd
+        ? {
+            compress: {
+              drop_console: true,
+              drop_debugger: true,
+              pure_funcs: ['console.log', 'console.info', 'console.debug'],
+              passes: 2,
+            },
+            mangle: {
+              safari10: true,
+              properties: {
+                regex: /^_/,
+              },
+            },
+            format: {
+              comments: false,
+            },
+          }
+        : undefined,
 
       // Source maps for better debugging
       sourcemap: isDev ? 'inline' : true,
       target: 'es2022',
-      
+
       // Build optimizations
       chunkSizeWarningLimit: 1000,
       reportCompressedSize: true,

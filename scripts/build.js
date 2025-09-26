@@ -6,7 +6,7 @@
  */
 
 import { execSync } from 'child_process';
-import { existsSync, rmSync, mkdirSync } from 'fs';
+import { existsSync, mkdirSync, rmSync } from 'fs';
 import { resolve } from 'path';
 import { buildMonitor } from '../build.config.js';
 
@@ -38,21 +38,21 @@ const startTime = buildMonitor.start();
 try {
   // Build command
   let buildCmd = 'vite build';
-  
+
   if (mode === 'development') {
     buildCmd += ' --mode development';
   } else {
     buildCmd += ' --mode production';
   }
-  
+
   if (profile) {
     buildCmd += ' --profile';
   }
-  
+
   console.log(`🏗️  Running: ${buildCmd}`);
-  
+
   // Execute build
-  execSync(buildCmd, { 
+  execSync(buildCmd, {
     stdio: 'inherit',
     env: {
       ...process.env,
@@ -60,20 +60,20 @@ try {
       BUILD_MONITOR: 'true',
     }
   });
-  
+
   // Bundle analysis
   if (analyze) {
     console.log('📊 Running bundle analysis...');
     execSync('npm run analyze', { stdio: 'inherit' });
   }
-  
+
   // Build monitoring
   const duration = buildMonitor.end(startTime);
-  
+
   // Success message
   console.log('🎉 Build completed successfully!');
   console.log(`⏱️  Total time: ${duration}ms`);
-  
+
   // Performance recommendations
   if (duration > 5000) {
     console.log('⚠️  Build time is slow. Consider:');
@@ -81,7 +81,7 @@ try {
     console.log('   - Optimizing dependencies');
     console.log('   - Using incremental builds');
   }
-  
+
 } catch (error) {
   console.error('❌ Build failed:', error.message);
   process.exit(1);

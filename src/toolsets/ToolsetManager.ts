@@ -3,8 +3,8 @@
  * Handles toolset creation, updates, and rendering
  */
 
-import { html } from 'lit';
 import type { TemplateResult } from 'lit';
+import { html } from 'lit';
 import type { EntityState, SakConfig, ThemeState, ToolsetConfig } from '../types/SakTypes.js';
 import { Toolset } from './Toolset.js';
 
