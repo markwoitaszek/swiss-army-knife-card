@@ -216,7 +216,7 @@ export class GaugeTool extends BaseTool {
         d="${trackPath}"
         style="${styleMap(trackStyles)}"
       />
-      
+
       <!-- Fill (progress) -->
       ${
         progress > 0
