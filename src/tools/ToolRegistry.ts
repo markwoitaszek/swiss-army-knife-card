@@ -7,6 +7,8 @@ import type { BaseTool } from './base/BaseTool.js';
 
 // Import modern TypeScript tools
 import { GaugeTool } from './charts/GaugeTool.js';
+import { HeatmapTool } from './charts/HeatmapTool.js';
+import { PieChartTool } from './charts/PieChartTool.js';
 import { SparklineBarChartTool } from './charts/SparklineBarChartTool.js';
 import { EntityStateTool } from './entity/EntityStateTool.js';
 import { RangeSliderTool } from './interactive/RangeSliderTool.js';
@@ -55,6 +57,8 @@ export type ToolType =
   | 'sparkline_barchart'
   | 'bar'
   | 'gauge'
+  | 'pie_chart'
+  | 'heatmap'
   | 'usersvg';
 
 export type ToolConstructor = new (...args: any[]) => BaseTool;
@@ -88,6 +92,8 @@ export class ToolRegistry {
     this.modernTools.set('entity_state', EntityStateTool);
     this.modernTools.set('sparkline_barchart', SparklineBarChartTool);
     this.modernTools.set('gauge', GaugeTool);
+    this.modernTools.set('pie_chart', PieChartTool);
+    this.modernTools.set('heatmap', HeatmapTool);
     this.modernTools.set('switch', SwitchTool);
     this.modernTools.set('slider', RangeSliderTool);
   }
