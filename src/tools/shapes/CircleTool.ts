@@ -6,9 +6,9 @@
 import { svg, type SVGTemplateResult } from 'lit';
 import { customElement } from 'lit/decorators.js';
 
-import { BaseTool } from '../base/BaseTool.js';
-import type { ToolConfig, Position } from '../../types/SakTypes.js';
+import type { Position, ToolConfig } from '../../types/SakTypes.js';
 import { styleMap } from '../../utils/StyleUtils.js';
+import { BaseTool } from '../base/BaseTool.js';
 
 export interface CircleToolConfig extends ToolConfig {
   position: Position & {
@@ -129,10 +129,10 @@ export class CircleTool extends BaseTool {
     };
 
     return svg`
-      <circle 
+      <circle
         class="sak-circle__circle"
-        cx="${this.config.position.cx}%" 
-        cy="${this.config.position.cy}%" 
+        cx="${this.config.position.cx}%"
+        cy="${this.config.position.cy}%"
         r="${this.config.position.radius}"
         style="${styleMap(circleStyles)}"
       />
@@ -199,7 +199,7 @@ export class CircleTool extends BaseTool {
     };
 
     return svg`
-      <g 
+      <g
         id="circle-${this.toolId || 'unknown'}"
         class="sak-circle"
         style="${styleMap(toolStyles)}"

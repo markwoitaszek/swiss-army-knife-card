@@ -62,8 +62,8 @@ describe('RectangleTool', () => {
     await element.updateComplete;
     const rect = element.shadowRoot?.querySelector('rect');
     const style = rect?.getAttribute('style');
-    expect(style).toContain('fill: rgb(0, 255, 0)');
-    expect(style).toContain('stroke: rgb(255, 0, 0)');
+    expect(style).toContain('fill: #00ff00');
+    expect(style).toContain('stroke: #ff0000');
     expect(style).toContain('stroke-width: 3');
     expect(style).toContain('opacity: 0.8');
   });

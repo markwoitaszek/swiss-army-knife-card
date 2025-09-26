@@ -1,7 +1,7 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { beforeEach, describe, expect, it } from 'vitest';
 
-import { CircleTool } from '../CircleTool.js';
 import type { CircleToolConfig } from '../CircleTool.js';
+import { CircleTool } from '../CircleTool.js';
 
 describe('CircleTool', () => {
   let element: CircleTool;
