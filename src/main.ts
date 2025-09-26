@@ -35,12 +35,7 @@ import { version } from '../package.json';
 // Import TypeScript types
 import type {
   SakConfig,
-  EntityConfig,
-  LayoutConfig,
-  ToolsetConfig,
-  ToolConfig,
   EntityState,
-  SakError,
 } from './types/SakTypes.js';
 
 // Module declarations are loaded automatically from types/modules.d.ts
@@ -159,7 +154,7 @@ class SwissArmyKnifeCard extends LitElement {
   private counter: number = 0;
   private _hass: any;
   private config: SakConfig | null = null;
-  private interval: NodeJS.Timeout | null = null;
+  private interval: number | null = null;
   private _attributes: any;
   private stateObj: any;
   private coords: any;
@@ -1705,7 +1700,7 @@ class SwissArmyKnifeCard extends LitElement {
     // New in v2.5.1: Check for built-in state converters
     if (entityConfig.convert) {
       // Match converter with parameter between ()
-      let splitted = entityConfig.convert.match(/(^\w+)\((\d+)\)/);
+      const splitted = entityConfig.convert.match(/(^\w+)\((\d+)\)/);
       let converter;
       let parameter;
       // If no parameters found, just the converter
@@ -1755,7 +1750,7 @@ class SwissArmyKnifeCard extends LitElement {
           //   return [255, 255, 255];
           // }
           if (entityConfig.attribute) {
-            let entity = this._hass.states[entityConfig.entity];
+            const entity = this._hass.states[entityConfig.entity];
             switch (entity.attributes.color_mode) {
               case 'unknown':
                 break;
@@ -1765,7 +1760,7 @@ class SwissArmyKnifeCard extends LitElement {
                 break;
               case 'color_temp':
                 if (entity.attributes.color_temp_kelvin) {
-                  let rgb = temperature2rgb(entity.attributes.color_temp_kelvin);
+                  const rgb = temperature2rgb(entity.attributes.color_temp_kelvin);
 
                   const hsvColor = rgb2hsv(rgb);
                   // Modify the real rgb color for better contrast
