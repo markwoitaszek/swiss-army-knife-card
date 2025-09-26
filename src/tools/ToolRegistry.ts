@@ -9,6 +9,8 @@ import type { BaseTool } from './base/BaseTool.js';
 import { GaugeTool } from './charts/GaugeTool.js';
 import { SparklineBarChartTool } from './charts/SparklineBarChartTool.js';
 import { EntityStateTool } from './entity/EntityStateTool.js';
+import { RangeSliderTool } from './interactive/RangeSliderTool.js';
+import { SwitchTool } from './interactive/SwitchTool.js';
 import { CircleTool } from './shapes/CircleTool.js';
 import { RectangleTool } from './shapes/RectangleTool.js';
 import { TextTool } from './text/TextTool.js';
@@ -22,13 +24,13 @@ import EntityIconTool from '../entity-icon-tool.js';
 import EntityNameTool from '../entity-name-tool.js';
 import HorseshoeTool from '../horseshoe-tool.js';
 import LineTool from '../line-tool.js';
-import RangeSliderTool from '../range-slider-tool.js';
+import LegacyRangeSliderTool from '../range-slider-tool.js';
 import RectangleToolEx from '../rectangle-ex-tool.js';
 import RegPolyTool from '../regular-polygon-tool.js';
 import SegmentedArcTool from '../segmented-arc-tool.js';
 import LegacySparklineBarChartTool from '../sparkline-barchart-tool.js';
 import SparklineGraphTool from '../sparkline-graph-tool.js';
-import SwitchTool from '../switch-tool.js';
+import LegacySwitchTool from '../switch-tool.js';
 import UserSvgTool from '../user-svg-tool.js';
 
 export type ToolType =
@@ -86,6 +88,8 @@ export class ToolRegistry {
     this.modernTools.set('entity_state', EntityStateTool);
     this.modernTools.set('sparkline_barchart', SparklineBarChartTool);
     this.modernTools.set('gauge', GaugeTool);
+    this.modernTools.set('switch', SwitchTool);
+    this.modernTools.set('slider', RangeSliderTool);
   }
 
   private registerLegacyTools(): void {
@@ -98,13 +102,13 @@ export class ToolRegistry {
     this.legacyTools.set('entity_name', EntityNameTool);
     this.legacyTools.set('horseshoe', HorseshoeTool);
     this.legacyTools.set('line', LineTool);
-    this.legacyTools.set('slider', RangeSliderTool);
+    this.legacyTools.set('range_slider', LegacyRangeSliderTool);
     this.legacyTools.set('rectex', RectangleToolEx);
     this.legacyTools.set('regpoly', RegPolyTool);
     this.legacyTools.set('segarc', SegmentedArcTool);
     this.legacyTools.set('bar', LegacySparklineBarChartTool);
     this.legacyTools.set('sparkline', SparklineGraphTool);
-    this.legacyTools.set('switch', SwitchTool);
+    this.legacyTools.set('legacy_switch', LegacySwitchTool);
     this.legacyTools.set('usersvg', UserSvgTool);
   }
 
