@@ -259,7 +259,7 @@ export class SwitchTool extends BaseTool {
         rx="${track.radius}"
         style="${styleMap(trackStyles)}"
       />
-      
+
       <!-- Thumb -->
       <rect
         class="sak-switch__thumb"

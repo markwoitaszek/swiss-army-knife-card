@@ -94,14 +94,14 @@ describe('SwitchTool', () => {
       state: 'on',
       attributes: {},
     } as any;
-    
+
     // Manually trigger state update since we're setting entityState directly
     (element as any).updateSwitchState();
     await element.updateComplete;
-    
+
     const group = element.shadowRoot?.querySelector('g');
     expect(group?.getAttribute('class')).toContain('sak-switch--checked');
-    
+
     const track = element.shadowRoot?.querySelector('.sak-switch__track');
     const style = track?.getAttribute('style');
     expect(style).toContain('fill: #4CAF50'); // checked color
