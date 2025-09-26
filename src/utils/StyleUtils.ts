@@ -8,11 +8,13 @@ export function styleMap(
 ): string {
   if (!styles) return '';
 
-  return Object.entries(styles)
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    .filter(([_, value]) => value != null && value !== '')
-    .map(([key, value]) => `${key}: ${value}`)
-    .join('; ');
+  return (
+    Object.entries(styles)
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      .filter(([_, value]) => value != null && value !== '')
+      .map(([key, value]) => `${key}: ${value}`)
+      .join('; ')
+  );
 }
 
 export function classMap(classes: Record<string, boolean | undefined> | null | undefined): string {

@@ -480,7 +480,7 @@ describe('BaseTool', () => {
       expect(() => {
         tool.dispatchEvent(new MouseEvent('click'));
       }).not.toThrow();
-      
+
       expect(callServiceSpy).toHaveBeenCalled();
     });
   });
