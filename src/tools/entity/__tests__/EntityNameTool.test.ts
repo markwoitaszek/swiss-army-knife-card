@@ -75,14 +75,14 @@ describe('EntityNameTool', () => {
       tool.config.name = 'Custom Name';
       const result = tool.render();
       const textElement = result.values[0];
-      
+
       expect(textElement.strings.join('')).toContain('Custom Name');
     });
 
     it('should use entity friendly_name when no explicit name', () => {
       const result = tool.render();
       const textElement = result.values[0];
-      
+
       expect(textElement.strings.join('')).toContain('Test Temperature Sensor');
     });
 
@@ -91,10 +91,10 @@ describe('EntityNameTool', () => {
         ...mockEntityState,
         attributes: { ...mockEntityState.attributes, friendly_name: undefined },
       };
-      
+
       const result = tool.render();
       const textElement = result.values[0];
-      
+
       expect(textElement.strings.join('')).toContain('sensor.test_temperature');
     });
 
@@ -105,10 +105,10 @@ describe('EntityNameTool', () => {
         entity_id: '',
         attributes: { ...mockEntityState.attributes, friendly_name: undefined },
       };
-      
+
       const result = tool.render();
       const textElement = result.values[0];
-      
+
       expect(textElement.strings.join('')).toContain('Fallback Name');
     });
 
@@ -118,10 +118,10 @@ describe('EntityNameTool', () => {
         entity_id: '',
         attributes: { ...mockEntityState.attributes, friendly_name: undefined },
       };
-      
+
       const result = tool.render();
       const textElement = result.values[0];
-      
+
       expect(textElement.strings.join('')).toContain('Unknown Entity');
     });
   });
@@ -130,7 +130,7 @@ describe('EntityNameTool', () => {
     it('should apply font size styling', () => {
       tool.config.font_size = 16;
       const result = tool.render();
-      
+
       // Check that font-size is applied in the style attribute
       expect(result.strings.join('')).toContain('font-size: 16px');
     });
@@ -138,28 +138,28 @@ describe('EntityNameTool', () => {
     it('should apply font weight styling', () => {
       tool.config.font_weight = 'bold';
       const result = tool.render();
-      
+
       expect(result.strings.join('')).toContain('font-weight: bold');
     });
 
     it('should apply font family styling', () => {
       tool.config.font_family = 'Arial, sans-serif';
       const result = tool.render();
-      
+
       expect(result.strings.join('')).toContain('font-family: Arial, sans-serif');
     });
 
     it('should apply color styling', () => {
       tool.config.color = '#ff0000';
       const result = tool.render();
-      
+
       expect(result.strings.join('')).toContain('fill: #ff0000');
     });
 
     it('should apply opacity styling', () => {
       tool.config.opacity = 0.8;
       const result = tool.render();
-      
+
       expect(result.strings.join('')).toContain('opacity: 0.8');
     });
   });
@@ -169,14 +169,14 @@ describe('EntityNameTool', () => {
       tool.config.x = 100;
       tool.config.y = 200;
       const result = tool.render();
-      
+
       expect(result.strings.join('')).toContain('x="100"');
       expect(result.strings.join('')).toContain('y="200"');
     });
 
     it('should fall back to position cx/cy when x/y not specified', () => {
       const result = tool.render();
-      
+
       expect(result.strings.join('')).toContain('x="50"'); // position.cx
       expect(result.strings.join('')).toContain('y="50"'); // position.cy
     });
@@ -184,28 +184,28 @@ describe('EntityNameTool', () => {
     it('should apply text anchor', () => {
       tool.config.text_anchor = 'start';
       const result = tool.render();
-      
+
       expect(result.strings.join('')).toContain('text-anchor="start"');
     });
 
     it('should apply alignment baseline', () => {
       tool.config.alignment_baseline = 'hanging';
       const result = tool.render();
-      
+
       expect(result.strings.join('')).toContain('alignment-baseline="hanging"');
     });
 
     it('should apply rotation transform', () => {
       tool.config.rotate = 45;
       const result = tool.render();
-      
+
       expect(result.strings.join('')).toContain('transform="rotate(45)"');
     });
 
     it('should apply visibility', () => {
       tool.config.visibility = 'hidden';
       const result = tool.render();
-      
+
       expect(result.strings.join('')).toContain('visibility="hidden"');
     });
   });
@@ -231,16 +231,16 @@ describe('EntityNameTool', () => {
 
     it('should not trigger unnecessary updates when name unchanged', () => {
       const updateSpy = vi.spyOn(tool, 'requestUpdate');
-      
+
       // Update with same entity state
       tool.updateEntityState(mockEntityState);
-      
+
       expect(updateSpy).not.toHaveBeenCalled();
     });
 
     it('should trigger update when name actually changes', () => {
       const updateSpy = vi.spyOn(tool, 'requestUpdate');
-      
+
       const newEntityState: EntityState = {
         ...mockEntityState,
         attributes: {
@@ -250,7 +250,7 @@ describe('EntityNameTool', () => {
       };
 
       tool.updateEntityState(newEntityState);
-      
+
       expect(updateSpy).toHaveBeenCalled();
     });
   });
@@ -258,7 +258,7 @@ describe('EntityNameTool', () => {
   describe('Rendering', () => {
     it('should render SVG text element', () => {
       const result = tool.render();
-      
+
       expect(result.strings.join('')).toContain('<text');
       expect(result.strings.join('')).toContain('class="sak-entity-name"');
     });
@@ -266,7 +266,7 @@ describe('EntityNameTool', () => {
     it('should include event handlers', () => {
       const result = tool.render();
       const resultString = result.strings.join('');
-      
+
       expect(resultString).toContain('@click');
       expect(resultString).toContain('@mouseenter');
       expect(resultString).toContain('@mouseleave');
@@ -277,14 +277,14 @@ describe('EntityNameTool', () => {
     it('should return empty when not visible', () => {
       tool.isVisible = false;
       const result = tool.render();
-      
+
       expect(result.strings.join('').trim()).toBe('');
     });
 
     it('should apply default text-anchor and alignment-baseline', () => {
       const result = tool.render();
       const resultString = result.strings.join('');
-      
+
       expect(resultString).toContain('text-anchor="middle"');
       expect(resultString).toContain('alignment-baseline="central"');
     });
@@ -293,7 +293,7 @@ describe('EntityNameTool', () => {
   describe('Edge Cases', () => {
     it('should handle missing entity state gracefully', () => {
       tool.entityState = undefined;
-      
+
       expect(() => tool.render()).not.toThrow();
       const result = tool.render();
       expect(result.strings.join('')).toContain('Unknown Entity');
@@ -304,7 +304,7 @@ describe('EntityNameTool', () => {
         ...mockEntityState,
         attributes: {},
       };
-      
+
       const result = tool.render();
       expect(result.strings.join('')).toContain('sensor.test_temperature');
     });
@@ -312,7 +312,7 @@ describe('EntityNameTool', () => {
     it('should handle numeric font weight', () => {
       tool.config.font_weight = 600;
       const result = tool.render();
-      
+
       expect(result.strings.join('')).toContain('font-weight: 600');
     });
 
@@ -320,10 +320,10 @@ describe('EntityNameTool', () => {
       tool.config.x = 0;
       tool.config.y = 0;
       tool.config.opacity = 0;
-      
+
       const result = tool.render();
       const resultString = result.strings.join('');
-      
+
       expect(resultString).toContain('x="0"');
       expect(resultString).toContain('y="0"');
       expect(resultString).toContain('opacity: 0');

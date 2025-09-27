@@ -5,8 +5,8 @@
 
 import { html, svg } from 'lit';
 import { customElement } from 'lit/decorators.js';
-import { BaseTool } from '../base/BaseTool.js';
 import type { EntityState, ToolConfig } from '../../types/SakTypes.js';
+import { BaseTool } from '../base/BaseTool.js';
 
 /**
  * Configuration interface for EntityNameTool
@@ -21,7 +21,20 @@ export interface EntityNameConfig extends ToolConfig {
   font_family?: string;
   color?: string;
   text_anchor?: 'start' | 'middle' | 'end';
-  alignment_baseline?: 'auto' | 'baseline' | 'before-edge' | 'text-before-edge' | 'middle' | 'central' | 'after-edge' | 'text-after-edge' | 'ideographic' | 'alphabetic' | 'hanging' | 'mathematical' | 'inherit';
+  alignment_baseline?:
+    | 'auto'
+    | 'baseline'
+    | 'before-edge'
+    | 'text-before-edge'
+    | 'middle'
+    | 'central'
+    | 'after-edge'
+    | 'text-after-edge'
+    | 'ideographic'
+    | 'alphabetic'
+    | 'hanging'
+    | 'mathematical'
+    | 'inherit';
   x?: number;
   y?: number;
   dx?: number;
@@ -197,7 +210,7 @@ export class EntityNameTool extends BaseTool {
     const oldName = this.getDisplayName();
     super.updateEntityState(newState);
     const newName = this.getDisplayName();
-    
+
     // Only trigger update if the display name actually changed
     if (oldName !== newName) {
       this.requestUpdate();
