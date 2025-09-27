@@ -49,13 +49,19 @@ function styleMap(styles: Record<string, string | number | undefined> | null | u
   );
 }
 
-import { FONT_SIZE, SVG_DEFAULT_DIMENSIONS, SVG_VIEW_BOX } from './const.js';
+import { FONT_SIZE, SVG_DEFAULT_DIMENSIONS, SVG_VIEW_BOX } from './constants/Constants.js';
 
-import Colors from './colors.js';
-import Merge from './merge.js';
-import Templates from './templates.js';
+import ColorUtils from './utils/ColorUtils.js';
+import MergeUtils from './utils/MergeUtils.js';
+import TemplateUtils from './utils/TemplateUtils.js';
 import Toolset from './toolset.js';
-import Utils from './utils.js';
+import CoreUtils from './utils/CoreUtils.js';
+
+// Backward compatibility aliases
+const Colors = ColorUtils;
+const Merge = MergeUtils;
+const Templates = TemplateUtils;
+const Utils = CoreUtils;
 
 import { hs2rgb, hsv2rgb, rgb2hex, rgb2hsv } from './frontend_mods/color/convert-color.js';
 import { rgbw2rgb, rgbww2rgb, temperature2rgb } from './frontend_mods/color/convert-light-color.js';
