@@ -14,9 +14,9 @@ export default class CoreUtils {
    * Calculate fractional value between start and end based on current value
    * Clips the val value between start and end, and returns the between value
    * Returned value is a fractional value between 0 and 1
-   * 
+   *
    * @param argStart - Start value of range
-   * @param argEnd - End value of range  
+   * @param argEnd - End value of range
    * @param argVal - Current value to calculate fraction for
    * @returns Fractional value between 0 and 1
    */
@@ -32,7 +32,7 @@ export default class CoreUtils {
   /**
    * Calculate SVG coordinate relative to centered toolset position
    * Tool coordinates are percentages that need to be converted to SVG units
-   * 
+   *
    * @param argOwn - Tool's own coordinate as percentage (0-100)
    * @param argToolset - Toolset's position in SVG coordinates
    * @returns Calculated SVG coordinate
@@ -44,7 +44,7 @@ export default class CoreUtils {
   /**
    * Translate tool dimension like length or width to actual SVG dimension
    * Converts percentage-based dimensions to SVG units
-   * 
+   *
    * @param argDimension - Dimension as percentage (0-100)
    * @returns SVG dimension in actual units
    */
@@ -55,7 +55,7 @@ export default class CoreUtils {
   /**
    * Get Lovelace instance from Home Assistant DOM
    * Navigates through the shadow DOM to find the Lovelace instance
-   * 
+   *
    * @returns Lovelace instance or null if not found
    */
   static getLovelace(): any | null {
@@ -71,7 +71,7 @@ export default class CoreUtils {
       root = root?.querySelector('ha-panel-lovelace');
       root = root?.shadowRoot;
       root = root?.querySelector('hui-root');
-      
+
       if (root) {
         const ll = root.lovelace;
         if (ll) {
@@ -88,9 +88,5 @@ export default class CoreUtils {
 }
 
 // Export individual functions for modern usage
-export const {
-  calculateValueBetween,
-  calculateSvgCoordinate, 
-  calculateSvgDimension,
-  getLovelace
-} = CoreUtils;
+export const { calculateValueBetween, calculateSvgCoordinate, calculateSvgDimension, getLovelace } =
+  CoreUtils;

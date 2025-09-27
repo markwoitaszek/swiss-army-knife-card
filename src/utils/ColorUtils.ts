@@ -78,7 +78,7 @@ export default class ColorUtils {
       const value = String(argColors[key]);
       prefixedColors[prefixedKey] = value;
     });
-    
+
     return prefixedColors;
   }
 
@@ -124,7 +124,7 @@ export default class ColorUtils {
       combinedBase = { ...combinedBase, ...swatchBase };
       combinedLight = { ...combinedLight, ...swatchBase };
       combinedDark = { ...combinedDark, ...swatchBase };
-      
+
       if (modes) {
         if (modes.light) {
           combinedLight = { ...combinedLight, ...modes.light };
@@ -244,11 +244,11 @@ export default class ColorUtils {
    */
   static getColorVariable(argColor: string): string {
     const newColor = argColor.substr(4, argColor.length - 5);
-    
+
     if (!ColorUtils.element) {
       return argColor;
     }
-    
+
     const returnColor = window.getComputedStyle(ColorUtils.element).getPropertyValue(newColor);
     return returnColor;
   }
@@ -304,7 +304,7 @@ export default class ColorUtils {
     if (cachedColor) return cachedColor;
 
     let theColor = argColor;
-    
+
     // Check for CSS variable colors
     if (argColor.substr(0, 3) === 'var') {
       theColor = ColorUtils.getColorVariable(argColor);
@@ -314,7 +314,7 @@ export default class ColorUtils {
     const canvas = document.createElement('canvas');
     canvas.width = canvas.height = 1;
     const ctx = canvas.getContext('2d');
-    
+
     if (!ctx) {
       return [0, 0, 0, 255]; // Default to black if canvas context fails
     }

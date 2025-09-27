@@ -54,7 +54,7 @@ export default class TemplateUtils {
   /**
    * Replace variables in template with provided values
    * Processes template variables and merges with defaults
-   * 
+   *
    * @param argVariables - Array of variable objects to replace
    * @param argTemplate - Template configuration object
    * @returns Processed template with variables replaced
@@ -104,17 +104,13 @@ export default class TemplateUtils {
   /**
    * Process JavaScript templates or return values as-is
    * Recursively processes objects and evaluates JavaScript templates
-   * 
+   *
    * @param argTool - Tool configuration for context
    * @param argEntities - Entities configuration for context
    * @param argValue - Value to process (may contain JS templates)
    * @returns Processed value with JS templates evaluated
    */
-  static getJsTemplateOrValueConfig(
-    argTool: ToolConfig,
-    argEntities: any[],
-    argValue: any
-  ): any {
+  static getJsTemplateOrValueConfig(argTool: ToolConfig, argEntities: any[], argValue: any): any {
     // Check for 'undefined' or 'null'
     if (argValue == null) return argValue;
 
@@ -154,7 +150,7 @@ export default class TemplateUtils {
   /**
    * Evaluate JavaScript template in configuration context
    * Provides tool_config and entities_config as context
-   * 
+   *
    * @param argTool - Tool configuration
    * @param argEntities - Entities configuration
    * @param jsTemplate - JavaScript template string to evaluate
@@ -168,11 +164,11 @@ export default class TemplateUtils {
     try {
       // Create a new Function with tool_config and entities_config context
       // eslint-disable-next-line no-new-func
-      return new Function(
-        'tool_config',
-        'entities_config',
-        `'use strict'; ${jsTemplate}`
-      ).call(null, argTool, argEntities);
+      return new Function('tool_config', 'entities_config', `'use strict'; ${jsTemplate}`).call(
+        null,
+        argTool,
+        argEntities
+      );
     } catch (error) {
       const enhancedError = error as Error;
       enhancedError.name = 'Sak-evaluateJsTemplateConfig-Error';
@@ -184,7 +180,7 @@ export default class TemplateUtils {
   /**
    * Process JavaScript templates or return values as-is (runtime version)
    * Recursively processes objects and evaluates JavaScript templates with runtime context
-   * 
+   *
    * @param argTool - Tool instance for context
    * @param argState - Current entity state
    * @param argValue - Value to process (may contain JS templates)
@@ -203,11 +199,7 @@ export default class TemplateUtils {
     if (typeof argValue === 'object') {
       const processedObject: any = Array.isArray(argValue) ? [] : {};
       Object.keys(argValue).forEach(key => {
-        processedObject[key] = TemplateUtils.getJsTemplateOrValue(
-          argTool,
-          argState,
-          argValue[key]
-        );
+        processedObject[key] = TemplateUtils.getJsTemplateOrValue(argTool, argState, argValue[key]);
       });
       return processedObject;
     }
@@ -226,7 +218,7 @@ export default class TemplateUtils {
   /**
    * Evaluate JavaScript template with full runtime context
    * Provides comprehensive context including state, states, entity, user, hass, etc.
-   * 
+   *
    * @param argTool - Tool instance with card context
    * @param state - Current entity state
    * @param jsTemplate - JavaScript template string to evaluate
@@ -275,7 +267,7 @@ export default class TemplateUtils {
   /**
    * Safely evaluate JavaScript template with error handling
    * Wraps template evaluation with comprehensive error handling
-   * 
+   *
    * @param template - JavaScript template string
    * @param context - Evaluation context object
    * @returns Result of evaluation or null if error
@@ -287,10 +279,7 @@ export default class TemplateUtils {
       const contextValues = Object.values(context);
 
       // eslint-disable-next-line no-new-func
-      const evaluationFunction = new Function(
-        ...contextKeys,
-        `'use strict'; ${template}`
-      );
+      const evaluationFunction = new Function(...contextKeys, `'use strict'; ${template}`);
 
       return evaluationFunction.apply(null, contextValues);
     } catch (error) {

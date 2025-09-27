@@ -46,8 +46,7 @@ export const angle360 = (start: number, angle: number, end: number): number =>
  * @param value2 - Second value
  * @returns Absolute difference between values
  */
-export const range = (value1: number, value2: number): number =>
-  Math.abs(value1 - value2);
+export const range = (value1: number, value2: number): number => Math.abs(value1 - value2);
 
 // Export all constants and utilities as default for backward compatibility
 export default {

@@ -8,13 +8,13 @@
  * @param obj - Value to check
  * @returns True if value is an object (but not array or null)
  */
-const isObject = (obj: any): obj is Record<string, any> => 
+const isObject = (obj: any): obj is Record<string, any> =>
   obj && typeof obj === 'object' && !Array.isArray(obj);
 
 /**
  * Performs a deep merge of objects and returns new object. Does not modify
  * objects (immutable) and merges arrays via concatenation.
- * 
+ *
  * @param objects - Objects to merge
  * @returns New object with merged key/values
  */
@@ -23,7 +23,7 @@ export const mergeDeep = (...objects: Record<string, any>[]): Record<string, any
     Object.keys(obj).forEach(key => {
       const pVal = prev[key];
       const oVal = obj[key];
-      
+
       if (Array.isArray(pVal) && Array.isArray(oVal)) {
         // Concatenate arrays
         // TODO: Consider matching by .id for more sophisticated array merging

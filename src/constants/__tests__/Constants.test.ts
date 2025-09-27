@@ -5,14 +5,14 @@
 
 import { describe, expect, it } from 'vitest';
 import {
+  FONT_SIZE,
   SVG_DEFAULT_DIMENSIONS,
   SVG_DEFAULT_DIMENSIONS_HALF,
   SVG_VIEW_BOX,
-  FONT_SIZE,
-  clamp,
-  round,
   angle360,
+  clamp,
   range,
+  round,
 } from '../Constants.js';
 
 describe('Constants', () => {

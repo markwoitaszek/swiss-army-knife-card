@@ -4,19 +4,13 @@
  */
 
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import ColorUtils, {
-  type HSLColor,
-  type ProcessedPalette,
-  type ProcessedTheme,
-  type RGBColor,
-  type ThemeConfig,
-} from '../ColorUtils.js';
+import ColorUtils, { type HSLColor, type ThemeConfig } from '../ColorUtils.js';
 
 describe('ColorUtils', () => {
   beforeEach(() => {
     // Clear color cache before each test
     ColorUtils.clearColorCache();
-    
+
     // Mock DOM elements
     document.body.innerHTML = '';
   });
@@ -25,7 +19,7 @@ describe('ColorUtils', () => {
     it('should set the element for color calculations', () => {
       const element = document.createElement('div');
       ColorUtils.setElement(element);
-      
+
       // We can't directly test the private element, but we can test it indirectly
       expect(() => ColorUtils.setElement(element)).not.toThrow();
     });
@@ -134,7 +128,7 @@ describe('ColorUtils', () => {
   describe('calculateColor', () => {
     it('should return exact color for exact stop match', () => {
       const stops = { 0: '#ff0000', 50: '#00ff00', 100: '#0000ff' };
-      
+
       expect(ColorUtils.calculateColor(0, stops)).toBe('#ff0000');
       expect(ColorUtils.calculateColor(50, stops)).toBe('#00ff00');
       expect(ColorUtils.calculateColor(100, stops)).toBe('#0000ff');
@@ -142,28 +136,28 @@ describe('ColorUtils', () => {
 
     it('should return boundary colors for out-of-range values', () => {
       const stops = { 10: '#ff0000', 90: '#0000ff' };
-      
+
       expect(ColorUtils.calculateColor(-5, stops)).toBe('#ff0000');
       expect(ColorUtils.calculateColor(150, stops)).toBe('#0000ff');
     });
 
     it('should return step color when gradient is disabled', () => {
       const stops = { 0: '#ff0000', 100: '#0000ff' };
-      
+
       expect(ColorUtils.calculateColor(25, stops, false)).toBe('#ff0000');
       expect(ColorUtils.calculateColor(75, stops, false)).toBe('#ff0000');
     });
 
     it('should calculate gradient color when gradient is enabled', () => {
       const stops = { 0: '#ff0000', 100: '#0000ff' };
-      
+
       // Mock colorToRGBA to return predictable values
       vi.spyOn(ColorUtils, 'colorToRGBA')
         .mockReturnValueOnce([255, 0, 0, 255]) // #ff0000
         .mockReturnValueOnce([0, 0, 255, 255]); // #0000ff
 
       const result = ColorUtils.calculateColor(50, stops, true);
-      
+
       // Should be a gradient between red and blue
       expect(result).toMatch(/^#[0-9a-f]{8}$/i);
     });
@@ -233,13 +227,13 @@ describe('ColorUtils', () => {
 
     it('should cache color results', () => {
       const color = '#ff0000';
-      
+
       // First call
       const result1 = ColorUtils.colorToRGBA(color);
-      
+
       // Second call should return cached result
       const result2 = ColorUtils.colorToRGBA(color);
-      
+
       expect(result1).toEqual(result2);
       expect(ColorUtils.getColorCacheSize()).toBe(1);
     });
@@ -264,7 +258,7 @@ describe('ColorUtils', () => {
       expect(rgbRed.g).toBeCloseTo(0);
       expect(rgbRed.b).toBeCloseTo(0);
 
-      // Green color  
+      // Green color
       const green: HSLColor = { h: 120, s: 100, l: 50 };
       const rgbGreen = ColorUtils.hslToRgb(green);
       expect(rgbGreen.r).toBeCloseTo(0);
@@ -282,7 +276,7 @@ describe('ColorUtils', () => {
     it('should handle achromatic colors (no saturation)', () => {
       const gray: HSLColor = { h: 0, s: 0, l: 50 };
       const rgbGray = ColorUtils.hslToRgb(gray);
-      
+
       expect(rgbGray.r).toBeCloseTo(127.5);
       expect(rgbGray.g).toBeCloseTo(127.5);
       expect(rgbGray.b).toBeCloseTo(127.5);
@@ -315,10 +309,10 @@ describe('ColorUtils', () => {
 
     it('should report correct cache size', () => {
       expect(ColorUtils.getColorCacheSize()).toBe(0);
-      
+
       ColorUtils.colorToRGBA('#ff0000');
       expect(ColorUtils.getColorCacheSize()).toBe(1);
-      
+
       ColorUtils.colorToRGBA('#00ff00');
       expect(ColorUtils.getColorCacheSize()).toBe(2);
     });
@@ -327,20 +321,19 @@ describe('ColorUtils', () => {
   describe('getGradientValue', () => {
     beforeEach(() => {
       // Mock colorToRGBA for predictable results
-      vi.spyOn(ColorUtils, 'colorToRGBA')
-        .mockImplementation((color: string) => {
-          if (color === '#ff0000') return [255, 0, 0, 255];
-          if (color === '#0000ff') return [0, 0, 255, 255];
-          return [0, 0, 0, 255];
-        });
+      vi.spyOn(ColorUtils, 'colorToRGBA').mockImplementation((color: string) => {
+        if (color === '#ff0000') return [255, 0, 0, 255];
+        if (color === '#0000ff') return [0, 0, 255, 255];
+        return [0, 0, 0, 255];
+      });
     });
 
     it('should interpolate between two colors', () => {
       const result = ColorUtils.getGradientValue('#ff0000', '#0000ff', 0.5);
-      
+
       // Should be halfway between red and blue
       expect(result).toMatch(/^#[0-9a-f]{8}$/i);
-      
+
       // At 50%, should be roughly #7f007fff (127, 0, 127, 255)
       expect(result.toLowerCase()).toBe('#7f007fff');
     });

@@ -5,9 +5,9 @@
 
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import CoreUtils, {
-  calculateValueBetween,
   calculateSvgCoordinate,
   calculateSvgDimension,
+  calculateValueBetween,
   getLovelace,
 } from '../CoreUtils.js';
 
@@ -51,13 +51,13 @@ describe('CoreUtils', () => {
     it('should calculate SVG coordinates from percentages', () => {
       // 50% of 400 (SVG_DEFAULT_DIMENSIONS) + (200 - 200) = 200
       expect(calculateSvgCoordinate(50, 200)).toBe(200);
-      
+
       // 25% of 400 + (100 - 200) = 100 + (-100) = 0
       expect(calculateSvgCoordinate(25, 100)).toBe(0);
-      
+
       // 0% of 400 + (200 - 200) = 0
       expect(calculateSvgCoordinate(0, 200)).toBe(0);
-      
+
       // 100% of 400 + (200 - 200) = 400
       expect(calculateSvgCoordinate(100, 200)).toBe(400);
     });
@@ -65,8 +65,8 @@ describe('CoreUtils', () => {
     it('should handle different toolset positions', () => {
       // With toolset at position 300
       expect(calculateSvgCoordinate(50, 300)).toBe(300); // 200 + (300 - 200)
-      
-      // With toolset at position 100  
+
+      // With toolset at position 100
       expect(calculateSvgCoordinate(50, 100)).toBe(100); // 200 + (100 - 200)
     });
   });
@@ -100,7 +100,7 @@ describe('CoreUtils', () => {
       // Create incomplete DOM structure
       const homeAssistant = document.createElement('home-assistant');
       document.body.appendChild(homeAssistant);
-      
+
       expect(getLovelace()).toBeNull();
     });
 
@@ -135,17 +135,21 @@ describe('CoreUtils', () => {
     });
 
     it('should produce same results as exported functions', () => {
-      const start = 0, end = 10, val = 5;
-      expect(CoreUtils.calculateValueBetween(start, end, val))
-        .toBe(calculateValueBetween(start, end, val));
-      
-      const own = 50, toolset = 200;
-      expect(CoreUtils.calculateSvgCoordinate(own, toolset))
-        .toBe(calculateSvgCoordinate(own, toolset));
-      
+      const start = 0,
+        end = 10,
+        val = 5;
+      expect(CoreUtils.calculateValueBetween(start, end, val)).toBe(
+        calculateValueBetween(start, end, val)
+      );
+
+      const own = 50,
+        toolset = 200;
+      expect(CoreUtils.calculateSvgCoordinate(own, toolset)).toBe(
+        calculateSvgCoordinate(own, toolset)
+      );
+
       const dimension = 25;
-      expect(CoreUtils.calculateSvgDimension(dimension))
-        .toBe(calculateSvgDimension(dimension));
+      expect(CoreUtils.calculateSvgDimension(dimension)).toBe(calculateSvgDimension(dimension));
     });
   });
 });
