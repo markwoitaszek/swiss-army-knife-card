@@ -74,16 +74,16 @@ describe('EntityNameTool', () => {
     it('should use explicit name from config when provided', () => {
       tool.config.name = 'Custom Name';
       const result = tool.render();
-      const textElement = result.values[0];
-
-      expect(textElement.strings.join('')).toContain('Custom Name');
+      const resultString = result.strings.join('') + result.values.join('');
+      
+      expect(resultString).toContain('Custom Name');
     });
 
     it('should use entity friendly_name when no explicit name', () => {
       const result = tool.render();
-      const textElement = result.values[0];
-
-      expect(textElement.strings.join('')).toContain('Test Temperature Sensor');
+      const resultString = result.strings.join('') + result.values.join('');
+      
+      expect(resultString).toContain('Test Temperature Sensor');
     });
 
     it('should fall back to entity_id when no friendly_name', () => {
@@ -91,11 +91,11 @@ describe('EntityNameTool', () => {
         ...mockEntityState,
         attributes: { ...mockEntityState.attributes, friendly_name: undefined },
       };
-
+      
       const result = tool.render();
-      const textElement = result.values[0];
-
-      expect(textElement.strings.join('')).toContain('sensor.test_temperature');
+      const resultString = result.strings.join('') + result.values.join('');
+      
+      expect(resultString).toContain('sensor.test_temperature');
     });
 
     it('should use fallback_name when entity has no friendly_name or entity_id', () => {
@@ -105,11 +105,11 @@ describe('EntityNameTool', () => {
         entity_id: '',
         attributes: { ...mockEntityState.attributes, friendly_name: undefined },
       };
-
+      
       const result = tool.render();
-      const textElement = result.values[0];
-
-      expect(textElement.strings.join('')).toContain('Fallback Name');
+      const resultString = result.strings.join('') + result.values.join('');
+      
+      expect(resultString).toContain('Fallback Name');
     });
 
     it('should use "Unknown Entity" as final fallback', () => {
@@ -118,11 +118,11 @@ describe('EntityNameTool', () => {
         entity_id: '',
         attributes: { ...mockEntityState.attributes, friendly_name: undefined },
       };
-
+      
       const result = tool.render();
-      const textElement = result.values[0];
-
-      expect(textElement.strings.join('')).toContain('Unknown Entity');
+      const resultString = result.strings.join('') + result.values.join('');
+      
+      expect(resultString).toContain('Unknown Entity');
     });
   });
 
@@ -130,37 +130,42 @@ describe('EntityNameTool', () => {
     it('should apply font size styling', () => {
       tool.config.font_size = 16;
       const result = tool.render();
-
+      const resultString = result.strings.join('') + result.values.join('');
+      
       // Check that font-size is applied in the style attribute
-      expect(result.strings.join('')).toContain('font-size: 16px');
+      expect(resultString).toContain('font-size: 16px');
     });
 
     it('should apply font weight styling', () => {
       tool.config.font_weight = 'bold';
       const result = tool.render();
-
-      expect(result.strings.join('')).toContain('font-weight: bold');
+      const resultString = result.strings.join('') + result.values.join('');
+      
+      expect(resultString).toContain('font-weight: bold');
     });
 
     it('should apply font family styling', () => {
       tool.config.font_family = 'Arial, sans-serif';
       const result = tool.render();
-
-      expect(result.strings.join('')).toContain('font-family: Arial, sans-serif');
+      const resultString = result.strings.join('') + result.values.join('');
+      
+      expect(resultString).toContain('font-family: Arial, sans-serif');
     });
 
     it('should apply color styling', () => {
       tool.config.color = '#ff0000';
       const result = tool.render();
-
-      expect(result.strings.join('')).toContain('fill: #ff0000');
+      const resultString = result.strings.join('') + result.values.join('');
+      
+      expect(resultString).toContain('fill: #ff0000');
     });
 
     it('should apply opacity styling', () => {
       tool.config.opacity = 0.8;
       const result = tool.render();
-
-      expect(result.strings.join('')).toContain('opacity: 0.8');
+      const resultString = result.strings.join('') + result.values.join('');
+      
+      expect(resultString).toContain('opacity: 0.8');
     });
   });
 
@@ -169,51 +174,58 @@ describe('EntityNameTool', () => {
       tool.config.x = 100;
       tool.config.y = 200;
       const result = tool.render();
-
-      expect(result.strings.join('')).toContain('x="100"');
-      expect(result.strings.join('')).toContain('y="200"');
+      const resultString = result.strings.join('') + result.values.join('');
+      
+      expect(resultString).toContain('x="100"');
+      expect(resultString).toContain('y="200"');
     });
 
     it('should fall back to position cx/cy when x/y not specified', () => {
       const result = tool.render();
-
-      expect(result.strings.join('')).toContain('x="50"'); // position.cx
-      expect(result.strings.join('')).toContain('y="50"'); // position.cy
+      const resultString = result.strings.join('') + result.values.join('');
+      
+      expect(resultString).toContain('x="50"'); // position.cx
+      expect(resultString).toContain('y="50"'); // position.cy
     });
 
     it('should apply text anchor', () => {
       tool.config.text_anchor = 'start';
       const result = tool.render();
-
-      expect(result.strings.join('')).toContain('text-anchor="start"');
+      const resultString = result.strings.join('') + result.values.join('');
+      
+      expect(resultString).toContain('text-anchor="start"');
     });
 
     it('should apply alignment baseline', () => {
       tool.config.alignment_baseline = 'hanging';
       const result = tool.render();
-
-      expect(result.strings.join('')).toContain('alignment-baseline="hanging"');
+      const resultString = result.strings.join('') + result.values.join('');
+      
+      expect(resultString).toContain('alignment-baseline="hanging"');
     });
 
     it('should apply rotation transform', () => {
       tool.config.rotate = 45;
       const result = tool.render();
-
-      expect(result.strings.join('')).toContain('transform="rotate(45)"');
+      const resultString = result.strings.join('') + result.values.join('');
+      
+      expect(resultString).toContain('transform="rotate(45)"');
     });
 
     it('should apply visibility', () => {
       tool.config.visibility = 'hidden';
       const result = tool.render();
-
-      expect(result.strings.join('')).toContain('visibility="hidden"');
+      const resultString = result.strings.join('') + result.values.join('');
+      
+      expect(resultString).toContain('visibility="hidden"');
     });
   });
 
   describe('Entity State Updates', () => {
     it('should update display when entity friendly_name changes', () => {
       const initialRender = tool.render();
-      expect(initialRender.strings.join('')).toContain('Test Temperature Sensor');
+      const initialString = initialRender.strings.join('') + initialRender.values.join('');
+      expect(initialString).toContain('Test Temperature Sensor');
 
       // Update entity state with new friendly name
       const newEntityState: EntityState = {
@@ -226,21 +238,25 @@ describe('EntityNameTool', () => {
 
       tool.updateEntityState(newEntityState);
       const updatedRender = tool.render();
-      expect(updatedRender.strings.join('')).toContain('Updated Sensor Name');
+      const updatedString = updatedRender.strings.join('') + updatedRender.values.join('');
+      expect(updatedString).toContain('Updated Sensor Name');
     });
 
     it('should not trigger unnecessary updates when name unchanged', () => {
+      // Reset any previous calls
+      tool.updateEntityState(mockEntityState);
+      
       const updateSpy = vi.spyOn(tool, 'requestUpdate');
-
+      
       // Update with same entity state
       tool.updateEntityState(mockEntityState);
-
+      
       expect(updateSpy).not.toHaveBeenCalled();
     });
 
     it('should trigger update when name actually changes', () => {
       const updateSpy = vi.spyOn(tool, 'requestUpdate');
-
+      
       const newEntityState: EntityState = {
         ...mockEntityState,
         attributes: {
@@ -250,7 +266,7 @@ describe('EntityNameTool', () => {
       };
 
       tool.updateEntityState(newEntityState);
-
+      
       expect(updateSpy).toHaveBeenCalled();
     });
   });
@@ -258,15 +274,16 @@ describe('EntityNameTool', () => {
   describe('Rendering', () => {
     it('should render SVG text element', () => {
       const result = tool.render();
-
-      expect(result.strings.join('')).toContain('<text');
-      expect(result.strings.join('')).toContain('class="sak-entity-name"');
+      const resultString = result.strings.join('') + result.values.join('');
+      
+      expect(resultString).toContain('<text');
+      expect(resultString).toContain('class="sak-entity-name"');
     });
 
     it('should include event handlers', () => {
       const result = tool.render();
-      const resultString = result.strings.join('');
-
+      const resultString = result.strings.join('') + result.values.join('');
+      
       expect(resultString).toContain('@click');
       expect(resultString).toContain('@mouseenter');
       expect(resultString).toContain('@mouseleave');
@@ -277,14 +294,14 @@ describe('EntityNameTool', () => {
     it('should return empty when not visible', () => {
       tool.isVisible = false;
       const result = tool.render();
-
+      
       expect(result.strings.join('').trim()).toBe('');
     });
 
     it('should apply default text-anchor and alignment-baseline', () => {
       const result = tool.render();
-      const resultString = result.strings.join('');
-
+      const resultString = result.strings.join('') + result.values.join('');
+      
       expect(resultString).toContain('text-anchor="middle"');
       expect(resultString).toContain('alignment-baseline="central"');
     });
@@ -293,10 +310,11 @@ describe('EntityNameTool', () => {
   describe('Edge Cases', () => {
     it('should handle missing entity state gracefully', () => {
       tool.entityState = undefined;
-
+      
       expect(() => tool.render()).not.toThrow();
       const result = tool.render();
-      expect(result.strings.join('')).toContain('Unknown Entity');
+      const resultString = result.strings.join('') + result.values.join('');
+      expect(resultString).toContain('Unknown Entity');
     });
 
     it('should handle empty entity attributes', () => {
@@ -304,26 +322,28 @@ describe('EntityNameTool', () => {
         ...mockEntityState,
         attributes: {},
       };
-
+      
       const result = tool.render();
-      expect(result.strings.join('')).toContain('sensor.test_temperature');
+      const resultString = result.strings.join('') + result.values.join('');
+      expect(resultString).toContain('sensor.test_temperature');
     });
 
     it('should handle numeric font weight', () => {
       tool.config.font_weight = 600;
       const result = tool.render();
-
-      expect(result.strings.join('')).toContain('font-weight: 600');
+      const resultString = result.strings.join('') + result.values.join('');
+      
+      expect(resultString).toContain('font-weight: 600');
     });
 
     it('should handle zero values for positioning', () => {
       tool.config.x = 0;
       tool.config.y = 0;
       tool.config.opacity = 0;
-
+      
       const result = tool.render();
-      const resultString = result.strings.join('');
-
+      const resultString = result.strings.join('') + result.values.join('');
+      
       expect(resultString).toContain('x="0"');
       expect(resultString).toContain('y="0"');
       expect(resultString).toContain('opacity: 0');

@@ -180,18 +180,28 @@ export class EntityNameTool extends BaseTool {
     const attributes = this.getTextAttributes();
     const styleString = this.stylesToString(styles);
 
+    // Get position values
+    const x = attributes.x !== undefined ? attributes.x : (this.position?.cx || 0);
+    const y = attributes.y !== undefined ? attributes.y : (this.position?.cy || 0);
+    const dx = attributes.dx !== undefined ? attributes.dx : 0;
+    const dy = attributes.dy !== undefined ? attributes.dy : 0;
+    const textAnchor = attributes['text-anchor'] || 'middle';
+    const alignmentBaseline = attributes['alignment-baseline'] || 'central';
+    const transform = attributes.transform || '';
+    const visibility = attributes.visibility || 'visible';
+
     return svg`
       <text
         class="sak-entity-name"
         style="${styleString}"
-        x="${attributes.x || this.position?.cx || 0}"
-        y="${attributes.y || this.position?.cy || 0}"
-        dx="${attributes.dx || 0}"
-        dy="${attributes.dy || 0}"
-        text-anchor="${attributes['text-anchor'] || 'middle'}"
-        alignment-baseline="${attributes['alignment-baseline'] || 'central'}"
-        transform="${attributes.transform || ''}"
-        visibility="${attributes.visibility || 'visible'}"
+        x="${x}"
+        y="${y}"
+        dx="${dx}"
+        dy="${dy}"
+        text-anchor="${textAnchor}"
+        alignment-baseline="${alignmentBaseline}"
+        transform="${transform}"
+        visibility="${visibility}"
         @click="${this.handleClick}"
         @mouseenter="${this.handleMouseEnter}"
         @mouseleave="${this.handleMouseLeave}"
