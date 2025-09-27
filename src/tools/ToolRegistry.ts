@@ -10,10 +10,14 @@ import { GaugeTool } from './charts/GaugeTool.js';
 import { HeatmapTool } from './charts/HeatmapTool.js';
 import { PieChartTool } from './charts/PieChartTool.js';
 import { SparklineBarChartTool } from './charts/SparklineBarChartTool.js';
+import { EntityAreaTool } from './entity/EntityAreaTool.js';
+import { EntityIconTool } from './entity/EntityIconTool.js';
+import { EntityNameTool } from './entity/EntityNameTool.js';
 import { EntityStateTool } from './entity/EntityStateTool.js';
 import { RangeSliderTool } from './interactive/RangeSliderTool.js';
 import { SwitchTool } from './interactive/SwitchTool.js';
 import { CircleTool } from './shapes/CircleTool.js';
+import { LineTool } from './shapes/LineTool.js';
 import { RectangleTool } from './shapes/RectangleTool.js';
 import { TextTool } from './text/TextTool.js';
 
@@ -90,6 +94,10 @@ export class ToolRegistry {
     this.modernTools.set('rectangle', RectangleTool);
     this.modernTools.set('text', TextTool);
     this.modernTools.set('entity_state', EntityStateTool);
+    this.modernTools.set('entity_name', EntityNameTool);
+    this.modernTools.set('entity_area', EntityAreaTool);
+    this.modernTools.set('entity_icon', EntityIconTool);
+    this.modernTools.set('line', LineTool);
     this.modernTools.set('sparkline_barchart', SparklineBarChartTool);
     this.modernTools.set('gauge', GaugeTool);
     this.modernTools.set('pie_chart', PieChartTool);
